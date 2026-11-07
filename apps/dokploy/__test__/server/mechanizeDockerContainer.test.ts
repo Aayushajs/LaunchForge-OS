@@ -39,6 +39,10 @@ const {
 	};
 });
 
+vi.mock("@dokploy/server/utils/builders/rollout", () => ({
+	waitForRollout: vi.fn(async () => undefined),
+}));
+
 vi.mock("@dokploy/server/utils/servers/remote-docker", () => ({
 	getRemoteDocker: getRemoteDockerMock,
 }));

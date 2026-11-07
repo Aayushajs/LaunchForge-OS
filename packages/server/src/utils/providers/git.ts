@@ -24,6 +24,17 @@ export const getGitTokenAuthConfig = (cloneUrl: string, token: string) => {
 	return `-c ${quote([`http.${new URL(cloneUrl).origin}/.extraHeader=Authorization: Basic ${credentials}`])}`;
 };
 
+/**
+ * Writes the deploy key to a per-build temp file that is removed when the
+ * build script exits. A fixed path such as /tmp/id_rsa was shared by every
+ * concurrent build on the host and never deleted, and echoing the key inside
+ * double quotes let a crafted key run shell substitutions; base64 avoids both.
+ */
+export const writeTemporarySshKeyCommand = (privateKey: string) => {
+	const encoded = Buffer.from(privateKey).toString("base64");
+	return `GIT_SSH_KEY_FILE=$(mktemp); trap 'rm -f "$GIT_SSH_KEY_FILE"' EXIT; chmod 600 "$GIT_SSH_KEY_FILE"; echo '${encoded}' | base64 -d > "$GIT_SSH_KEY_FILE";`;
+};
+
 export const cloneGitRepository = async ({
 	type = "application",
 	...entity
@@ -45,16 +56,6 @@ export const cloneGitRepository = async ({
 		return command;
 	}
 
-	const temporalKeyPath = path.join("/tmp", "id_rsa");
-
-	if (customGitSSHKeyId) {
-		const sshKey = await findSSHKeyById(customGitSSHKeyId);
-
-		command += `
-			echo "${sshKey.privateKey}" > ${temporalKeyPath}
-			chmod 600 ${temporalKeyPath};
-			`;
-	}
 	const basePath = type === "compose" ? COMPOSE_PATH : APPLICATIONS_PATH;
 	const outputPath = outputPathOverride ?? join(basePath, appName, "code");
 	const knownHostsPath = path.join(SSH_PATH, "known_hosts");
@@ -79,10 +80,9 @@ export const cloneGitRepository = async ({
 
 	if (customGitSSHKeyId) {
 		const sshKey = await findSSHKeyById(customGitSSHKeyId);
+		command += writeTemporarySshKeyCommand(sshKey.privateKey);
 		const { port } = sanitizeRepoPathSSH(customGitUrl);
-		const gitSshCommand = `ssh -i /tmp/id_rsa${port ? ` -p ${port}` : ""} -o UserKnownHostsFile=${knownHostsPath} -o StrictHostKeyChecking=accept-new`;
-		command += `echo "${sshKey.privateKey}" > /tmp/id_rsa;`;
-		command += "chmod 600 /tmp/id_rsa;";
+		const gitSshCommand = `ssh -i $GIT_SSH_KEY_FILE${port ? ` -p ${port}` : ""} -o UserKnownHostsFile=${knownHostsPath} -o StrictHostKeyChecking=accept-new`;
 		command += `export GIT_SSH_COMMAND="${gitSshCommand}";`;
 	}
 	command += `if ! git clone --branch ${quote([String(customGitBranch ?? "")])} --depth 1 ${enableSubmodules ? "--recurse-submodules" : ""} --progress ${quote([String(customGitUrl ?? "")])} ${quote([String(outputPath ?? "")])}; then

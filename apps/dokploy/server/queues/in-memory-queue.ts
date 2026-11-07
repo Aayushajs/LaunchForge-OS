@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import type { DeploymentJob } from "./queue-types";
 
 /**
@@ -40,6 +41,16 @@ export interface InMemoryJob {
 
 type Processor = (job: InMemoryJob) => Promise<void>;
 
+/**
+ * Persistence for jobs that have been accepted but not finished, so a
+ * restart of the panel does not silently drop queued deployments.
+ */
+export interface JobStore {
+	save: (id: string, data: DeploymentJob) => Promise<void>;
+	remove: (ids: string[]) => Promise<void>;
+	loadAll: () => Promise<Array<{ id: string; data: DeploymentJob }>>;
+}
+
 /** Resolve the partition key (serverId) a job belongs to. */
 export const getPartition = (data: DeploymentJob): string =>
 	data.serverId ?? LOCAL_PARTITION;
@@ -81,19 +92,39 @@ export interface InMemoryQueueOptions {
 	resolveConcurrency: (partition: string) => Promise<number> | number;
 	/** Monotonic clock; injectable for tests. Defaults to Date.now. */
 	now?: () => number;
+	store?: JobStore;
 }
 
 export class InMemoryQueue {
 	private partitions = new Map<string, Partition>();
 	private processor: Processor | null = null;
 	private running = false;
-	private seq = 0;
 	private readonly resolveConcurrency: InMemoryQueueOptions["resolveConcurrency"];
 	private readonly now: () => number;
+	private readonly store?: JobStore;
 
 	constructor(options: InMemoryQueueOptions) {
 		this.resolveConcurrency = options.resolveConcurrency;
 		this.now = options.now ?? (() => Date.now());
+		this.store = options.store;
+	}
+
+	private forget(ids: string[]) {
+		if (!this.store || ids.length === 0) return;
+		this.store.remove(ids).catch((error) => {
+			console.error("Failed to remove persisted deployment jobs", error);
+		});
+	}
+
+	/** Re-enqueues jobs that were persisted but never finished. */
+	async restore(): Promise<number> {
+		if (!this.store) return 0;
+		const pending = await this.store.loadAll();
+		for (const { id, data } of pending) {
+			this.enqueue(id, data);
+		}
+		this.schedule();
+		return pending.length;
 	}
 
 	private getPartitionState(key: string): Partition {
@@ -124,7 +155,14 @@ export class InMemoryQueue {
 	}
 
 	async add(data: DeploymentJob): Promise<{ id: string }> {
-		const id = `job-${++this.seq}`;
+		const id = `job-${randomUUID()}`;
+		await this.store?.save(id, data);
+		this.enqueue(id, data);
+		this.schedule();
+		return { id };
+	}
+
+	private enqueue(id: string, data: DeploymentJob) {
 		const partitionKey = getPartition(data);
 		const job: InternalJob = {
 			id,
@@ -136,8 +174,6 @@ export class InMemoryQueue {
 			group: getGroup(data),
 		};
 		this.getPartitionState(partitionKey).waiting.push(job);
-		this.schedule();
-		return { id };
 	}
 
 	private toPublic(job: InternalJob): InMemoryJob {
@@ -174,32 +210,37 @@ export class InMemoryQueue {
 		for (const partition of this.partitions.values()) {
 			const before = partition.waiting.length;
 			partition.waiting = partition.waiting.filter((job) => job.id !== id);
-			if (partition.waiting.length !== before) break;
+			if (partition.waiting.length !== before) {
+				this.forget([id]);
+				break;
+			}
 		}
 		return Promise.resolve();
 	}
 
 	/** Remove waiting jobs matching a predicate. Active jobs are not affected. */
 	removeWaiting(predicate: (data: DeploymentJob) => boolean): number {
-		let removed = 0;
+		const removed: string[] = [];
 		for (const partition of this.partitions.values()) {
 			partition.waiting = partition.waiting.filter((job) => {
 				const match = predicate(job.data);
-				if (match) removed++;
+				if (match) removed.push(job.id);
 				return !match;
 			});
 		}
-		return removed;
+		this.forget(removed);
+		return removed.length;
 	}
 
 	/** Drop every waiting job across all partitions. */
 	clearWaiting(): number {
-		let removed = 0;
+		const removed: string[] = [];
 		for (const partition of this.partitions.values()) {
-			removed += partition.waiting.length;
+			removed.push(...partition.waiting.map((job) => job.id));
 			partition.waiting = [];
 		}
-		return removed;
+		this.forget(removed);
+		return removed.length;
 	}
 
 	on() {
@@ -250,6 +291,7 @@ export class InMemoryQueue {
 			console.error("In-memory deployment job failed", error);
 		} finally {
 			job.finishedOn = this.now();
+			this.forget([job.id]);
 			const partition = this.partitions.get(job.partition);
 			if (partition) {
 				partition.active = partition.active.filter((j) => j.id !== job.id);

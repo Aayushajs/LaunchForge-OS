@@ -901,7 +901,11 @@ export const applicationRouter = createTRPCRouter({
 			});
 			await assertReferencesAccessible(ctx, input);
 			const application = await findApplicationById(input.applicationId);
-			await killDockerBuild("application", application.serverId);
+			await killDockerBuild(
+				"application",
+				application.appName,
+				application.serverId,
+			);
 			await audit(ctx, {
 				action: "stop",
 				resourceType: "application",

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { asWebhook } from "./webhook-request";
 
 const mocks = vi.hoisted(() => ({
 	applicationsFindFirst: vi.fn(),
@@ -58,7 +59,7 @@ const json = (body: unknown, status = 200) =>
 	});
 
 const pushRequest = (newHash: string, oldHash: string | null = "base0") =>
-	({
+	asWebhook({
 		query: { refreshToken: "refresh-token" },
 		headers: { "x-event-key": "repo:push" },
 		body: {
@@ -81,7 +82,7 @@ const pushRequest = (newHash: string, oldHash: string | null = "base0") =>
 				],
 			},
 		},
-	}) as unknown as NextApiRequest;
+	});
 
 const createResponse = () => {
 	const res = {

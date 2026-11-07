@@ -20,6 +20,7 @@ import { getHerokuCommand } from "./heroku";
 import { getNixpacksCommand } from "./nixpacks";
 import { getPaketoCommand } from "./paketo";
 import { getRailpackCommand } from "./railpack";
+import { waitForRollout } from "./rollout";
 import { getStaticCommand } from "./static";
 
 // NIXPACKS codeDirectory = where is the path of the code directory
@@ -239,9 +240,11 @@ export const mechanizeDockerContainer = async (
 			newTasks.every(
 				(task) => !["new", "allocated", "pending"].includes(task.Status?.State),
 			);
-		if (scheduled) return;
+		if (scheduled) break;
 		await sleep(300);
 	}
+
+	await waitForRollout(docker, appName, forceUpdate);
 };
 
 const getImageName = async (application: ApplicationNested) => {

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { asWebhook } from "./webhook-request";
 
 const mocks = vi.hoisted(() => ({
 	applicationsFindFirst: vi.fn(),
@@ -50,6 +51,7 @@ const createResponse = () => {
 	const res = {
 		status: vi.fn(),
 		json: vi.fn(),
+		setHeader: vi.fn(),
 	} as unknown as NextApiResponse & {
 		status: ReturnType<typeof vi.fn>;
 		json: ReturnType<typeof vi.fn>;
@@ -62,11 +64,11 @@ const createResponse = () => {
 };
 
 const createRequest = (headers: Record<string, string>, body: unknown) =>
-	({
+	asWebhook({
 		query: { refreshToken: "refresh-token" },
 		headers,
 		body,
-	}) as unknown as NextApiRequest;
+	});
 
 // Trimmed from real deliveries for a single `docker/github-builder` push:
 // per-platform manifests and the index arrive untagged, tags arrive last
@@ -179,6 +181,47 @@ describe("Deploy webhook for docker applications", () => {
 			res,
 		);
 
+		expect(res.status).toHaveBeenCalledExactlyOnceWith(200);
+		expect(mocks.queueAdd).toHaveBeenCalledTimes(1);
+	});
+});
+
+describe("webhook request hardening", () => {
+	beforeEach(() => {
+		mocks.queueAdd.mockReset();
+		mocks.applicationsFindFirst.mockResolvedValue({
+			applicationId: "application-id",
+			refreshToken: "refresh-token",
+			sourceType: "docker",
+			dockerImage: "dokploy/app:latest",
+			autoDeploy: true,
+			serverId: null,
+		});
+	});
+
+	it("rejects non-POST requests without deploying", async () => {
+		const res = createResponse();
+		await handler(
+			asWebhook({ method: "GET", query: { refreshToken: "refresh-token" } }),
+			res,
+		);
+		expect(res.status).toHaveBeenCalledExactlyOnceWith(405);
+		expect(mocks.queueAdd).not.toHaveBeenCalled();
+	});
+
+	it("rejects a delivery with a wrong GitLab secret token", async () => {
+		const res = createResponse();
+		await handler(createRequest({ "x-gitlab-token": "guessed" }, {}), res);
+		expect(res.status).toHaveBeenCalledExactlyOnceWith(401);
+		expect(mocks.queueAdd).not.toHaveBeenCalled();
+	});
+
+	it("accepts a delivery signed with the webhook token", async () => {
+		const res = createResponse();
+		await handler(
+			createRequest({ "x-gitlab-token": "refresh-token" }, {}),
+			res,
+		);
 		expect(res.status).toHaveBeenCalledExactlyOnceWith(200);
 		expect(mocks.queueAdd).toHaveBeenCalledTimes(1);
 	});

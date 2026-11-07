@@ -10,13 +10,18 @@ import {
 	shouldDeploy,
 } from "@dokploy/server";
 import { db } from "@dokploy/server/db";
-import { Webhooks } from "@octokit/webhooks";
 import { and, eq } from "drizzle-orm";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { applications, compose, github } from "@/server/db/schema";
 import type { DeploymentJob } from "@/server/queues/queue-types";
 import { myQueue } from "@/server/queues/queueSetup";
 import { deploy } from "@/server/utils/deploy";
+import {
+	parseWebhookBody,
+	readRawBody,
+	verifyWebhookSignature,
+	WebhookBodyTooLargeError,
+} from "@/server/utils/webhook-auth";
 import {
 	extractCommitMessage,
 	extractHash,
@@ -28,9 +33,7 @@ const getGithubRepositoryOwner = (githubBody: any) =>
 
 export const config = {
 	api: {
-		bodyParser: {
-			sizeLimit: "25mb",
-		},
+		bodyParser: false,
 	},
 };
 
@@ -38,9 +41,27 @@ export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
+	if (req.method !== "POST") {
+		res.setHeader("Allow", "POST");
+		res.status(405).json({ message: "Method not allowed" });
+		return;
+	}
+
 	const signature = req.headers["x-hub-signature-256"];
 	if (!signature) {
 		res.status(401).json({ message: "Missing signature header" });
+		return;
+	}
+
+	let rawBody: Buffer;
+	try {
+		rawBody = await readRawBody(req);
+		req.body = parseWebhookBody(rawBody, req.headers["content-type"]);
+	} catch (error) {
+		const tooLarge = error instanceof WebhookBodyTooLargeError;
+		res
+			.status(tooLarge ? 413 : 400)
+			.json({ message: tooLarge ? "Payload too large" : "Invalid payload" });
 		return;
 	}
 
@@ -64,14 +85,12 @@ export default async function handler(
 		res.status(400).json({ message: "Github Webhook Secret not set" });
 		return;
 	}
-	const webhooks = new Webhooks({
-		secret: githubResult.githubWebhookSecret,
-	});
-
-	const verified = await webhooks.verify(
-		JSON.stringify(githubBody),
-		signature as string,
-	);
+	const verified =
+		verifyWebhookSignature(
+			{ "x-hub-signature-256": signature },
+			rawBody,
+			githubResult.githubWebhookSecret,
+		) === "verified";
 
 	if (!verified) {
 		res.status(401).json({ message: "Unauthorized" });

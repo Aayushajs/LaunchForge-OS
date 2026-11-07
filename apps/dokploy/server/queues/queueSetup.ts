@@ -3,9 +3,12 @@ import {
 	execAsync,
 	execAsyncRemote,
 } from "@dokploy/server/utils/process/execAsync";
+import { quote } from "shell-quote";
+import { buildCancelPattern } from "./build-cancel";
 import { resolveBuildsConcurrency } from "./concurrency";
 import { processDeploymentJob } from "./deployments-queue";
 import { type InMemoryJob, InMemoryQueue } from "./in-memory-queue";
+import { postgresJobStore } from "./job-store";
 import type { DeploymentJob } from "./queue-types";
 
 /**
@@ -28,6 +31,7 @@ interface DeploymentQueue {
 	run: () => Promise<void>;
 	removeWaiting: (predicate: (data: DeploymentJob) => boolean) => number;
 	clearWaiting: () => number;
+	restore: () => Promise<number>;
 }
 
 const createNoopQueue = (): DeploymentQueue => ({
@@ -38,11 +42,13 @@ const createNoopQueue = (): DeploymentQueue => ({
 	run: () => Promise.resolve(),
 	removeWaiting: () => 0,
 	clearWaiting: () => 0,
+	restore: () => Promise.resolve(0),
 });
 
 const createInMemoryQueue = (): DeploymentQueue => {
 	const queue = new InMemoryQueue({
 		resolveConcurrency: resolveBuildsConcurrency,
+		store: postgresJobStore,
 	});
 	queue.process(processDeploymentJob);
 
@@ -54,6 +60,7 @@ const createInMemoryQueue = (): DeploymentQueue => {
 		run: () => queue.run(),
 		removeWaiting: (predicate) => queue.removeWaiting(predicate),
 		clearWaiting: () => queue.clearWaiting(),
+		restore: () => queue.restore(),
 	};
 };
 
@@ -74,7 +81,15 @@ if (!globalForQueue.__dokployDeploymentQueue) {
 const myQueue: DeploymentQueue = globalForQueue.__dokployDeploymentQueue;
 
 /** Start processing jobs. Called once on server startup (self-hosted). */
-export const startDeploymentWorker = () => myQueue.run();
+export const startDeploymentWorker = async () => {
+	const restored = await myQueue.restore();
+	if (restored > 0) {
+		console.log(
+			`Restored ${restored} queued deployment(s) from before restart`,
+		);
+	}
+	await myQueue.run();
+};
 
 export const getJobsByApplicationId = async (applicationId: string) => {
 	const jobs = await myQueue.getJobs();
@@ -122,25 +137,15 @@ export const cleanAllDeploymentQueue = async () => {
 
 export const killDockerBuild = async (
 	type: "application" | "compose",
+	appName: string,
 	serverId: string | null,
 ) => {
+	const command = `pkill -2 -f -- ${quote([buildCancelPattern(type, appName)])}`;
 	try {
-		if (type === "application") {
-			const command = `pkill -2 -f "docker build"`;
-
-			if (serverId) {
-				await execAsyncRemote(serverId, command);
-			} else {
-				await execAsync(command);
-			}
-		} else if (type === "compose") {
-			const command = `pkill -2 -f "docker compose"`;
-
-			if (serverId) {
-				await execAsyncRemote(serverId, command);
-			} else {
-				await execAsync(command);
-			}
+		if (serverId) {
+			await execAsyncRemote(serverId, command);
+		} else {
+			await execAsync(command);
 		}
 	} catch (error) {
 		console.error(error);

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { asWebhook } from "./webhook-request";
 
 const mocks = vi.hoisted(() => ({
 	eq: vi.fn((field: string, value: unknown) => ({ field, value })),
@@ -120,44 +121,44 @@ const createPushRequest = (
 	branch: string,
 	owner: { login?: string; name?: string } = { login: "agentHits" },
 ) =>
-	({
-		headers: {
-			"x-hub-signature-256": "sha256=test-signature",
-			"x-github-event": "push",
-		},
-		body: {
-			installation: {
-				id: 12345,
+	asWebhook(
+		{
+			headers: {
+				"x-hub-signature-256": "sha256=test-signature",
+				"x-github-event": "push",
 			},
-			ref: `refs/heads/${branch}`,
-			after: "abc123",
-			head_commit: {
-				message: "fix: trigger deployment",
-			},
-			commits: [
-				{
-					modified: ["src/index.ts"],
+			body: {
+				installation: {
+					id: 12345,
 				},
-			],
-			repository: {
-				name: "dokploy",
-				full_name: "agentHits/dokploy",
-				clone_url: "https://github.com/agentHits/dokploy.git",
-				html_url: "https://github.com/agentHits/dokploy",
-				owner,
+				ref: `refs/heads/${branch}`,
+				after: "abc123",
+				head_commit: {
+					message: "fix: trigger deployment",
+				},
+				commits: [
+					{
+						modified: ["src/index.ts"],
+					},
+				],
+				repository: {
+					name: "dokploy",
+					full_name: "agentHits/dokploy",
+					clone_url: "https://github.com/agentHits/dokploy.git",
+					html_url: "https://github.com/agentHits/dokploy",
+					owner,
+				},
 			},
 		},
-	}) as unknown as NextApiRequest;
+		"webhook-secret",
+	);
 
 const createTagRequest = (tagName: string) => {
-	const req = createPushRequest("main") as unknown as {
-		body: { ref: string; head_commit: { message: string } };
-	};
-
-	req.body.ref = `refs/tags/${tagName}`;
-	req.body.head_commit.message = `release: ${tagName}`;
-
-	return req as unknown as NextApiRequest;
+	const req = createPushRequest("main");
+	const body = req.body as { ref: string; head_commit: { message: string } };
+	body.ref = `refs/tags/${tagName}`;
+	body.head_commit.message = `release: ${tagName}`;
+	return req;
 };
 
 describe("GitHub app webhook auto-deploy", () => {
@@ -382,41 +383,44 @@ describe("GitHub app webhook preview deployments", () => {
 		}));
 
 	const createPullRequestRequest = (action: string) =>
-		({
-			headers: {
-				"x-hub-signature-256": "sha256=test-signature",
-				"x-github-event": "pull_request",
+		asWebhook(
+			{
+				headers: {
+					"x-hub-signature-256": "sha256=test-signature",
+					"x-github-event": "pull_request",
+				},
+				body: {
+					installation: {
+						id: 12345,
+					},
+					action,
+					pull_request: {
+						id: 987,
+						number: 42,
+						title: "feat: add preview",
+						html_url: "https://github.com/agentHits/dokploy/pull/42",
+						labels: [],
+						user: {
+							login: "agentHits",
+						},
+						head: {
+							ref: "feature",
+							sha: "abc123",
+						},
+						base: {
+							ref: "main",
+						},
+					},
+					repository: {
+						name: "dokploy",
+						owner: {
+							login: "agentHits",
+						},
+					},
+				},
 			},
-			body: {
-				installation: {
-					id: 12345,
-				},
-				action,
-				pull_request: {
-					id: 987,
-					number: 42,
-					title: "feat: add preview",
-					html_url: "https://github.com/agentHits/dokploy/pull/42",
-					labels: [],
-					user: {
-						login: "agentHits",
-					},
-					head: {
-						ref: "feature",
-						sha: "abc123",
-					},
-					base: {
-						ref: "main",
-					},
-				},
-				repository: {
-					name: "dokploy",
-					owner: {
-						login: "agentHits",
-					},
-				},
-			},
-		}) as unknown as NextApiRequest;
+			"webhook-secret",
+		);
 
 	beforeEach(() => {
 		vi.clearAllMocks();

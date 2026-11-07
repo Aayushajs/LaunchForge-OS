@@ -316,7 +316,7 @@ export const composeRouter = createTRPCRouter({
 			});
 			await assertReferencesAccessible(ctx, input);
 			const compose = await findComposeById(input.composeId);
-			await killDockerBuild("compose", compose.serverId);
+			await killDockerBuild("compose", compose.appName, compose.serverId);
 		}),
 
 	loadServices: protectedProcedure

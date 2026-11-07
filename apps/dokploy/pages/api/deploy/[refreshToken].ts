@@ -11,6 +11,12 @@ import { applications } from "@/server/db/schema";
 import type { DeploymentJob } from "@/server/queues/queue-types";
 import { myQueue } from "@/server/queues/queueSetup";
 import { deploy } from "@/server/utils/deploy";
+import {
+	parseWebhookBody,
+	readRawBody,
+	verifyWebhookSignature,
+	WebhookBodyTooLargeError,
+} from "@/server/utils/webhook-auth";
 
 /**
  * Log a webhook handler error server-side without leaking its shape to the HTTP
@@ -34,9 +40,7 @@ const getPackageVersion = (headers: any, body: any) => {
 
 export const config = {
 	api: {
-		bodyParser: {
-			sizeLimit: "25mb",
-		},
+		bodyParser: false,
 	},
 };
 
@@ -44,6 +48,22 @@ export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
+	if (req.method !== "POST") {
+		res.setHeader("Allow", "POST");
+		res.status(405).json({ message: "Method not allowed" });
+		return;
+	}
+	let rawBody: Buffer;
+	try {
+		rawBody = await readRawBody(req);
+		req.body = parseWebhookBody(rawBody, req.headers["content-type"]);
+	} catch (error) {
+		const tooLarge = error instanceof WebhookBodyTooLargeError;
+		res
+			.status(tooLarge ? 413 : 400)
+			.json({ message: tooLarge ? "Payload too large" : "Invalid payload" });
+		return;
+	}
 	const { refreshToken } = req.query;
 	try {
 		if (req.headers["x-github-event"] === "ping") {
@@ -64,6 +84,14 @@ export default async function handler(
 
 		if (!application) {
 			res.status(404).json({ message: "Application Not Found" });
+			return;
+		}
+
+		if (
+			verifyWebhookSignature(req.headers, rawBody, String(refreshToken)) ===
+			"invalid"
+		) {
+			res.status(401).json({ message: "Invalid webhook signature" });
 			return;
 		}
 		if (!application?.autoDeploy) {
