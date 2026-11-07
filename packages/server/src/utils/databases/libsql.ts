@@ -1,6 +1,7 @@
 import type { InferResultType } from "@dokploy/server/types/with";
 import type { CreateServiceOptions, PortConfig } from "dockerode";
 import { resolveServiceNetworks } from "../../services/network";
+import { withWorkspaceQuota } from "../../services/workspace-quota";
 import { buildDokployLabels } from "../docker/dokploy-labels";
 import {
 	calculateResources,
@@ -61,12 +62,16 @@ export const buildLibsql = async (rawLibsql: LibsqlNested) => {
 		RollbackConfig,
 		UpdateConfig,
 	} = generateConfigContainer(libsql);
-	const resources = calculateResources({
-		memoryLimit,
-		memoryReservation,
-		cpuLimit,
-		cpuReservation,
-	});
+	const resources = await withWorkspaceQuota(
+		libsql.environment.project.organizationId,
+		libsql.libsqlId,
+		calculateResources({
+			memoryLimit,
+			memoryReservation,
+			cpuLimit,
+			cpuReservation,
+		}),
+	);
 	const envVariables = prepareEnvironmentVariables(
 		defaultLibsqlEnv,
 		libsql.environment.project.env,

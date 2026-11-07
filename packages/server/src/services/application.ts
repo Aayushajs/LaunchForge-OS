@@ -55,11 +55,15 @@ import {
 	updatePreviewDeployment,
 } from "./preview-deployment";
 import { validUniqueServerAppName } from "./project";
+import { assertServiceCountQuota } from "./workspace-quota";
 export type Application = typeof applications.$inferSelect;
 
 export const createApplication = async (
 	input: z.infer<typeof apiCreateApplication>,
 ) => {
+	if (input.environmentId) {
+		await assertServiceCountQuota(input.environmentId, "application");
+	}
 	const appName = buildAppName("app", input.appName);
 
 	const valid = await validUniqueServerAppName(appName);

@@ -18,10 +18,14 @@ import { eq, getTableColumns } from "drizzle-orm";
 import { quote } from "shell-quote";
 import type { z } from "zod";
 import { validUniqueServerAppName } from "./project";
+import { assertServiceCountQuota } from "./workspace-quota";
 
 export type Mongo = typeof mongo.$inferSelect;
 
 export const createMongo = async (input: z.infer<typeof apiCreateMongo>) => {
+	if (input.environmentId) {
+		await assertServiceCountQuota(input.environmentId, "database");
+	}
 	const appName = buildAppName("mongo", input.appName);
 
 	const valid = await validUniqueServerAppName(appName);

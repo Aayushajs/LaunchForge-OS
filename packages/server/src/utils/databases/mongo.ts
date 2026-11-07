@@ -1,6 +1,7 @@
 import type { InferResultType } from "@dokploy/server/types/with";
 import type { CreateServiceOptions } from "dockerode";
 import { resolveServiceNetworks } from "../../services/network";
+import { withWorkspaceQuota } from "../../services/workspace-quota";
 import { buildDokployLabels } from "../docker/dokploy-labels";
 import {
 	calculateResources,
@@ -102,12 +103,16 @@ ${command ?? "wait $MONGOD_PID"}`;
 		Ulimits,
 	} = generateConfigContainer(mongo);
 
-	const resources = calculateResources({
-		memoryLimit,
-		memoryReservation,
-		cpuLimit,
-		cpuReservation,
-	});
+	const resources = await withWorkspaceQuota(
+		mongo.environment.project.organizationId,
+		mongo.mongoId,
+		calculateResources({
+			memoryLimit,
+			memoryReservation,
+			cpuLimit,
+			cpuReservation,
+		}),
+	);
 
 	const envVariables = prepareEnvironmentVariables(
 		defaultMongoEnv,

@@ -2,6 +2,7 @@ import { resolveServiceNetworks } from "@dokploy/server/services/network";
 import { findRegistryByIdWithCredentials } from "@dokploy/server/services/registry";
 import type { InferResultType } from "@dokploy/server/types/with";
 import type { CreateServiceOptions } from "dockerode";
+import { withWorkspaceQuota } from "../../services/workspace-quota";
 import { getRegistryTag, uploadImageRemoteCommand } from "../cluster/upload";
 import { buildDokployLabels } from "../docker/dokploy-labels";
 import {
@@ -98,12 +99,16 @@ export const mechanizeDockerContainer = async (
 		ports,
 	} = application;
 
-	const resources = calculateResources({
-		memoryLimit,
-		memoryReservation,
-		cpuLimit,
-		cpuReservation,
-	});
+	const resources = await withWorkspaceQuota(
+		application.environment.project.organizationId,
+		application.applicationId,
+		calculateResources({
+			memoryLimit,
+			memoryReservation,
+			cpuLimit,
+			cpuReservation,
+		}),
+	);
 
 	const volumesMount = generateVolumeMounts(mounts);
 

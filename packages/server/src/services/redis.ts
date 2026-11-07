@@ -16,11 +16,15 @@ import { eq } from "drizzle-orm";
 import { quote } from "shell-quote";
 import type { z } from "zod";
 import { validUniqueServerAppName } from "./project";
+import { assertServiceCountQuota } from "./workspace-quota";
 
 export type Redis = typeof redis.$inferSelect;
 
 // https://github.com/drizzle-team/drizzle-orm/discussions/1483#discussioncomment-7523881
 export const createRedis = async (input: z.infer<typeof apiCreateRedis>) => {
+	if (input.environmentId) {
+		await assertServiceCountQuota(input.environmentId, "database");
+	}
 	const appName = buildAppName("redis", input.appName);
 
 	const valid = await validUniqueServerAppName(appName);

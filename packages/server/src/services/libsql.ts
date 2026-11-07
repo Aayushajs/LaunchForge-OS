@@ -17,10 +17,14 @@ import { eq, getTableColumns } from "drizzle-orm";
 import { quote } from "shell-quote";
 import type { z } from "zod";
 import { validUniqueServerAppName } from "./project";
+import { assertServiceCountQuota } from "./workspace-quota";
 
 export type Libsql = typeof libsql.$inferSelect;
 
 export const createLibsql = async (input: z.infer<typeof apiCreateLibsql>) => {
+	if (input.environmentId) {
+		await assertServiceCountQuota(input.environmentId, "database");
+	}
 	const appName = buildAppName("libsql", input.appName);
 
 	const valid = await validUniqueServerAppName(input.appName);

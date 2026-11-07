@@ -39,6 +39,10 @@ const {
 	};
 });
 
+vi.mock("@dokploy/server/services/workspace-quota", () => ({
+	withWorkspaceQuota: vi.fn(async (_org: string, _id: string, r: unknown) => r),
+}));
+
 vi.mock("@dokploy/server/utils/builders/rollout", () => ({
 	waitForRollout: vi.fn(async () => undefined),
 }));

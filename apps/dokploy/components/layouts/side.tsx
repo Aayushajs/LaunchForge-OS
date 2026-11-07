@@ -17,6 +17,7 @@ import {
 	Folder,
 	Forward,
 	GalleryVerticalEnd,
+	Gauge,
 	GitBranch,
 	Globe,
 	HardDrive,
@@ -336,6 +337,13 @@ const MENU: Menu = {
 			icon: ClipboardList,
 			url: "/dashboard/settings/audit-logs",
 			isEnabled: ({ permissions }) => !!permissions?.auditLog.read,
+		},
+		{
+			isSingle: true,
+			title: "Usage & Quotas",
+			icon: Gauge,
+			url: "/dashboard/settings/usage",
+			isEnabled: ({ permissions }) => !!permissions?.monitoring.read,
 		},
 		{
 			isSingle: true,

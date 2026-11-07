@@ -1,6 +1,7 @@
 import type { InferResultType } from "@dokploy/server/types/with";
 import type { CreateServiceOptions } from "dockerode";
 import { resolveServiceNetworks } from "../../services/network";
+import { withWorkspaceQuota } from "../../services/workspace-quota";
 import { buildDokployLabels } from "../docker/dokploy-labels";
 import {
 	calculateResources,
@@ -61,12 +62,16 @@ export const buildMysql = async (rawMysql: MysqlNested) => {
 		EndpointSpec,
 		Ulimits,
 	} = generateConfigContainer(mysql);
-	const resources = calculateResources({
-		memoryLimit,
-		memoryReservation,
-		cpuLimit,
-		cpuReservation,
-	});
+	const resources = await withWorkspaceQuota(
+		mysql.environment.project.organizationId,
+		mysql.mysqlId,
+		calculateResources({
+			memoryLimit,
+			memoryReservation,
+			cpuLimit,
+			cpuReservation,
+		}),
+	);
 	const envVariables = prepareEnvironmentVariables(
 		defaultMysqlEnv,
 		mysql.environment.project.env,

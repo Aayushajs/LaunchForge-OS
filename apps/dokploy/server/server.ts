@@ -9,6 +9,7 @@ import {
 	initializeNetwork,
 	initSchedules,
 	initVolumeBackupsCronJobs,
+	initWorkspaceMetering,
 	restoreInterruptedTraefik,
 	sendDokployRestartNotifications,
 	setupDirectories,
@@ -68,6 +69,7 @@ void app.prepare().then(async () => {
 			await initSchedules();
 			await initCancelDeployments();
 			await initVolumeBackupsCronJobs();
+			initWorkspaceMetering();
 			await sendDokployRestartNotifications();
 		}
 

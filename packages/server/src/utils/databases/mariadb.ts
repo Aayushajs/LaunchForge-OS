@@ -1,6 +1,7 @@
 import type { InferResultType } from "@dokploy/server/types/with";
 import type { CreateServiceOptions } from "dockerode";
 import { resolveServiceNetworks } from "../../services/network";
+import { withWorkspaceQuota } from "../../services/workspace-quota";
 import { buildDokployLabels } from "../docker/dokploy-labels";
 import {
 	calculateResources,
@@ -55,12 +56,16 @@ export const buildMariadb = async (rawMariadb: MariadbNested) => {
 		EndpointSpec,
 		Ulimits,
 	} = generateConfigContainer(mariadb);
-	const resources = calculateResources({
-		memoryLimit,
-		memoryReservation,
-		cpuLimit,
-		cpuReservation,
-	});
+	const resources = await withWorkspaceQuota(
+		mariadb.environment.project.organizationId,
+		mariadb.mariadbId,
+		calculateResources({
+			memoryLimit,
+			memoryReservation,
+			cpuLimit,
+			cpuReservation,
+		}),
+	);
 	const envVariables = prepareEnvironmentVariables(
 		defaultMariadbEnv,
 		mariadb.environment.project.env,

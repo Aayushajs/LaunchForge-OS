@@ -1,6 +1,7 @@
 import type { InferResultType } from "@dokploy/server/types/with";
 import type { CreateServiceOptions } from "dockerode";
 import { resolveServiceNetworks } from "../../services/network";
+import { withWorkspaceQuota } from "../../services/workspace-quota";
 import { buildDokployLabels } from "../docker/dokploy-labels";
 import {
 	calculateResources,
@@ -54,12 +55,16 @@ export const buildPostgres = async (rawPostgres: PostgresNested) => {
 		EndpointSpec,
 		Ulimits,
 	} = generateConfigContainer(postgres);
-	const resources = calculateResources({
-		memoryLimit,
-		memoryReservation,
-		cpuLimit,
-		cpuReservation,
-	});
+	const resources = await withWorkspaceQuota(
+		postgres.environment.project.organizationId,
+		postgres.postgresId,
+		calculateResources({
+			memoryLimit,
+			memoryReservation,
+			cpuLimit,
+			cpuReservation,
+		}),
+	);
 	const envVariables = prepareEnvironmentVariables(
 		defaultPostgresEnv,
 		postgres.environment.project.env,

@@ -171,3 +171,11 @@ export const assertHostAvailable = async (
 		}
 	}
 };
+
+export const organizationOfDomainTarget = async (target: DomainTarget) => {
+	const environmentId = await environmentOfTarget(target);
+	if (!environmentId) return undefined;
+	return (await organizationsOfEnvironments([environmentId])).get(
+		environmentId,
+	);
+};

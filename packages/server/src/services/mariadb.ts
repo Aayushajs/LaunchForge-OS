@@ -17,12 +17,16 @@ import { eq, getTableColumns } from "drizzle-orm";
 import { quote } from "shell-quote";
 import type { z } from "zod";
 import { validUniqueServerAppName } from "./project";
+import { assertServiceCountQuota } from "./workspace-quota";
 
 export type Mariadb = typeof mariadb.$inferSelect;
 
 export const createMariadb = async (
 	input: z.infer<typeof apiCreateMariaDB>,
 ) => {
+	if (input.environmentId) {
+		await assertServiceCountQuota(input.environmentId, "database");
+	}
 	const appName = buildAppName("mariadb", input.appName);
 
 	const valid = await validUniqueServerAppName(appName);

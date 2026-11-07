@@ -1,6 +1,7 @@
 import type { InferResultType } from "@dokploy/server/types/with";
 import type { CreateServiceOptions } from "dockerode";
 import { resolveServiceNetworks } from "../../services/network";
+import { withWorkspaceQuota } from "../../services/workspace-quota";
 import { buildDokployLabels } from "../docker/dokploy-labels";
 import {
 	calculateResources,
@@ -52,12 +53,16 @@ export const buildRedis = async (rawRedis: RedisNested) => {
 		EndpointSpec,
 		Ulimits,
 	} = generateConfigContainer(redis);
-	const resources = calculateResources({
-		memoryLimit,
-		memoryReservation,
-		cpuLimit,
-		cpuReservation,
-	});
+	const resources = await withWorkspaceQuota(
+		redis.environment.project.organizationId,
+		redis.redisId,
+		calculateResources({
+			memoryLimit,
+			memoryReservation,
+			cpuLimit,
+			cpuReservation,
+		}),
+	);
 	const envVariables = prepareEnvironmentVariables(
 		defaultRedisEnv,
 		redis.environment.project.env,

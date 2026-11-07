@@ -48,12 +48,16 @@ import {
 } from "./deployment";
 import { generateApplyPatchesCommand } from "./patch";
 import { validUniqueServerAppName } from "./project";
+import { assertServiceCountQuota } from "./workspace-quota";
 
 export type Compose = typeof compose.$inferSelect;
 
 export const createCompose = async (
 	input: z.infer<typeof apiCreateCompose>,
 ) => {
+	if (input.environmentId) {
+		await assertServiceCountQuota(input.environmentId, "application");
+	}
 	const appName = buildAppName("compose", input.appName);
 
 	const valid = await validUniqueServerAppName(appName);
@@ -87,6 +91,9 @@ export const createCompose = async (
 export const createComposeByTemplate = async (
 	input: typeof compose.$inferInsert,
 ) => {
+	if (input.environmentId) {
+		await assertServiceCountQuota(input.environmentId, "application");
+	}
 	const appName = cleanAppName(input.appName);
 	if (appName) {
 		const valid = await validUniqueServerAppName(appName);

@@ -14,14 +14,22 @@ import type { z } from "zod";
 import { type apiCreateDomain, domains } from "../db/schema";
 import { findApplicationById } from "./application";
 import { detectCDNProvider } from "./cdn";
-import { assertHostAvailable } from "./domain-ownership";
+import {
+	assertHostAvailable,
+	organizationOfDomainTarget,
+} from "./domain-ownership";
 import { findServerById } from "./server";
+import { assertDomainCountQuota } from "./workspace-quota";
 
 export type Domain = typeof domains.$inferSelect;
 
 export const createDomain = async (input: z.infer<typeof apiCreateDomain>) => {
 	if (input.host) {
 		await assertHostAvailable(input.host, input.path, input);
+	}
+	const organizationId = await organizationOfDomainTarget(input);
+	if (organizationId) {
+		await assertDomainCountQuota(organizationId);
 	}
 	const result = await db.transaction(async (tx) => {
 		const domain = await tx
