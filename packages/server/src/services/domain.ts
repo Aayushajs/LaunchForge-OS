@@ -14,11 +14,15 @@ import type { z } from "zod";
 import { type apiCreateDomain, domains } from "../db/schema";
 import { findApplicationById } from "./application";
 import { detectCDNProvider } from "./cdn";
+import { assertHostAvailable } from "./domain-ownership";
 import { findServerById } from "./server";
 
 export type Domain = typeof domains.$inferSelect;
 
 export const createDomain = async (input: z.infer<typeof apiCreateDomain>) => {
+	if (input.host) {
+		await assertHostAvailable(input.host, input.path, input);
+	}
 	const result = await db.transaction(async (tx) => {
 		const domain = await tx
 			.insert(domains)
@@ -128,6 +132,15 @@ export const updateDomainById = async (
 	domainId: string,
 	domainData: Partial<Domain>,
 ) => {
+	if (domainData.host !== undefined || domainData.path !== undefined) {
+		const current = await findDomainById(domainId);
+		await assertHostAvailable(
+			domainData.host ?? current.host,
+			domainData.path !== undefined ? domainData.path : current.path,
+			current,
+			domainId,
+		);
+	}
 	const domain = await db
 		.update(domains)
 		.set({

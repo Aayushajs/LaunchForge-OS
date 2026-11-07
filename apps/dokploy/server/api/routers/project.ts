@@ -69,6 +69,19 @@ import {
 } from "@/server/db/schema";
 import { getBillingStatus } from "@/server/utils/billing";
 
+// A copied service would collide with the source's routes, so domains that
+// are still routed elsewhere are left for the user to reassign.
+const createDomainUnlessTaken = async (
+	input: Parameters<typeof createDomain>[0],
+) => {
+	try {
+		await createDomain(input);
+	} catch (error) {
+		if (error instanceof TRPCError && error.code === "CONFLICT") return;
+		throw error;
+	}
+};
+
 export const projectRouter = createTRPCRouter({
 	create: protectedProcedure
 		.input(apiCreateProject)
@@ -954,7 +967,7 @@ export const projectRouter = createTRPCRouter({
 
 								for (const domain of domains) {
 									const { domainId, ...rest } = domain;
-									await createDomain({
+									await createDomainUnlessTaken({
 										...rest,
 										applicationId: newApplication.applicationId,
 										domainType: "application",
@@ -1040,7 +1053,7 @@ export const projectRouter = createTRPCRouter({
 
 								for (const domain of domains) {
 									const { domainId, ...rest } = domain;
-									await createDomain({
+									await createDomainUnlessTaken({
 										...rest,
 										composeId: newCompose.composeId,
 										domainType: "compose",
