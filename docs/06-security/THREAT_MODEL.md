@@ -30,7 +30,7 @@ Status: **mitigated** – control in place and tested; **partial** – reduced, 
 | S7 | Info disclosure | Shared overlay network lets workspaces reach each other's services | – | – | open |
 | S8 | Info disclosure | SSRF via metrics URL | URL/token resolved server-side; ownership check on container metrics | `server/utils/metrics-endpoint.ts` | mitigated (template `baseUrl` and custom webhooks still fetch caller URLs: open) |
 | S9 | DoS / Elevation | Unbounded builds on the host daemon | Build timeout, scoped cancel, quotas | `utils/builders/build-timeout.ts` | partial (no build sandbox / build CPU limit) |
-| S10 | Elevation | Remote Docker falls back to local daemon; cluster router acts locally | – | `utils/servers/remote-docker.ts` | open |
+| S10 | Elevation | Remote Docker falls back to local daemon; cluster router acts locally | `getRemoteDocker` refuses servers without an SSH key | `utils/servers/remote-docker.ts` | partial (cluster router still acts locally when `serverId` is omitted) |
 | S11 | Spoofing | Forged or replayed webhook; GET triggers deploy | POST only, raw-body HMAC / token verification | `server/utils/webhook-auth.ts` | mitigated (replay of a valid signed delivery is not detected) |
 | S12 | Info disclosure | Plaintext secrets in the database | `encryptedText` columns; sealed rollback snapshots | `db/schema/*.ts`, `services/rollbacks.ts` | mitigated (notification tokens, vault/DNS configs still plaintext: partial) |
 | S13 | Elevation / DoS | Shared `/tmp/id_rsa`, key echoed into shell; `pkill` of every build | Per-build temp key via base64; scoped cancel | `utils/providers/git.ts`, `build-timeout.ts` | mitigated |
@@ -44,4 +44,4 @@ Status: **mitigated** – control in place and tested; **partial** – reduced, 
 
 ## Residual risk
 
-Until S7, S10 and S14 are closed and builds are sandboxed, give "workspace admin" only to people you would trust with shell access to the host. `SECURITY.md` states the same.
+Until S7, S14 and the rest of S10 are closed and builds are sandboxed, give "workspace admin" only to people you would trust with shell access to the host. `SECURITY.md` states the same.

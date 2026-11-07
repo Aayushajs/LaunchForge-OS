@@ -6,7 +6,13 @@ import { sshKeepalive } from "../process/execAsync";
 export const getRemoteDocker = async (serverId?: string | null) => {
 	if (!serverId) return docker;
 	const server = await findServerById(serverId);
-	if (!server.sshKeyId) return docker;
+	// Falling back to the local daemon here would run another workspace's
+	// remote operation against the control-plane host.
+	if (!server.sshKeyId) {
+		throw new Error(
+			`Server ${server.name} has no SSH key; add one before using it.`,
+		);
+	}
 	const dockerode = new Dockerode({
 		host: server.ipAddress,
 		port: server.port,
