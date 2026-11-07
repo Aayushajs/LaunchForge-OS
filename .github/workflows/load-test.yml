@@ -1,0 +1,64 @@
+name: Load test
+
+# Installs LaunchForge on a fresh runner with the real installer and runs the
+# k6 scenarios in tests/load. Numbers describe a GitHub-hosted runner, not a
+# production server; the report records the runner's CPU and memory.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  k6:
+    runs-on: ubuntu-24.04
+    env:
+      LAUNCHFORGE_SKIP_PULL: "1"
+      LAUNCHFORGE_MIN_DISK_GB: "5"
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Build the panel image
+        run: |
+          cp apps/dokploy/.env.production.example .env.production
+          cp apps/dokploy/.env.production.example apps/dokploy/.env.production
+          docker build -t launchforge:load .
+
+      - name: Install LaunchForge
+        run: sudo -E bash scripts/install.sh install --yes --image launchforge --version load
+
+      - uses: grafana/setup-k6-action@v1
+
+      - name: Run scenarios
+        working-directory: tests/load
+        run: |
+          mkdir -p reports
+          k6 run api-read.js
+          k6 run webhooks.js
+
+      - name: Publish report
+        if: always()
+        working-directory: tests/load
+        run: |
+          {
+            echo "# LaunchForge load test"
+            echo
+            echo "Runner: $(nproc) vCPU, $(awk '/MemTotal/ {printf "%.1f GB", $2/1024/1024}' /proc/meminfo) RAM, $(lsb_release -ds), commit ${GITHUB_SHA::7}"
+            echo
+            cat reports/*.md 2>/dev/null || echo "No reports were produced."
+          } | tee reports/SUMMARY.md >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: load-test-reports
+          path: tests/load/reports/
+          retention-days: 90
+
+      - name: Logs on failure
+        if: failure()
+        run: docker service logs dokploy --tail 200 || true
