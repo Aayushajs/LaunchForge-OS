@@ -65,3 +65,14 @@ TypeScript monorepo (pnpm workspaces, Node 24) · Next.js 16 + React 19 + tRPC 1
 - [GAP_ANALYSIS.md](../01-discovery/GAP_ANALYSIS.md) — what to reuse, change and build, prioritised
 - [DEPENDENCY_MAP.md](../01-discovery/DEPENDENCY_MAP.md) — packages, services and runtime dependencies
 - [LICENSE_AUDIT.md](../01-discovery/LICENSE_AUDIT.md) — licensing boundaries and risks
+
+## Design and operations documents
+
+- Architecture: [SYSTEM_ARCHITECTURE.md](../02-architecture/SYSTEM_ARCHITECTURE.md), [ARCHITECTURE_DECISIONS.md](../02-architecture/ARCHITECTURE_DECISIONS.md)
+- Design: [HLD.md](../03-design/HLD.md), [LLD.md](../03-design/LLD.md)
+- Database: [ER_DIAGRAM.md](../04-database/ER_DIAGRAM.md)
+- API: [API_DOCUMENTATION.md](../05-api/API_DOCUMENTATION.md)
+- Security: [THREAT_MODEL.md](../06-security/THREAT_MODEL.md), [SECURITY_DECISIONS.md](../06-security/SECURITY_DECISIONS.md), [RBAC_MATRIX.md](../06-security/RBAC_MATRIX.md)
+- Performance: [LOAD_TEST_PLAN.md](../07-performance/LOAD_TEST_PLAN.md), [PERFORMANCE_REQUIREMENTS.md](../07-performance/PERFORMANCE_REQUIREMENTS.md)
+- Progress: [PROGRESS.md](../08-implementation/PROGRESS.md)
+- Release: [INSTALLATION_GUIDE.md](../09-release/INSTALLATION_GUIDE.md), [UPGRADE_GUIDE.md](../09-release/UPGRADE_GUIDE.md), [BACKUP_RESTORE.md](../09-release/BACKUP_RESTORE.md), [OPERATIONS_RUNBOOK.md](../09-release/OPERATIONS_RUNBOOK.md)
