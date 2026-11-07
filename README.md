@@ -71,22 +71,34 @@ Useful commands:
 
 ## Production install
 
-A one-command Linux installer (Ubuntu 22.04/24.04, Debian 12) is on the roadmap. Container images are published to GitHub Container Registry on every release:
+On a fresh Ubuntu 22.04/24.04 or Debian 12 server (2 GB RAM, 20 GB disk, ports 80/443/3000 free):
 
+```bash
+curl -fsSL https://raw.githubusercontent.com/Aayushajs/LaunchForge-OS/main/scripts/install.sh | sudo bash
 ```
-ghcr.io/aayushajs/launchforge
-ghcr.io/aayushajs/launchforge-monitoring
+
+The installer checks the server, installs Docker, initializes Swarm, generates all secrets as Docker secrets, starts PostgreSQL, Traefik and the dashboard, and waits until it is healthy. Then open `http://<server-ip>:3000` and create the owner account.
+
+```bash
+sudo bash install.sh upgrade              # backs up the database, upgrades, rolls back if unhealthy
+sudo bash install.sh status
+sudo bash install.sh uninstall [--purge]
 ```
+
+Images are published to GitHub Container Registry (`ghcr.io/aayushajs/launchforge`). See [docs/09-release](docs/09-release) for configuration, upgrades, backups and operations.
 
 ## Roadmap
 
 - [x] Repository audit, gap analysis and licensing review
 - [x] Apache-2.0-only codebase with built-in audit logging and custom roles
-- [ ] One-command installer with upgrade and rollback
-- [ ] Workspace isolation: mount/compose policy, per-workspace networks, container hardening
-- [ ] Resource quotas and per-workspace usage metering
-- [ ] Health-gated deployments with registry-free rollback
-- [ ] Domain ownership verification and platform wildcard domains
+- [x] One-command installer with upgrade and rollback
+- [x] Workspace isolation: mount/compose policy, container hardening
+- [ ] Per-workspace overlay networks
+- [x] Resource quotas and per-workspace usage metering
+- [x] Health-gated deployments, signed webhooks, durable queue
+- [ ] Registry-free rollback
+- [x] Cross-workspace domain ownership
+- [ ] DNS TXT domain verification and platform wildcard domains
 - [ ] Load-test reports (k6)
 
 ## License

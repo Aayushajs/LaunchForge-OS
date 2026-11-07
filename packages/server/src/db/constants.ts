@@ -32,8 +32,8 @@ if (DATABASE_URL) {
 		You are using the legacy hardcoded database credentials.
 		This mode WILL BE REMOVED in a future release.
 		
-		Please migrate to Docker Secrets using POSTGRES_PASSWORD_FILE.
-		Please execute this command in your server: curl -sSL https://dokploy.com/security/0.26.6.sh | bash
+		Set POSTGRES_PASSWORD_FILE (Docker secret) or DATABASE_URL.
+		Installs created with scripts/install.sh already do this.
 		`);
 	}
 
