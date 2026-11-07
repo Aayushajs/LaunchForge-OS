@@ -52,7 +52,7 @@ export const redis = pgTable("redis", {
 		.$defaultFn(() => generateAppName("redis"))
 		.unique(),
 	description: text("description"),
-	databasePassword: text("password").notNull(),
+	databasePassword: encryptedText("password").notNull(),
 	dockerImage: text("dockerImage").notNull(),
 	command: text("command"),
 	args: text("args").array(),

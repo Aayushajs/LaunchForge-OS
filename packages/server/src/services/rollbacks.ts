@@ -7,6 +7,7 @@ import {
 	deployments as deploymentsSchema,
 	rollbacks,
 } from "../db/schema";
+import { decryptValue, encryptValue } from "../lib/encryption";
 import { getRegistryTag } from "../utils/cluster/upload";
 import {
 	calculateResources,
@@ -30,6 +31,70 @@ import {
 	findRegistryByIdWithCredentials,
 	type Registry,
 } from "./registry";
+
+const SNAPSHOT_SECRET_FIELDS = [
+	"env",
+	"previewEnv",
+	"buildArgs",
+	"buildSecrets",
+	"previewBuildArgs",
+	"previewBuildSecrets",
+	"password",
+] as const;
+
+type Snapshot = Record<string, unknown> & {
+	environment?: { env?: string | null; project?: { env?: string | null } };
+};
+
+const mapSecrets = (snapshot: Snapshot, fn: (value: string) => string) => {
+	const out: Snapshot = { ...snapshot };
+	for (const field of SNAPSHOT_SECRET_FIELDS) {
+		const value = out[field];
+		if (typeof value === "string" && value) out[field] = fn(value);
+	}
+	if (out.environment) {
+		const environment = { ...out.environment };
+		if (environment.env) environment.env = fn(environment.env);
+		if (environment.project?.env) {
+			environment.project = {
+				...environment.project,
+				env: fn(environment.project.env),
+			};
+		}
+		out.environment = environment;
+	}
+	return out;
+};
+
+/**
+ * Rollback snapshots live in a jsonb column, outside the column-level
+ * encryption. Secrets are encrypted inside the snapshot and registry
+ * credentials are dropped entirely; they are re-read by id at rollback time.
+ */
+export const sealRollbackContext = (application: Record<string, unknown>) => {
+	const {
+		registry: _registry,
+		buildRegistry: _buildRegistry,
+		rollbackRegistry: _rollbackRegistry,
+		...rest
+	} = application;
+	return mapSecrets(rest as Snapshot, encryptValue);
+};
+
+export const openRollbackContext = async <
+	T extends { rollbackRegistryId?: string | null },
+>(
+	snapshot: T,
+): Promise<T & { rollbackRegistry?: Registry | null }> => {
+	const opened = mapSecrets(
+		snapshot as unknown as Snapshot,
+		decryptValue,
+	) as unknown as T;
+	const rollbackRegistry = snapshot.rollbackRegistryId
+		? await findRegistryByIdWithCredentials(snapshot.rollbackRegistryId)
+		: null;
+	return { ...opened, rollbackRegistry };
+};
 
 export const createRollback = async (
 	input: z.infer<typeof createRollbackSchema>,
@@ -62,29 +127,12 @@ export const createRollback = async (
 			...rest
 		} = await findApplicationById(deployment.applicationId);
 
-		const registry = rest.registryId
-			? await findRegistryByIdWithCredentials(rest.registryId)
-			: rest.registry;
-		const buildRegistry = rest.buildRegistryId
-			? await findRegistryByIdWithCredentials(rest.buildRegistryId)
-			: rest.buildRegistry;
-		const rollbackRegistry = rest.rollbackRegistryId
-			? await findRegistryByIdWithCredentials(rest.rollbackRegistryId)
-			: rest.rollbackRegistry;
-
-		const fullContextWithCredentials = {
-			...rest,
-			registry,
-			buildRegistry,
-			rollbackRegistry,
-		};
-
 		await tx
 			.update(rollbacks)
 			.set({
 				image: tagImage,
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				fullContext: fullContextWithCredentials as any,
+				fullContext: sealRollbackContext(rest) as any,
 			})
 			.where(eq(rollbacks.rollbackId, rollback.rollbackId));
 
@@ -199,7 +247,9 @@ const rollbackApplication = async (
 		throw new Error("Full context is required for rollback");
 	}
 
-	const resolvedContext = await withResolvedVaultRefs(fullContext);
+	const resolvedContext = await withResolvedVaultRefs(
+		await openRollbackContext(fullContext),
+	);
 
 	const rollbackRegistry = resolvedContext.rollbackRegistry ?? undefined;
 

@@ -56,7 +56,7 @@ export const postgres = pgTable("postgres", {
 		.unique(),
 	databaseName: text("databaseName").notNull(),
 	databaseUser: text("databaseUser").notNull(),
-	databasePassword: text("databasePassword").notNull(),
+	databasePassword: encryptedText("databasePassword").notNull(),
 	description: text("description"),
 	dockerImage: text("dockerImage").notNull(),
 	command: text("command"),

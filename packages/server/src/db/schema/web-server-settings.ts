@@ -12,6 +12,7 @@ import { nanoid } from "nanoid";
 import { z } from "zod";
 import { organization } from "./account";
 import { certificateType } from "./shared";
+import { encryptedText } from "./utils";
 
 export const webServerSettings = pgTable("webServerSettings", {
 	id: text("id")
@@ -24,7 +25,7 @@ export const webServerSettings = pgTable("webServerSettings", {
 	https: boolean("https").notNull().default(false),
 	host: text("host"),
 	letsEncryptEmail: text("letsEncryptEmail"),
-	sshPrivateKey: text("sshPrivateKey"),
+	sshPrivateKey: encryptedText("sshPrivateKey"),
 	enableDockerCleanup: boolean("enableDockerCleanup").notNull().default(true),
 	logCleanupCron: text("logCleanupCron").default("0 0 * * *"),
 	telemetryProviderIds: text("telemetryProviderIds")
@@ -150,6 +151,8 @@ export const webServerSettingsRelations = relations(
 );
 
 const createSchema = createInsertSchema(webServerSettings, {
+	sshPrivateKey: z.string(),
+
 	id: z.string().min(1),
 });
 

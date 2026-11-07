@@ -152,7 +152,7 @@ export const applications = pgTable("application", {
 	bitbucketBuildPath: text("bitbucketBuildPath").default("/"),
 	// Docker
 	username: text("username"),
-	password: text("password"),
+	password: encryptedText("password"),
 	dockerImage: text("dockerImage"),
 	registryUrl: text("registryUrl"),
 	// Git

@@ -55,7 +55,7 @@ export const libsql = pgTable("libsql", {
 		.unique(),
 	description: text("description"),
 	databaseUser: text("databaseUser").notNull(),
-	databasePassword: text("databasePassword").notNull(),
+	databasePassword: encryptedText("databasePassword").notNull(),
 	sqldNode: sqldNode("sqldNode").notNull().default("primary"),
 	sqldPrimaryUrl: text("sqldPrimaryUrl"),
 	enableNamespaces: boolean("enableNamespaces").notNull().default(false),
