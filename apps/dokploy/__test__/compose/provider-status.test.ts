@@ -4,6 +4,12 @@ const mockUpdateCompose = vi.hoisted(() => vi.fn());
 
 vi.mock("@dokploy/server/services/permission", () => ({
 	checkServicePermissionAndAccess: vi.fn(async () => undefined),
+	checkServiceTargetEnvironment: vi.fn(async () => undefined),
+}));
+
+// Ownership of the referenced providers is covered by reference-access tests.
+vi.mock("@dokploy/server/services/reference-access", () => ({
+	assertReferencesAccessible: vi.fn(async () => undefined),
 }));
 
 vi.mock("@dokploy/server", () => ({
