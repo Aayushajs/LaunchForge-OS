@@ -1,0 +1,10 @@
+LaunchForge
+Copyright 2026 Aayushajs
+
+This product includes software originally developed by Dokploy Technology, Inc.
+(https://github.com/Dokploy/dokploy), Copyright 2026-present Dokploy Technology,
+Inc., licensed under the Apache License, Version 2.0. That software has been
+modified by the LaunchForge authors.
+
+The monitoring agent in apps/monitoring is licensed under the MIT License,
+Copyright 2025 Mauricio Siu. See apps/monitoring/LICENSE.md.

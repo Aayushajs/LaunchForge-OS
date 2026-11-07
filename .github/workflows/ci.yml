@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: ${{ matrix.job }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        job: [build, test, typecheck]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install Nixpacks
+        if: matrix.job == 'test'
+        run: curl -sSL https://nixpacks.com/install.sh | NIXPACKS_VERSION=1.41.0 bash
+
+      - name: Install Railpack
+        if: matrix.job == 'test'
+        run: curl -sSL https://railpack.com/install.sh | RAILPACK_VERSION=0.15.4 bash
+
+      - name: Add build tools to PATH
+        if: matrix.job == 'test'
+        run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      # Deployment tests talk to a real Docker daemon and expect Swarm mode
+      # plus the platform overlay network.
+      - name: Initialize Docker Swarm
+        if: matrix.job == 'test'
+        run: |
+          docker swarm init
+          docker network create --driver overlay --attachable dokploy-network || true
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm server:build
+      - run: pnpm ${{ matrix.job }}
+
+  monitoring:
+    name: monitoring (go)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/monitoring
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: apps/monitoring/go.mod
+          cache-dependency-path: apps/monitoring/go.sum
+      - run: go build ./...
