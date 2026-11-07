@@ -37,6 +37,7 @@ import {
 	addNewProject,
 	checkPermission,
 	checkProjectAccess,
+	checkServiceAccess,
 	findMemberByUserId,
 } from "@dokploy/server/services/permission";
 import { serviceColumns } from "@dokploy/server/services/project";
@@ -898,6 +899,12 @@ export const projectRouter = createTRPCRouter({
 							code: "UNAUTHORIZED",
 							message: "You don't have access to this project",
 						});
+					}
+				}
+
+				if (input.includeServices) {
+					for (const service of input.selectedServices ?? []) {
+						await checkServiceAccess(ctx, service.id, "read");
 					}
 				}
 

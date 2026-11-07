@@ -23,7 +23,9 @@ import {
 	addNewService,
 	checkServiceAccess,
 	checkServicePermissionAndAccess,
+	checkServiceTargetEnvironment,
 } from "@dokploy/server/services/permission";
+import { assertReferencesAccessible } from "@dokploy/server/services/reference-access";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -128,6 +130,7 @@ export const libsqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.libsqlId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const libsql = await findLibsqlById(input.libsqlId);
 
 			if (libsql.serverId) {
@@ -153,6 +156,7 @@ export const libsqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.libsqlId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const libsql = await findLibsqlById(input.libsqlId);
 
 			if (libsql.serverId) {
@@ -178,6 +182,7 @@ export const libsqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.libsqlId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const libsql = await findLibsqlById(input.libsqlId);
 
 			if (libsql.sqldNode === "replica" && input.externalGRPCPort !== null) {
@@ -240,6 +245,7 @@ export const libsqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.libsqlId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const libsql = await findLibsqlById(input.libsqlId);
 			await audit(ctx, {
 				action: "deploy",
@@ -263,6 +269,7 @@ export const libsqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.libsqlId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const queue: string[] = [];
 			let done = false;
 
@@ -292,6 +299,7 @@ export const libsqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.libsqlId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const libsql = await findLibsqlById(input.libsqlId);
 			await updateLibsqlById(input.libsqlId, {
 				applicationStatus: input.applicationStatus,
@@ -345,6 +353,7 @@ export const libsqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.libsqlId, {
 				envVars: ["write"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const service = await updateLibsqlById(input.libsqlId, {
 				env: input.env,
 			});
@@ -369,6 +378,7 @@ export const libsqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.libsqlId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const libsql = await findLibsqlById(input.libsqlId);
 			if (libsql.serverId) {
 				await stopServiceRemote(libsql.serverId, libsql.appName);
@@ -432,6 +442,8 @@ export const libsqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.libsqlId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
+			await checkServiceTargetEnvironment(ctx, input.targetEnvironmentId);
 
 			const updatedLibsql = await db
 				.update(libsqlTable)
@@ -463,6 +475,7 @@ export const libsqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.libsqlId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 
 			await rebuildDatabase(input.libsqlId, "libsql");
 			await audit(ctx, {

@@ -265,10 +265,7 @@ const Mariadb = (
 													{data?.serverId && isCloud ? (
 														<ContainerPaidMonitoring
 															appName={data?.appName || ""}
-															baseUrl={`${data?.serverId ? `http://${data?.server?.ipAddress}:${data?.server?.metricsConfig?.server?.port}` : "http://localhost:4500"}`}
-															token={
-																data?.server?.metricsConfig?.server?.token || ""
-															}
+															serverId={data?.serverId ?? undefined}
 														/>
 													) : (
 														<>
@@ -285,13 +282,7 @@ const Mariadb = (
 														)}
 
 														{toggleMonitoring ? (
-															<ContainerPaidMonitoring
-																appName={data?.appName || ""}
-																baseUrl={`http://${monitoring?.serverIp}:${monitoring?.metricsConfig?.server?.port}`}
-																token={
-																	monitoring?.metricsConfig?.server?.token || ""
-																}
-															/>
+															<ContainerPaidMonitoring appName={data?.appName || ""} serverId={data?.serverId ?? undefined} />
 														) : (
 															<div> */}
 															<ContainerFreeMonitoring

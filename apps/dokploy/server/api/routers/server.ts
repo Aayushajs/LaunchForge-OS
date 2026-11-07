@@ -55,6 +55,7 @@ import {
 	server,
 } from "@/server/db/schema";
 import { applyDockerCleanupSchedule } from "@/server/utils/docker-cleanup";
+import { resolveMetricsEndpoint } from "@/server/utils/metrics-endpoint";
 
 // Users without server.read only get what the server pickers render
 const toServerOptions = async (
@@ -602,18 +603,18 @@ export const serverRouter = createTRPCRouter({
 	getServerMetrics: withPermission("monitoring", "read")
 		.input(
 			z.object({
-				url: z.string(),
-				token: z.string(),
+				serverId: z.string().optional(),
 				dataPoints: z.string(),
 			}),
 		)
-		.query(async ({ input }) => {
+		.query(async ({ input, ctx }) => {
+			const endpoint = await resolveMetricsEndpoint(ctx, input.serverId);
 			try {
-				const url = new URL(input.url);
+				const url = new URL(`${endpoint.baseUrl}/metrics`);
 				url.searchParams.append("limit", input.dataPoints);
 				const response = await fetch(url.toString(), {
 					headers: {
-						Authorization: `Bearer ${input.token}`,
+						Authorization: `Bearer ${endpoint.token}`,
 					},
 				});
 				if (!response.ok) {

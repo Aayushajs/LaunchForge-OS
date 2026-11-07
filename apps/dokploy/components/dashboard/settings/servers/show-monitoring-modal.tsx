@@ -5,12 +5,11 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ShowPaidMonitoring } from "../../monitoring/paid/servers/show-paid-monitoring";
 
 interface Props {
-	url: string;
-	token: string;
+	serverId: string;
 	children?: React.ReactNode;
 }
 
-export const ShowMonitoringModal = ({ url, token, children }: Props) => {
+export const ShowMonitoringModal = ({ serverId, children }: Props) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
@@ -29,7 +28,7 @@ export const ShowMonitoringModal = ({ url, token, children }: Props) => {
 				onCloseAutoFocus={(e) => e.preventDefault()}
 			>
 				<div className="flex gap-4 py-4 w-full">
-					<ShowPaidMonitoring BASE_URL={url} token={token} />
+					<ShowPaidMonitoring serverId={serverId} />
 				</div>
 			</DialogContent>
 		</Dialog>

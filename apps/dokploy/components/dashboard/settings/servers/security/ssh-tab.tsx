@@ -79,8 +79,8 @@ export const SshTab = ({ serverId, canEdit }: Props) => {
 			{data.settings?.passwordAuthentication && (
 				<AlertBlock type="warning">
 					Password authentication is enabled, which makes the server a target
-					for brute force attacks. LaunchForge connects with an SSH key, so it is
-					safe to disable it if you also log in with a key.
+					for brute force attacks. LaunchForge connects with an SSH key, so it
+					is safe to disable it if you also log in with a key.
 				</AlertBlock>
 			)}
 

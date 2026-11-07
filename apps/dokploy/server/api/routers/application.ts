@@ -39,8 +39,10 @@ import {
 	addNewService,
 	checkServiceAccess,
 	checkServicePermissionAndAccess,
+	checkServiceTargetEnvironment,
 	findMemberByUserId,
 } from "@dokploy/server/services/permission";
+import { assertReferencesAccessible } from "@dokploy/server/services/reference-access";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
@@ -311,6 +313,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const application = await findApplicationById(input.applicationId);
 
 			try {
@@ -405,6 +408,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const service = await findApplicationById(input.applicationId);
 			if (service.serverId) {
 				await stopServiceRemote(service.serverId, service.appName);
@@ -427,6 +431,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const service = await findApplicationById(input.applicationId);
 			if (service.serverId) {
 				await startServiceRemote(service.serverId, service.appName);
@@ -449,6 +454,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const application = await findApplicationById(input.applicationId);
 			const jobData: DeploymentJob = {
 				applicationId: input.applicationId,
@@ -493,6 +499,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				envVars: ["write"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			await updateApplication(input.applicationId, {
 				env: input.env,
 				buildArgs: input.buildArgs,
@@ -514,6 +521,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			await updateApplication(input.applicationId, {
 				buildType: input.buildType,
 				dockerfile: input.dockerfile,
@@ -539,6 +547,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			await updateApplication(input.applicationId, {
 				repository: input.repository,
 				branch: input.branch,
@@ -565,6 +574,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			await updateApplication(input.applicationId, {
 				gitlabRepository: input.gitlabRepository,
 				gitlabOwner: input.gitlabOwner,
@@ -592,6 +602,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			await updateApplication(input.applicationId, {
 				bitbucketRepository: input.bitbucketRepository,
 				bitbucketRepositorySlug: input.bitbucketRepositorySlug,
@@ -618,6 +629,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			await updateApplication(input.applicationId, {
 				giteaRepository: input.giteaRepository,
 				giteaOwner: input.giteaOwner,
@@ -643,6 +655,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			await updateApplication(input.applicationId, {
 				dockerImage: input.dockerImage,
 				username: input.username,
@@ -665,6 +678,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			await updateApplication(input.applicationId, {
 				customGitBranch: input.customGitBranch,
 				customGitBuildPath: input.customGitBuildPath,
@@ -689,6 +703,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			await updateApplication(input.applicationId, {
 				repository: null,
 				branch: null,
@@ -741,6 +756,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			await updateApplicationStatus(input.applicationId, "running");
 			const application = await findApplicationById(input.applicationId);
 			await audit(ctx, {
@@ -756,6 +772,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 
 			if (input.buildServerId) {
 				const accessibleIds = await getAccessibleServerIds(ctx.session);
@@ -792,6 +809,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			await updateApplication(input.applicationId, {
 				refreshToken: nanoid(),
 			});
@@ -810,6 +828,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const application = await findApplicationById(input.applicationId);
 			const jobData: DeploymentJob = {
 				applicationId: input.applicationId,
@@ -854,6 +873,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				deployment: ["cancel"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			await cleanQueuesByApplication(input.applicationId);
 		}),
 	clearDeployments: protectedProcedure
@@ -862,6 +882,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const application = await findApplicationById(input.applicationId);
 			await clearOldDeployments(application.appName, application.serverId);
 			await audit(ctx, {
@@ -878,6 +899,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				deployment: ["cancel"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const application = await findApplicationById(input.applicationId);
 			await killDockerBuild("application", application.serverId);
 			await audit(ctx, {
@@ -893,6 +915,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				traefikFiles: ["read"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const application = await findApplicationById(input.applicationId);
 			let traefikConfig = null;
 			if (application.serverId) {
@@ -968,6 +991,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				traefikFiles: ["write"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const application = await findApplicationById(input.applicationId);
 			if (application.serverId) {
 				await writeConfigRemote(
@@ -1010,6 +1034,8 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
+			await checkServiceTargetEnvironment(ctx, input.targetEnvironmentId);
 
 			const updatedApplication = await db
 				.update(applications)
@@ -1041,6 +1067,7 @@ export const applicationRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.applicationId, {
 				deployment: ["cancel"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const application = await findApplicationById(input.applicationId);
 
 			if (IS_CLOUD && application.serverId) {

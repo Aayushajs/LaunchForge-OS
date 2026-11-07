@@ -263,6 +263,7 @@ const findProjectOrganizationId = async (projectId: string) => {
 const notFoundMessages = {
 	service: "Service not found",
 	project: "Project not found",
+	environment: "Environment not found",
 };
 
 const assertOrganizationOwns = (
@@ -303,6 +304,28 @@ const assertProjectInOrganization = async (
 		"project",
 		await findProjectOrganizationId(projectId),
 	);
+
+/**
+ * Validates an environment that a service is being placed into (move,
+ * update): it must belong to the caller's organization, and the caller must
+ * be allowed to create services in its project.
+ */
+export const checkServiceTargetEnvironment = async (
+	ctx: PermissionCtx,
+	environmentId: string,
+) => {
+	const [row] = await db
+		.select({
+			organizationId: projects.organizationId,
+			projectId: projects.projectId,
+		})
+		.from(environments)
+		.innerJoin(projects, eq(environments.projectId, projects.projectId))
+		.where(eq(environments.environmentId, environmentId));
+
+	assertOrganizationOwns(ctx, "environment", row?.organizationId);
+	await checkServiceAccess(ctx, row!.projectId, "create");
+};
 
 export const checkProjectAccess = async (
 	ctx: PermissionCtx,

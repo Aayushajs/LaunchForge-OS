@@ -27,8 +27,10 @@ import {
 	addNewService,
 	checkServiceAccess,
 	checkServicePermissionAndAccess,
+	checkServiceTargetEnvironment,
 	findMemberByUserId,
 } from "@dokploy/server/services/permission";
+import { assertReferencesAccessible } from "@dokploy/server/services/reference-access";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -136,6 +138,7 @@ export const redisRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.redisId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const redis = await findRedisById(input.redisId);
 
 			if (redis.serverId) {
@@ -161,6 +164,7 @@ export const redisRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.redisId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const redis = await findRedisById(input.redisId);
 			if (redis.serverId) {
 				await stopServiceRemote(redis.serverId, redis.appName);
@@ -194,6 +198,7 @@ export const redisRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.redisId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const redis = await findRedisById(input.redisId);
 			if (redis.serverId) {
 				await stopServiceRemote(redis.serverId, redis.appName);
@@ -218,6 +223,7 @@ export const redisRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.redisId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const redis = await findRedisById(input.redisId);
 
 			if (input.externalPort) {
@@ -251,6 +257,7 @@ export const redisRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.redisId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const redis = await findRedisById(input.redisId);
 			await audit(ctx, {
 				action: "deploy",
@@ -274,6 +281,7 @@ export const redisRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.redisId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const queue: string[] = [];
 			let done = false;
 
@@ -303,6 +311,7 @@ export const redisRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.redisId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mongo = await findRedisById(input.redisId);
 			await updateRedisById(input.redisId, {
 				applicationStatus: input.applicationStatus,
@@ -356,6 +365,7 @@ export const redisRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.redisId, {
 				envVars: ["write"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const updatedRedis = await updateRedisById(input.redisId, {
 				env: input.env,
 			});
@@ -461,6 +471,8 @@ export const redisRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.redisId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
+			await checkServiceTargetEnvironment(ctx, input.targetEnvironmentId);
 
 			const updatedRedis = await db
 				.update(redisTable)
@@ -492,6 +504,7 @@ export const redisRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.redisId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 
 			await rebuildDatabase(input.redisId, "redis");
 			await audit(ctx, {

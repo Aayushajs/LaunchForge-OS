@@ -28,8 +28,10 @@ import {
 	addNewService,
 	checkServiceAccess,
 	checkServicePermissionAndAccess,
+	checkServiceTargetEnvironment,
 	findMemberByUserId,
 } from "@dokploy/server/services/permission";
+import { assertReferencesAccessible } from "@dokploy/server/services/reference-access";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -145,6 +147,7 @@ export const mysqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mysqlId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const service = await findMySqlById(input.mysqlId);
 
 			if (service.serverId) {
@@ -170,6 +173,7 @@ export const mysqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mysqlId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mongo = await findMySqlById(input.mysqlId);
 			if (mongo.serverId) {
 				await stopServiceRemote(mongo.serverId, mongo.appName);
@@ -194,6 +198,7 @@ export const mysqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mysqlId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mysql = await findMySqlById(input.mysqlId);
 
 			if (input.externalPort) {
@@ -227,6 +232,7 @@ export const mysqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mysqlId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mysql = await findMySqlById(input.mysqlId);
 			await audit(ctx, {
 				action: "deploy",
@@ -250,6 +256,7 @@ export const mysqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mysqlId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 
 			const queue: string[] = [];
 			let done = false;
@@ -280,6 +287,7 @@ export const mysqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mysqlId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mongo = await findMySqlById(input.mysqlId);
 			await updateMySqlById(input.mysqlId, {
 				applicationStatus: input.applicationStatus,
@@ -298,6 +306,7 @@ export const mysqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mysqlId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mysql = await findMySqlById(input.mysqlId);
 			if (mysql.serverId) {
 				await stopServiceRemote(mysql.serverId, mysql.appName);
@@ -365,6 +374,7 @@ export const mysqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mysqlId, {
 				envVars: ["write"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const service = await updateMySqlById(input.mysqlId, {
 				env: input.env,
 			});
@@ -477,6 +487,8 @@ export const mysqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mysqlId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
+			await checkServiceTargetEnvironment(ctx, input.targetEnvironmentId);
 
 			const updatedMysql = await db
 				.update(mysqlTable)
@@ -508,6 +520,7 @@ export const mysqlRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mysqlId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 
 			await rebuildDatabase(input.mysqlId, "mysql");
 

@@ -291,8 +291,9 @@ export const Fail2banTab = ({ serverId, canEdit }: Props) => {
 										{(data.panelIps ?? []).length > 0 && (
 											<>
 												{" "}
-												The LaunchForge panel ({(data.panelIps ?? []).join(", ")})
-												is always whitelisted.
+												The LaunchForge panel (
+												{(data.panelIps ?? []).join(", ")}) is always
+												whitelisted.
 											</>
 										)}
 									</FormDescription>

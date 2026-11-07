@@ -62,11 +62,16 @@ interface ContainerMetric {
 
 interface Props {
 	appName: string;
-	baseUrl: string;
-	token: string;
+	/** Service that owns the container, when `appName` is one of its containers. */
+	ownerAppName?: string;
+	serverId?: string;
 }
 
-export const ContainerPaidMonitoring = ({ appName, baseUrl, token }: Props) => {
+export const ContainerPaidMonitoring = ({
+	appName,
+	ownerAppName,
+	serverId,
+}: Props) => {
 	const [historicalData, setHistoricalData] = useState<ContainerMetric[]>([]);
 	const [metrics, setMetrics] = useState<ContainerMetric>(
 		{} as ContainerMetric,
@@ -81,10 +86,10 @@ export const ContainerPaidMonitoring = ({ appName, baseUrl, token }: Props) => {
 		error: queryError,
 	} = api.user.getContainerMetrics.useQuery(
 		{
-			url: baseUrl,
-			token,
+			serverId,
 			dataPoints,
 			appName,
+			ownerAppName,
 		},
 		{
 			refetchInterval:
@@ -123,7 +128,6 @@ export const ContainerPaidMonitoring = ({ appName, baseUrl, token }: Props) => {
 							? queryError.message
 							: "Failed to fetch metrics, Please check your monitoring Instance is Configured correctly."}
 					</p>
-					<p className="text-sm text-muted-foreground">URL: {baseUrl}</p>
 				</div>
 			</div>
 		);

@@ -32,20 +32,64 @@ import {
 	apiUpdateDomain,
 } from "@/server/db/schema";
 
+type DomainAction = "create" | "read" | "delete";
+
+/**
+ * Every domain must be attached to a service the caller can manage. A domain
+ * with no owning service (or an unknown type) is rejected instead of skipping
+ * the check, which previously let any member create routes for any host.
+ */
+const assertDomainTargetAccess = async (
+	ctx: Parameters<typeof checkServicePermissionAndAccess>[0],
+	target: {
+		domainType?: string | null;
+		applicationId?: string | null;
+		composeId?: string | null;
+		previewDeploymentId?: string | null;
+	},
+	action: DomainAction,
+) => {
+	const permission = { domain: [action] };
+	if (
+		target.domainType === "preview" ||
+		(!target.domainType &&
+			target.previewDeploymentId &&
+			!target.applicationId &&
+			!target.composeId)
+	) {
+		if (!target.previewDeploymentId) {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: "Preview deployment is required",
+			});
+		}
+		const preview = await findPreviewDeploymentById(target.previewDeploymentId);
+		await checkServicePermissionAndAccess(
+			ctx,
+			preview.applicationId,
+			permission,
+		);
+		return;
+	}
+	const serviceId =
+		target.domainType === "compose"
+			? target.composeId
+			: (target.applicationId ?? target.composeId);
+	if (!serviceId) {
+		throw new TRPCError({
+			code: "BAD_REQUEST",
+			message: "Domain must belong to a service",
+		});
+	}
+	await checkServicePermissionAndAccess(ctx, serviceId, permission);
+};
+
 export const domainRouter = createTRPCRouter({
 	create: protectedProcedure
 		.input(apiCreateDomain)
 		.mutation(async ({ input, ctx }) => {
 			try {
-				if (input.domainType === "compose" && input.composeId) {
-					await checkServicePermissionAndAccess(ctx, input.composeId, {
-						domain: ["create"],
-					});
-				} else if (input.domainType === "application" && input.applicationId) {
-					await checkServicePermissionAndAccess(ctx, input.applicationId, {
-						domain: ["create"],
-					});
-				}
+				await assertDomainTargetAccess(ctx, input, "create");
 				const domain = await createDomain(input);
 				await audit(ctx, {
 					action: "create",
@@ -105,19 +149,7 @@ export const domainRouter = createTRPCRouter({
 		.input(apiUpdateDomain)
 		.mutation(async ({ input, ctx }) => {
 			const currentDomain = await findDomainById(input.domainId);
-			const serviceId = currentDomain.applicationId || currentDomain.composeId;
-			if (serviceId) {
-				await checkServicePermissionAndAccess(ctx, serviceId, {
-					domain: ["create"],
-				});
-			} else if (currentDomain.previewDeploymentId) {
-				const preview = await findPreviewDeploymentById(
-					currentDomain.previewDeploymentId,
-				);
-				await checkServicePermissionAndAccess(ctx, preview.applicationId, {
-					domain: ["create"],
-				});
-			}
+			await assertDomainTargetAccess(ctx, currentDomain, "create");
 
 			const result = await updateDomainById(input.domainId, input);
 			const domain = await findDomainById(input.domainId);
@@ -146,19 +178,7 @@ export const domainRouter = createTRPCRouter({
 		.input(apiFindDomain)
 		.mutation(async ({ input, ctx }) => {
 			const currentDomain = await findDomainById(input.domainId);
-			const serviceId = currentDomain.applicationId || currentDomain.composeId;
-			if (serviceId) {
-				await checkServicePermissionAndAccess(ctx, serviceId, {
-					domain: ["create"],
-				});
-			} else if (currentDomain.previewDeploymentId) {
-				const preview = await findPreviewDeploymentById(
-					currentDomain.previewDeploymentId,
-				);
-				await checkServicePermissionAndAccess(ctx, preview.applicationId, {
-					domain: ["create"],
-				});
-			}
+			await assertDomainTargetAccess(ctx, currentDomain, "create");
 
 			const result = await updateDomainById(input.domainId, {
 				enabled: !currentDomain.enabled,
@@ -196,38 +216,14 @@ export const domainRouter = createTRPCRouter({
 		}),
 	one: protectedProcedure.input(apiFindDomain).query(async ({ input, ctx }) => {
 		const domain = await findDomainById(input.domainId);
-		const serviceId = domain.applicationId || domain.composeId;
-		if (serviceId) {
-			await checkServicePermissionAndAccess(ctx, serviceId, {
-				domain: ["read"],
-			});
-		} else if (domain.previewDeploymentId) {
-			const preview = await findPreviewDeploymentById(
-				domain.previewDeploymentId,
-			);
-			await checkServicePermissionAndAccess(ctx, preview.applicationId, {
-				domain: ["read"],
-			});
-		}
+		await assertDomainTargetAccess(ctx, domain, "read");
 		return domain;
 	}),
 	delete: protectedProcedure
 		.input(apiFindDomain)
 		.mutation(async ({ input, ctx }) => {
 			const domain = await findDomainById(input.domainId);
-			const serviceId = domain.applicationId || domain.composeId;
-			if (serviceId) {
-				await checkServicePermissionAndAccess(ctx, serviceId, {
-					domain: ["delete"],
-				});
-			} else if (domain.previewDeploymentId) {
-				const preview = await findPreviewDeploymentById(
-					domain.previewDeploymentId,
-				);
-				await checkServicePermissionAndAccess(ctx, preview.applicationId, {
-					domain: ["delete"],
-				});
-			}
+			await assertDomainTargetAccess(ctx, domain, "delete");
 
 			const result = await removeDomainById(input.domainId);
 			await audit(ctx, {

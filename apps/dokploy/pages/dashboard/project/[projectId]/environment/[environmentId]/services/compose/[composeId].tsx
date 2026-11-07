@@ -343,11 +343,7 @@ const Service = (
 													{data?.serverId && isCloud ? (
 														<ComposePaidMonitoring
 															serverId={data?.serverId || ""}
-															baseUrl={`${data?.serverId ? `http://${data?.server?.ipAddress}:${data?.server?.metricsConfig?.server?.port}` : "http://localhost:4500"}`}
 															appName={data?.appName || ""}
-															token={
-																data?.server?.metricsConfig?.server?.token || ""
-															}
 															appType={data?.composeType || "docker-compose"}
 														/>
 													) : (
@@ -369,10 +365,6 @@ const Service = (
 														{toggleMonitoring ? (
 															<ComposePaidMonitoring
 																appName={data?.appName || ""}
-																baseUrl={`http://${monitoring?.serverIp}:${monitoring?.metricsConfig?.server?.port}`}
-																token={
-																	monitoring?.metricsConfig?.server?.token || ""
-																}
 																appType={data?.composeType || "docker-compose"}
 															/>
 														) : ( */}

@@ -45,6 +45,10 @@ import { apiKeyNameSchema } from "@/lib/api-keys";
 import { audit } from "@/server/api/utils/audit";
 import { deleteAccount } from "@/server/utils/account-deletion";
 import {
+	assertAppNameAccessible,
+	resolveMetricsEndpoint,
+} from "@/server/utils/metrics-endpoint";
+import {
 	adminProcedure,
 	createTRPCRouter,
 	protectedProcedure,
@@ -656,13 +660,24 @@ export const userRouter = createTRPCRouter({
 	getContainerMetrics: withPermission("monitoring", "read")
 		.input(
 			z.object({
-				url: z.string(),
-				token: z.string(),
+				serverId: z.string().optional(),
 				appName: z.string(),
+				ownerAppName: z.string().optional(),
 				dataPoints: z.string(),
 			}),
 		)
-		.query(async ({ input }) => {
+		.query(async ({ input, ctx }) => {
+			if (input.appName) {
+				const owner = input.ownerAppName ?? input.appName;
+				if (!input.appName.startsWith(owner)) {
+					throw new TRPCError({
+						code: "BAD_REQUEST",
+						message: "Container does not belong to this service",
+					});
+				}
+				await assertAppNameAccessible(ctx, owner);
+			}
+			const endpoint = await resolveMetricsEndpoint(ctx, input.serverId);
 			try {
 				if (!input.appName) {
 					throw new Error(
@@ -673,12 +688,12 @@ export const userRouter = createTRPCRouter({
 						].join("\n"),
 					);
 				}
-				const url = new URL(`${input.url}/metrics/containers`);
+				const url = new URL(`${endpoint.baseUrl}/metrics/containers`);
 				url.searchParams.append("limit", input.dataPoints);
 				url.searchParams.append("appName", input.appName);
 				const response = await fetch(url.toString(), {
 					headers: {
-						Authorization: `Bearer ${input.token}`,
+						Authorization: `Bearer ${endpoint.token}`,
 					},
 				});
 				if (!response.ok) {

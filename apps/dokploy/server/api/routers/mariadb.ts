@@ -28,8 +28,10 @@ import {
 	addNewService,
 	checkServiceAccess,
 	checkServicePermissionAndAccess,
+	checkServiceTargetEnvironment,
 	findMemberByUserId,
 } from "@dokploy/server/services/permission";
+import { assertReferencesAccessible } from "@dokploy/server/services/reference-access";
 import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
@@ -141,6 +143,7 @@ export const mariadbRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mariadbId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const service = await findMariadbById(input.mariadbId);
 			if (service.serverId) {
 				await startServiceRemote(service.serverId, service.appName);
@@ -165,6 +168,7 @@ export const mariadbRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mariadbId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mariadb = await findMariadbById(input.mariadbId);
 
 			if (mariadb.serverId) {
@@ -190,6 +194,7 @@ export const mariadbRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mariadbId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mariadb = await findMariadbById(input.mariadbId);
 
 			if (input.externalPort) {
@@ -223,6 +228,7 @@ export const mariadbRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mariadbId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mariadb = await findMariadbById(input.mariadbId);
 
 			await audit(ctx, {
@@ -247,6 +253,7 @@ export const mariadbRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mariadbId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 
 			return observable<string>((emit) => {
 				deployMariadb(input.mariadbId, (log) => {
@@ -260,6 +267,7 @@ export const mariadbRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mariadbId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mongo = await findMariadbById(input.mariadbId);
 			await updateMariadbById(input.mariadbId, {
 				applicationStatus: input.applicationStatus,
@@ -315,6 +323,7 @@ export const mariadbRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mariadbId, {
 				envVars: ["write"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const service = await updateMariadbById(input.mariadbId, {
 				env: input.env,
 			});
@@ -339,6 +348,7 @@ export const mariadbRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mariadbId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mariadb = await findMariadbById(input.mariadbId);
 			if (mariadb.serverId) {
 				await stopServiceRemote(mariadb.serverId, mariadb.appName);
@@ -459,6 +469,8 @@ export const mariadbRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mariadbId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
+			await checkServiceTargetEnvironment(ctx, input.targetEnvironmentId);
 
 			const updatedMariadb = await db
 				.update(mariadbTable)
@@ -490,6 +502,7 @@ export const mariadbRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mariadbId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 
 			await rebuildDatabase(input.mariadbId, "mariadb");
 			await audit(ctx, {

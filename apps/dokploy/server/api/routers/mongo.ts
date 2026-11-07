@@ -28,8 +28,10 @@ import {
 	addNewService,
 	checkServiceAccess,
 	checkServicePermissionAndAccess,
+	checkServiceTargetEnvironment,
 	findMemberByUserId,
 } from "@dokploy/server/services/permission";
+import { assertReferencesAccessible } from "@dokploy/server/services/reference-access";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -145,6 +147,7 @@ export const mongoRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mongoId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const service = await findMongoById(input.mongoId);
 
 			if (service.serverId) {
@@ -170,6 +173,7 @@ export const mongoRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mongoId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mongo = await findMongoById(input.mongoId);
 
 			if (mongo.serverId) {
@@ -195,6 +199,7 @@ export const mongoRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mongoId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mongo = await findMongoById(input.mongoId);
 
 			if (input.externalPort) {
@@ -228,6 +233,7 @@ export const mongoRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mongoId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mongo = await findMongoById(input.mongoId);
 			await audit(ctx, {
 				action: "deploy",
@@ -251,6 +257,7 @@ export const mongoRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mongoId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const queue: string[] = [];
 			let done = false;
 
@@ -281,6 +288,7 @@ export const mongoRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mongoId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mongo = await findMongoById(input.mongoId);
 			await updateMongoById(input.mongoId, {
 				applicationStatus: input.applicationStatus,
@@ -299,6 +307,7 @@ export const mongoRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mongoId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const mongo = await findMongoById(input.mongoId);
 			if (mongo.serverId) {
 				await stopServiceRemote(mongo.serverId, mongo.appName);
@@ -369,6 +378,7 @@ export const mongoRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mongoId, {
 				envVars: ["write"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const service = await updateMongoById(input.mongoId, {
 				env: input.env,
 			});
@@ -474,6 +484,8 @@ export const mongoRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mongoId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
+			await checkServiceTargetEnvironment(ctx, input.targetEnvironmentId);
 
 			const updatedMongo = await db
 				.update(mongoTable)
@@ -505,6 +517,7 @@ export const mongoRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.mongoId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 
 			await rebuildDatabase(input.mongoId, "mongo");
 

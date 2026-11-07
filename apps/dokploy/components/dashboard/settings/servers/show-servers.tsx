@@ -352,11 +352,7 @@ export const ShowServers = () => {
 																					!isBuildServer && (
 																						<Tooltip>
 																							<ShowMonitoringModal
-																								url={`http://${server.ipAddress}:${server?.metricsConfig?.server?.port}/metrics`}
-																								token={
-																									server?.metricsConfig?.server
-																										?.token
-																								}
+																								serverId={server.serverId}
 																							>
 																								<TooltipTrigger asChild>
 																									<Button

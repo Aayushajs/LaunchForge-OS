@@ -29,8 +29,10 @@ import {
 	addNewService,
 	checkServiceAccess,
 	checkServicePermissionAndAccess,
+	checkServiceTargetEnvironment,
 	findMemberByUserId,
 } from "@dokploy/server/services/permission";
+import { assertReferencesAccessible } from "@dokploy/server/services/reference-access";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -149,6 +151,7 @@ export const postgresRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.postgresId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const service = await findPostgresById(input.postgresId);
 
 			if (service.serverId) {
@@ -174,6 +177,7 @@ export const postgresRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.postgresId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const postgres = await findPostgresById(input.postgresId);
 			if (postgres.serverId) {
 				await stopServiceRemote(postgres.serverId, postgres.appName);
@@ -198,6 +202,7 @@ export const postgresRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.postgresId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const postgres = await findPostgresById(input.postgresId);
 
 			if (input.externalPort) {
@@ -231,6 +236,7 @@ export const postgresRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.postgresId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const postgres = await findPostgresById(input.postgresId);
 			await audit(ctx, {
 				action: "deploy",
@@ -255,6 +261,7 @@ export const postgresRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.postgresId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 
 			const queue: string[] = [];
 			let done = false;
@@ -286,6 +293,7 @@ export const postgresRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.postgresId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const postgres = await findPostgresById(input.postgresId);
 			await updatePostgresById(input.postgresId, {
 				applicationStatus: input.applicationStatus,
@@ -342,6 +350,7 @@ export const postgresRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.postgresId, {
 				envVars: ["write"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const service = await updatePostgresById(input.postgresId, {
 				env: input.env,
 			});
@@ -366,6 +375,7 @@ export const postgresRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.postgresId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 			const postgres = await findPostgresById(input.postgresId);
 			if (postgres.serverId) {
 				await stopServiceRemote(postgres.serverId, postgres.appName);
@@ -480,6 +490,8 @@ export const postgresRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.postgresId, {
 				service: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
+			await checkServiceTargetEnvironment(ctx, input.targetEnvironmentId);
 
 			const updatedPostgres = await db
 				.update(postgresTable)
@@ -511,6 +523,7 @@ export const postgresRouter = createTRPCRouter({
 			await checkServicePermissionAndAccess(ctx, input.postgresId, {
 				deployment: ["create"],
 			});
+			await assertReferencesAccessible(ctx, input);
 
 			await rebuildDatabase(input.postgresId, "postgres");
 
