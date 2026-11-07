@@ -3,6 +3,10 @@ import type { Domain } from "@dokploy/server/services/domain";
 import { addDomainToCompose } from "@dokploy/server/utils/docker/domain";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+// These cases exercise label/network wiring for host-networked services,
+// which the default strict workload policy rejects outright.
+process.env.WORKLOAD_POLICY = "permissive";
+
 // With sourceType "raw", addDomainToCompose parses compose.composeFile
 // directly instead of reading from disk, so baseCompose exposes it as a
 // getter that always reflects the current composeYaml for each test case.

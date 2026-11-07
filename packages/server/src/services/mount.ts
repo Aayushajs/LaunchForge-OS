@@ -16,12 +16,23 @@ import {
 	execAsync,
 	execAsyncRemote,
 } from "@dokploy/server/utils/process/execAsync";
+import { bindMountViolation } from "@dokploy/server/utils/security/workload-policy";
 import { TRPCError } from "@trpc/server";
 import { eq, type SQL, sql } from "drizzle-orm";
 import { quote } from "shell-quote";
 import type { z } from "zod";
 
 export type Mount = typeof mounts.$inferSelect;
+
+const rejectForbiddenBindMount = (hostPath: string | null | undefined) => {
+	const violation = bindMountViolation(hostPath);
+	if (violation) {
+		throw new TRPCError({
+			code: "BAD_REQUEST",
+			message: `Bind mount rejected: ${violation}`,
+		});
+	}
+};
 
 export const createMount = async (input: z.infer<typeof apiCreateMount>) => {
 	try {
@@ -38,6 +49,9 @@ export const createMount = async (input: z.infer<typeof apiCreateMount>) => {
 				code: "BAD_REQUEST",
 				message: `Invalid file path: ${input.filePath}`,
 			});
+		}
+		if (input.type === "bind") {
+			rejectForbiddenBindMount(input.hostPath);
 		}
 		const { serviceId, ...rest } = input;
 		const value = await db
@@ -211,6 +225,11 @@ export const updateMount = async (
 				code: "NOT_FOUND",
 				message: "Mount not found",
 			});
+		}
+		// Checked on the saved row so a type change to "bind" is covered too;
+		// throwing here rolls the update back.
+		if (mount.type === "bind") {
+			rejectForbiddenBindMount(mount.hostPath);
 		}
 
 		return await findMountById(mountId);

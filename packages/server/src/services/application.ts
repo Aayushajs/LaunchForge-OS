@@ -30,6 +30,10 @@ import { createTraefikConfig } from "@dokploy/server/utils/traefik/application";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import type { z } from "zod";
+import {
+	killBuildProcesses,
+	runWithBuildTimeout,
+} from "../utils/builders/build-timeout";
 import { getDokployUrl } from "./admin";
 import {
 	createDeployment,
@@ -225,11 +229,13 @@ export const deployApplication = async ({
 		command += await getBuildCommand(application);
 
 		const commandWithLog = `(${command}) >> ${deployment.logPath} 2>&1`;
-		if (serverId) {
-			await execAsyncRemote(serverId, commandWithLog);
-		} else {
-			await execAsync(commandWithLog);
-		}
+		await runWithBuildTimeout(
+			() =>
+				serverId
+					? execAsyncRemote(serverId, commandWithLog)
+					: execAsync(commandWithLog),
+			() => killBuildProcesses("application", application.appName, serverId),
+		);
 
 		await mechanizeDockerContainer(application);
 		await updateDeploymentStatus(deployment.deploymentId, "done");
@@ -307,11 +313,13 @@ export const rebuildApplication = async ({
 		// Check case for docker only
 		command += await getBuildCommand(application);
 		const commandWithLog = `(${command}) >> ${deployment.logPath} 2>&1`;
-		if (serverId) {
-			await execAsyncRemote(serverId, commandWithLog);
-		} else {
-			await execAsync(commandWithLog);
-		}
+		await runWithBuildTimeout(
+			() =>
+				serverId
+					? execAsyncRemote(serverId, commandWithLog)
+					: execAsync(commandWithLog),
+			() => killBuildProcesses("application", application.appName, serverId),
+		);
 		await mechanizeDockerContainer(application);
 		await updateDeploymentStatus(deployment.deploymentId, "done");
 		await updateApplicationStatus(applicationId, "done");
@@ -419,11 +427,13 @@ export const deployPreviewApplication = async ({
 			command += await getBuildCommand(application);
 
 			const commandWithLog = `(${command}) >> ${deployment.logPath} 2>&1`;
-			if (serverId) {
-				await execAsyncRemote(serverId, commandWithLog);
-			} else {
-				await execAsync(commandWithLog);
-			}
+			await runWithBuildTimeout(
+				() =>
+					serverId
+						? execAsyncRemote(serverId, commandWithLog)
+						: execAsync(commandWithLog),
+				() => killBuildProcesses("application", application.appName, serverId),
+			);
 			await mechanizeDockerContainer(application);
 		}
 		const successComment = getIssueComment(
@@ -531,11 +541,13 @@ export const rebuildPreviewApplication = async ({
 		// Only rebuild, don't clone repository
 		command += await getBuildCommand(application);
 		const commandWithLog = `(${command}) >> ${deployment.logPath} 2>&1`;
-		if (serverId) {
-			await execAsyncRemote(serverId, commandWithLog);
-		} else {
-			await execAsync(commandWithLog);
-		}
+		await runWithBuildTimeout(
+			() =>
+				serverId
+					? execAsyncRemote(serverId, commandWithLog)
+					: execAsync(commandWithLog),
+			() => killBuildProcesses("application", application.appName, serverId),
+		);
 		await mechanizeDockerContainer(application);
 
 		const successComment = getIssueComment(

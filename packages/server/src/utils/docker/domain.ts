@@ -15,6 +15,7 @@ import { cloneGiteaRepository } from "../providers/gitea";
 import { cloneGithubRepository } from "../providers/github";
 import { cloneGitlabRepository } from "../providers/gitlab";
 import { getCreateComposeFileCommand } from "../providers/raw";
+import { assertComposeAllowed } from "../security/workload-policy";
 import { randomizeDeployableSpecificationFile } from "./collision";
 import { randomizeSpecificationFile } from "./compose";
 import { buildDokployLabels } from "./dokploy-labels";
@@ -289,6 +290,11 @@ export const addDomainToCompose = async (
 	}
 
 	result = (await applyComposeFilePatch(compose)) ?? result;
+
+	assertComposeAllowed(result, {
+		appName,
+		domainKeys: domains.map((domain) => domain.uniqueConfigKey),
+	});
 
 	if (compose.isolatedDeployment) {
 		const randomized = randomizeDeployableSpecificationFile(

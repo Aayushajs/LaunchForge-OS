@@ -1,10 +1,10 @@
 import { IS_CLOUD } from "@dokploy/server";
+import { killBuildProcesses } from "@dokploy/server/utils/builders/build-timeout";
 import {
 	execAsync,
 	execAsyncRemote,
 } from "@dokploy/server/utils/process/execAsync";
 import { quote } from "shell-quote";
-import { buildCancelPattern } from "./build-cancel";
 import { resolveBuildsConcurrency } from "./concurrency";
 import { processDeploymentJob } from "./deployments-queue";
 import { type InMemoryJob, InMemoryQueue } from "./in-memory-queue";
@@ -135,21 +135,10 @@ export const cleanAllDeploymentQueue = async () => {
 	return true;
 };
 
-export const killDockerBuild = async (
+export const killDockerBuild = (
 	type: "application" | "compose",
 	appName: string,
 	serverId: string | null,
-) => {
-	const command = `pkill -2 -f -- ${quote([buildCancelPattern(type, appName)])}`;
-	try {
-		if (serverId) {
-			await execAsyncRemote(serverId, command);
-		} else {
-			await execAsync(command);
-		}
-	} catch (error) {
-		console.error(error);
-	}
-};
+) => killBuildProcesses(type, appName, serverId);
 
 export { myQueue };

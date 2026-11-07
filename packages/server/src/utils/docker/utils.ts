@@ -16,6 +16,7 @@ import type { PostgresNested } from "../databases/postgres";
 import type { RedisNested } from "../databases/redis";
 import { execAsync, execAsyncRemote } from "../process/execAsync";
 import { spawnAsync } from "../process/spawnAsync";
+import { assertBindMountAllowed } from "../security/workload-policy";
 import { getRemoteDocker } from "../servers/remote-docker";
 
 interface RegistryAuth {
@@ -621,6 +622,20 @@ type Resources = {
 	cpuLimit: string | null;
 	cpuReservation: string | null;
 };
+const DEFAULT_PIDS_LIMIT = 4096;
+
+/**
+ * Caps the number of processes per container so a fork bomb in one workload
+ * cannot exhaust the host's PID space. CONTAINER_PIDS_LIMIT=0 disables it.
+ */
+export const containerPidsLimit = () => {
+	const configured = process.env.CONTAINER_PIDS_LIMIT;
+	if (configured === undefined || configured === "") return DEFAULT_PIDS_LIMIT;
+	const value = Number(configured);
+	if (!Number.isFinite(value) || value < 0) return DEFAULT_PIDS_LIMIT;
+	return value === 0 ? undefined : Math.floor(value);
+};
+
 export const calculateResources = ({
 	memoryLimit,
 	memoryReservation,
@@ -631,6 +646,7 @@ export const calculateResources = ({
 		Limits: {
 			MemoryBytes: memoryLimit ? Number.parseInt(memoryLimit) : undefined,
 			NanoCPUs: cpuLimit ? Number.parseInt(cpuLimit) : undefined,
+			Pids: containerPidsLimit(),
 		},
 		Reservations: {
 			MemoryBytes: memoryReservation
@@ -740,13 +756,17 @@ export const generateBindMounts = (mounts: ApplicationNested["mounts"]) => {
 		return [];
 	}
 
-	return mounts
-		.filter((mount) => mount.type === "bind")
-		.map((mount) => ({
-			Type: "bind" as const,
-			Source: mount.hostPath || "",
-			Target: mount.mountPath,
-		}));
+	const binds = mounts.filter((mount) => mount.type === "bind");
+	// Re-checked at deploy time so mounts saved before the policy existed, or
+	// written straight to the database, still cannot reach the host.
+	for (const mount of binds) {
+		assertBindMountAllowed(mount.hostPath);
+	}
+	return binds.map((mount) => ({
+		Type: "bind" as const,
+		Source: mount.hostPath || "",
+		Target: mount.mountPath,
+	}));
 };
 
 export const generateFileMounts = (

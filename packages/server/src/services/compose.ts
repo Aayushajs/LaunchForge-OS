@@ -35,6 +35,10 @@ import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { quote } from "shell-quote";
 import type { z } from "zod";
+import {
+	killBuildProcesses,
+	runWithBuildTimeout,
+} from "../utils/builders/build-timeout";
 import { getDokployUrl } from "./admin";
 import {
 	createDeploymentCompose,
@@ -268,11 +272,13 @@ export const deployCompose = async ({
 		}
 
 		let commandWithLog = `(${command}) >> ${deployment.logPath} 2>&1`;
-		if (compose.serverId) {
-			await execAsyncRemote(compose.serverId, commandWithLog);
-		} else {
-			await execAsync(commandWithLog);
-		}
+		await runWithBuildTimeout(
+			() =>
+				compose.serverId
+					? execAsyncRemote(compose.serverId, commandWithLog)
+					: execAsync(commandWithLog),
+			() => killBuildProcesses("compose", compose.appName, compose.serverId),
+		);
 		if (compose.sourceType !== "raw") {
 			command = "set -e;";
 			command += await generateApplyPatchesCommand({
@@ -281,11 +287,13 @@ export const deployCompose = async ({
 				serverId: compose.serverId,
 			});
 			commandWithLog = `(${command}) >> ${deployment.logPath} 2>&1`;
-			if (compose.serverId) {
-				await execAsyncRemote(compose.serverId, commandWithLog);
-			} else {
-				await execAsync(commandWithLog);
-			}
+			await runWithBuildTimeout(
+				() =>
+					compose.serverId
+						? execAsyncRemote(compose.serverId, commandWithLog)
+						: execAsync(commandWithLog),
+				() => killBuildProcesses("compose", compose.appName, compose.serverId),
+			);
 		}
 
 		if (freshVolumes && compose.composeType === "docker-compose") {
@@ -301,11 +309,13 @@ export const deployCompose = async ({
 		command = "set -e;";
 		command += await getBuildComposeCommand(entity);
 		commandWithLog = `(${command}) >> ${deployment.logPath} 2>&1`;
-		if (compose.serverId) {
-			await execAsyncRemote(compose.serverId, commandWithLog);
-		} else {
-			await execAsync(commandWithLog);
-		}
+		await runWithBuildTimeout(
+			() =>
+				compose.serverId
+					? execAsyncRemote(compose.serverId, commandWithLog)
+					: execAsync(commandWithLog),
+			() => killBuildProcesses("compose", compose.appName, compose.serverId),
+		);
 
 		await updateDeploymentStatus(deployment.deploymentId, "done");
 		await updateCompose(composeId, {
@@ -383,11 +393,13 @@ export const rebuildCompose = async ({
 		}
 
 		let commandWithLog = `(${command}) >> ${deployment.logPath} 2>&1`;
-		if (compose.serverId) {
-			await execAsyncRemote(compose.serverId, commandWithLog);
-		} else {
-			await execAsync(commandWithLog);
-		}
+		await runWithBuildTimeout(
+			() =>
+				compose.serverId
+					? execAsyncRemote(compose.serverId, commandWithLog)
+					: execAsync(commandWithLog),
+			() => killBuildProcesses("compose", compose.appName, compose.serverId),
+		);
 
 		if (compose.sourceType !== "raw") {
 			command = "set -e;";
@@ -397,11 +409,13 @@ export const rebuildCompose = async ({
 				serverId: compose.serverId,
 			});
 			commandWithLog = `(${command}) >> ${deployment.logPath} 2>&1`;
-			if (compose.serverId) {
-				await execAsyncRemote(compose.serverId, commandWithLog);
-			} else {
-				await execAsync(commandWithLog);
-			}
+			await runWithBuildTimeout(
+				() =>
+					compose.serverId
+						? execAsyncRemote(compose.serverId, commandWithLog)
+						: execAsync(commandWithLog),
+				() => killBuildProcesses("compose", compose.appName, compose.serverId),
+			);
 		}
 
 		if (freshVolumes && compose.composeType === "docker-compose") {
@@ -417,11 +431,13 @@ export const rebuildCompose = async ({
 		command = "set -e;";
 		command += await getBuildComposeCommand(compose);
 		commandWithLog = `(${command}) >> ${deployment.logPath} 2>&1`;
-		if (compose.serverId) {
-			await execAsyncRemote(compose.serverId, commandWithLog);
-		} else {
-			await execAsync(commandWithLog);
-		}
+		await runWithBuildTimeout(
+			() =>
+				compose.serverId
+					? execAsyncRemote(compose.serverId, commandWithLog)
+					: execAsync(commandWithLog),
+			() => killBuildProcesses("compose", compose.appName, compose.serverId),
+		);
 
 		await updateDeploymentStatus(deployment.deploymentId, "done");
 		await updateCompose(composeId, {
