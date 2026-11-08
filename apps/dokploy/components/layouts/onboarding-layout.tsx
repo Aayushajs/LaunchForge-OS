@@ -82,7 +82,7 @@ export const OnboardingLayout = ({ children, leftPanel }: Props) => {
 			<aside className="relative hidden flex-col overflow-hidden bg-black bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:56px_56px] p-10 text-zinc-50 lg:flex">
 				<div
 					aria-hidden
-					className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_30%_0%,rgba(91,91,246,0.28),transparent_65%),radial-gradient(ellipse_90%_70%_at_50%_100%,#000_30%,transparent)]"
+					className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_30%_0%,rgba(255,255,255,0.07),transparent_65%),radial-gradient(ellipse_90%_70%_at_50%_100%,#000_30%,transparent)]"
 				/>
 				<Link
 					href="/"
