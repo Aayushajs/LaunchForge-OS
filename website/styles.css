@@ -21,6 +21,7 @@
 	--line: #1c1c20;
 	--line-strong: #2e2e33;
 	--grid: rgb(255 255 255 / 5%);
+	--grid-fill: rgb(255 255 255 / 4%);
 	--glow: rgb(91 91 246 / 24%);
 	--solid-bg: #fafafa;
 	--solid-text: #09090b;
@@ -37,6 +38,7 @@
 	--line: #e4e4e7;
 	--line-strong: #d4d4d8;
 	--grid: rgb(0 0 0 / 5%);
+	--grid-fill: rgb(0 0 0 / 3.5%);
 	--glow: rgb(91 91 246 / 14%);
 	--solid-bg: #09090b;
 	--solid-text: #fafafa;
@@ -451,7 +453,7 @@ a {
 .hero {
 	position: relative;
 	overflow: hidden;
-	padding: clamp(64px, 9vw, 120px) 0 clamp(72px, 8vw, 112px);
+	padding: clamp(36px, 5vw, 64px) 0 clamp(64px, 7vw, 96px);
 }
 
 .hero-grid {
@@ -468,13 +470,27 @@ a {
 		#000 30%,
 		transparent 75%
 	);
-	animation: grid-drift 24s linear infinite;
 	pointer-events: none;
 }
 
-@keyframes grid-drift {
-	to {
-		background-position: 0 72px;
+/* Squares on the grid that light up and fade, one at a time. */
+.hero-grid .sq {
+	position: absolute;
+	width: 72px;
+	height: 72px;
+	background: var(--grid-fill);
+	opacity: 0;
+	animation: sq-flicker 6s ease-in-out infinite;
+}
+
+@keyframes sq-flicker {
+	0%,
+	100% {
+		opacity: 0;
+	}
+	40%,
+	60% {
+		opacity: 1;
 	}
 }
 
@@ -941,32 +957,39 @@ a {
 
 /* Marquee */
 .marquee-band {
-	padding: 8px 0 48px;
+	padding: 24px 0 64px;
 }
 
 .marquee-title {
-	margin: 0 0 22px;
+	margin: 0 0 26px;
 	text-align: center;
-	font-size: 0.85rem;
+	font-size: 0.92rem;
+	font-weight: 500;
 	color: var(--text-dim);
 }
 
 .marquee {
 	overflow: hidden;
+	padding: 5px 0;
 	mask-image: linear-gradient(
 		90deg,
 		transparent,
-		#000 12%,
-		#000 88%,
+		#000 14%,
+		#000 86%,
 		transparent
 	);
 }
 
 .marquee-track {
 	display: flex;
-	gap: 14px;
+	gap: 12px;
 	width: max-content;
-	animation: scroll-x 45s linear infinite;
+	animation: scroll-x 50s linear infinite;
+}
+
+.marquee.reverse .marquee-track {
+	animation-direction: reverse;
+	animation-duration: 56s;
 }
 
 .marquee:hover .marquee-track {
@@ -974,13 +997,34 @@ a {
 }
 
 .marquee-track span {
-	padding: 9px 18px;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 18px 10px 14px;
 	border: 1px solid var(--line);
-	border-radius: 999px;
+	border-radius: 12px;
 	background: var(--bg-raised);
 	color: var(--text-soft);
-	font-size: 0.88rem;
+	font-size: 0.92rem;
+	font-weight: 500;
 	white-space: nowrap;
+	transition:
+		color 0.2s ease,
+		border-color 0.2s ease;
+}
+
+.marquee-track span:hover {
+	color: var(--text);
+	border-color: var(--line-strong);
+}
+
+.marquee-track i {
+	width: 20px;
+	height: 20px;
+	flex: none;
+	background: currentColor;
+	-webkit-mask: var(--logo) center / contain no-repeat;
+	mask: var(--logo) center / contain no-repeat;
 }
 
 @keyframes scroll-x {
@@ -1018,6 +1062,23 @@ a {
 }
 
 /* Feature grid */
+.features-section .wrap {
+	max-width: 1320px;
+}
+
+.features-section .section-head {
+	max-width: 980px;
+}
+
+.features-section .section-head h2 {
+	font-size: clamp(2.2rem, 4.6vw, 3.5rem);
+}
+
+.features-section .section-head p {
+	max-width: 820px;
+	font-size: 1.08rem;
+}
+
 .feature-grid {
 	display: grid;
 	grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1025,7 +1086,7 @@ a {
 
 .cell {
 	position: relative;
-	padding: 40px 0 44px;
+	padding: 52px 0 56px;
 	border-right: 1px solid var(--line);
 	overflow: hidden;
 }
@@ -1060,8 +1121,8 @@ a {
 .cell svg {
 	position: relative;
 	display: block;
-	width: 20px;
-	height: 20px;
+	width: 24px;
+	height: 24px;
 	margin: 0 40px;
 	fill: none;
 	stroke: var(--text-soft);
@@ -1072,9 +1133,9 @@ a {
 
 .cell h3 {
 	position: relative;
-	margin: 18px 0 0;
+	margin: 22px 0 0;
 	padding: 0 40px;
-	font-size: 1.04rem;
+	font-size: 1.15rem;
 	font-weight: 600;
 	letter-spacing: -0.01em;
 }
@@ -1109,10 +1170,11 @@ a {
 
 .cell p {
 	position: relative;
-	margin: 10px 0 0;
+	margin: 12px 0 0;
 	padding: 0 40px;
-	max-width: 320px;
-	font-size: 0.9rem;
+	max-width: 340px;
+	font-size: 0.96rem;
+	line-height: 1.7;
 	color: var(--text-soft);
 }
 
@@ -1420,77 +1482,49 @@ a {
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	min-height: 280px;
-	padding: 26px 24px;
-	border-radius: 22px;
-	background: var(--bg-soft);
+	min-height: 300px;
+	padding: 28px 26px;
+	border: 1px solid var(--line);
+	border-radius: 24px;
+	background: var(--bg-raised);
+	transition: border-color 0.25s ease;
 	overflow: hidden;
 }
 
-/* A corner of small squares that fade in and out. */
+/* A corner of tiles; a few of them light up in turn. */
 .pixels {
 	position: absolute;
 	top: 0;
 	right: 0;
-	width: 140px;
-	height: 120px;
-	background-image:
-		linear-gradient(var(--grid) 1px, transparent 1px),
-		linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-	background-size: 20px 20px;
-	mask-image: radial-gradient(circle at 100% 0%, #000 10%, transparent 70%);
+	display: grid;
+	grid-template-columns: repeat(7, 20px);
+	grid-auto-rows: 20px;
+	gap: 1px;
+	mask-image: radial-gradient(circle at 100% 0%, #000 15%, transparent 72%);
 	pointer-events: none;
 }
 
-.pixels::before,
-.pixels::after {
-	content: "";
-	position: absolute;
-	width: 19px;
-	height: 19px;
-	background: var(--line-strong);
-	opacity: 0;
+.pixels b {
+	background: var(--grid);
+}
+
+.pixels b.on {
 	animation: pixel 5s ease-in-out infinite;
-}
-
-.pixels::before {
-	top: 21px;
-	right: 41px;
-}
-
-.pixels::after {
-	top: 41px;
-	right: 21px;
-	animation-delay: 2.5s;
-}
-
-.stat:nth-child(2) .pixels::before {
-	top: 1px;
-	right: 61px;
-	animation-delay: 1.2s;
-}
-
-.stat:nth-child(3) .pixels::after {
-	top: 61px;
-	right: 41px;
-	animation-delay: 3.4s;
-}
-
-.stat:nth-child(4) .pixels::before {
-	top: 41px;
-	right: 81px;
-	animation-delay: 0.6s;
 }
 
 @keyframes pixel {
 	0%,
 	100% {
-		opacity: 0;
+		background: var(--grid);
 	}
 	45%,
 	60% {
-		opacity: 1;
+		background: var(--line-strong);
 	}
+}
+
+.stat:hover {
+	border-color: var(--line-strong);
 }
 
 .stat h3 {
@@ -1524,9 +1558,9 @@ a {
 .stat strong {
 	position: relative;
 	margin-top: auto;
-	font-size: 1.6rem;
+	font-size: 2rem;
 	font-weight: 600;
-	letter-spacing: 0.04em;
+	letter-spacing: 0.02em;
 	font-variant-numeric: tabular-nums;
 }
 

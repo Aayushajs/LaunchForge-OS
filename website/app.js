@@ -275,5 +275,42 @@
 		})
 		.catch(() => {});
 
+	// Light up a few grid squares behind the hero, each on its own timer.
+	const heroGrid = document.getElementById("hero-grid");
+	if (!reduceMotion) {
+		// Must match the grid's background-size so squares sit in the cells.
+		const CELL = 72;
+		const centre = Math.floor(heroGrid.offsetWidth / CELL / 2);
+		const used = new Set();
+		for (let n = 0; n < 14; n++) {
+			const col = centre + Math.floor(Math.random() * 16) - 8;
+			const row = Math.floor(Math.random() * 7);
+			if (used.has(`${col},${row}`)) continue;
+			used.add(`${col},${row}`);
+			const square = document.createElement("span");
+			square.className = "sq";
+			square.style.left = `${col * CELL}px`;
+			square.style.top = `${row * CELL}px`;
+			square.style.animationDelay = `${(Math.random() * 6).toFixed(2)}s`;
+			square.style.animationDuration = `${(5 + Math.random() * 4).toFixed(2)}s`;
+			heroGrid.append(square);
+		}
+	}
+
+	// Each stat card gets a corner of tiles, three of which light up.
+	for (const corner of document.querySelectorAll(".pixels")) {
+		const tiles = [];
+		for (let n = 0; n < 42; n++) {
+			const tile = document.createElement("b");
+			corner.append(tile);
+			tiles.push(tile);
+		}
+		for (let n = 0; n < 3; n++) {
+			const tile = tiles[Math.floor(Math.random() * 18)];
+			tile.classList.add("on");
+			tile.style.animationDelay = `${(Math.random() * 5).toFixed(2)}s`;
+		}
+	}
+
 	applyLanguage(pickLanguage());
 })();

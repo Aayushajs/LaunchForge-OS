@@ -83,7 +83,7 @@ window.LF_MESSAGES = {
 		"tour.c8": "Who changed what, and when, for every action.",
 		"stats.title": "We Counted Things So You Don't Have To",
 		"stats.lead":
-			"A few numbers pulled straight from CI and our releases. No vanity metrics, and yes, we checked them twice.",
+			"Taken from the CI runs and the release history. When a number moves, it moves here too.",
 		"s1.t": "Automated tests",
 		"s1.d": "Unit, integration and real Docker Swarm tests run on every push.",
 		"s2.t": "API latency, p95",
@@ -142,7 +142,7 @@ window.LF_MESSAGES = {
 		"dd.ref": "Feature reference",
 		"dd.ref.d": "Every page and setting",
 		"dd.releases.d": "A new version with every change",
-		"works.title": "Deploy anything that runs in a container",
+		"works.title": "Works with the stack you already use",
 		"plans.title": "Run It Your Way",
 		"plans.lead":
 			"Install it yourself, connect your own server to our dashboard, or deploy on our servers. Free while in beta.",
@@ -275,7 +275,7 @@ window.LF_MESSAGES = {
 		"tour.c8": "किसने क्या और कब बदला, हर काम के लिए।",
 		"stats.title": "हमने गिनती कर दी, ताकि आपको न करनी पड़े",
 		"stats.lead":
-			"कुछ आँकड़े सीधे CI और हमारी रिलीज़ से। कोई दिखावटी नंबर नहीं, और हाँ, हमने दो बार जाँचे हैं।",
+			"CI रन और रिलीज़ हिस्ट्री से लिए गए आँकड़े। कोई नंबर बदलेगा, तो यहाँ भी बदलेगा।",
 		"s1.t": "ऑटोमेटेड टेस्ट",
 		"s1.d": "हर पुश पर यूनिट, इंटीग्रेशन और असली Docker Swarm टेस्ट।",
 		"s2.t": "API लेटेंसी, p95",
@@ -331,7 +331,7 @@ window.LF_MESSAGES = {
 		"dd.ref": "फ़ीचर रेफ़रेंस",
 		"dd.ref.d": "हर पेज और सेटिंग",
 		"dd.releases.d": "हर बदलाव के साथ नया वर्ज़न",
-		"works.title": "कंटेनर में चलने वाली कोई भी चीज़ डिप्लॉय करें",
+		"works.title": "आपके पहले से इस्तेमाल हो रहे स्टैक के साथ चलता है",
 		"plans.title": "जैसे चाहें वैसे चलाएँ",
 		"plans.lead":
 			"खुद इंस्टॉल करें, अपना सर्वर हमारे डैशबोर्ड से जोड़ें, या हमारे सर्वर पर डिप्लॉय करें। बीटा के दौरान मुफ़्त।",
@@ -470,7 +470,7 @@ window.LF_MESSAGES = {
 		"tour.c8": "Quién cambió qué y cuándo, en cada acción.",
 		"stats.title": "Contamos las cosas para que tú no tengas que hacerlo",
 		"stats.lead":
-			"Algunas cifras sacadas directamente del CI y de nuestras versiones. Sin métricas de vanidad, y sí, las revisamos dos veces.",
+			"Sacadas de las ejecuciones de CI y del historial de versiones. Si una cifra cambia, aquí también.",
 		"s1.t": "Tests automatizados",
 		"s1.d":
 			"Tests unitarios, de integración y con Docker Swarm real en cada push.",
@@ -530,7 +530,7 @@ window.LF_MESSAGES = {
 		"dd.ref": "Referencia de funciones",
 		"dd.ref.d": "Cada página y ajuste",
 		"dd.releases.d": "Una versión nueva con cada cambio",
-		"works.title": "Despliega cualquier cosa que corra en un contenedor",
+		"works.title": "Funciona con el stack que ya usas",
 		"plans.title": "Úsalo a tu manera",
 		"plans.lead":
 			"Instálalo tú mismo, conecta tu servidor a nuestro panel o despliega en nuestros servidores. Gratis durante la beta.",
@@ -669,7 +669,7 @@ window.LF_MESSAGES = {
 		"tour.c8": "Quem mudou o quê, e quando, em cada ação.",
 		"stats.title": "Contamos tudo para você não precisar",
 		"stats.lead":
-			"Alguns números tirados direto do CI e das nossas versões. Nada de métricas de vaidade, e sim, conferimos duas vezes.",
+			"Tirados das execuções de CI e do histórico de versões. Se um número muda, muda aqui também.",
 		"s1.t": "Testes automatizados",
 		"s1.d":
 			"Testes unitários, de integração e com Docker Swarm real a cada push.",
@@ -729,7 +729,7 @@ window.LF_MESSAGES = {
 		"dd.ref": "Referência de recursos",
 		"dd.ref.d": "Cada página e configuração",
 		"dd.releases.d": "Uma nova versão a cada mudança",
-		"works.title": "Publique qualquer coisa que rode em um container",
+		"works.title": "Funciona com o stack que você já usa",
 		"plans.title": "Do seu jeito",
 		"plans.lead":
 			"Instale você mesmo, conecte seu servidor ao nosso painel ou publique nos nossos servidores. Grátis durante o beta.",
@@ -869,7 +869,7 @@ window.LF_MESSAGES = {
 		"tour.c8": "Wer was wann geändert hat, für jede Aktion.",
 		"stats.title": "Wir haben gezählt, damit du es nicht musst",
 		"stats.lead":
-			"Ein paar Zahlen direkt aus der CI und unseren Releases. Keine Eitelkeitsmetriken, und ja, wir haben doppelt nachgesehen.",
+			"Aus den CI-Läufen und der Release-Historie. Ändert sich eine Zahl, ändert sie sich auch hier.",
 		"s1.t": "Automatisierte Tests",
 		"s1.d": "Unit-, Integrations- und echte Docker-Swarm-Tests bei jedem Push.",
 		"s2.t": "API-Latenz, p95",
@@ -928,7 +928,7 @@ window.LF_MESSAGES = {
 		"dd.ref": "Funktionsreferenz",
 		"dd.ref.d": "Jede Seite und Einstellung",
 		"dd.releases.d": "Eine neue Version mit jeder Änderung",
-		"works.title": "Deploye alles, was in einem Container läuft",
+		"works.title": "Läuft mit dem Stack, den du schon nutzt",
 		"plans.title": "Ganz wie du willst",
 		"plans.lead":
 			"Selbst installieren, eigenen Server mit unserem Dashboard verbinden oder auf unseren Servern deployen. Kostenlos während der Beta.",
@@ -1069,7 +1069,7 @@ window.LF_MESSAGES = {
 		"tour.c8": "Qui a changé quoi, et quand, pour chaque action.",
 		"stats.title": "On a compté pour vous",
 		"stats.lead":
-			"Quelques chiffres tirés directement de la CI et de nos versions. Pas de chiffres de vanité, et oui, on a vérifié deux fois.",
+			"Tirés des exécutions de CI et de l'historique des versions. Quand un chiffre bouge, il bouge ici aussi.",
 		"s1.t": "Tests automatisés",
 		"s1.d":
 			"Tests unitaires, d'intégration et sur un vrai Docker Swarm à chaque push.",
@@ -1129,7 +1129,7 @@ window.LF_MESSAGES = {
 		"dd.ref": "Référence des fonctions",
 		"dd.ref.d": "Chaque page et réglage",
 		"dd.releases.d": "Une nouvelle version à chaque changement",
-		"works.title": "Déployez tout ce qui tourne dans un conteneur",
+		"works.title": "Fonctionne avec la stack que vous utilisez déjà",
 		"plans.title": "À votre façon",
 		"plans.lead":
 			"Installez-le vous-même, connectez votre serveur à notre tableau de bord, ou déployez sur nos serveurs. Gratuit pendant la bêta.",
@@ -1267,7 +1267,7 @@ window.LF_MESSAGES = {
 		"tour.c8": "誰がいつ何を変更したか、すべての操作を記録。",
 		"stats.title": "数えておきました",
 		"stats.lead":
-			"CI とリリースから取ってきた数字です。見栄えのための数字はありません。二度確認済みです。",
+			"CI の実行結果とリリース履歴から取った数字です。数字が変われば、ここも変わります。",
 		"s1.t": "自動テスト",
 		"s1.d": "push ごとにユニット、統合、実際の Docker Swarm テストを実行。",
 		"s2.t": "API レイテンシ p95",
@@ -1324,7 +1324,7 @@ window.LF_MESSAGES = {
 		"dd.ref": "機能リファレンス",
 		"dd.ref.d": "すべてのページと設定",
 		"dd.releases.d": "変更のたびに新バージョン",
-		"works.title": "コンテナで動くものなら何でもデプロイ",
+		"works.title": "いま使っているスタックでそのまま動きます",
 		"plans.title": "好きな方法で",
 		"plans.lead":
 			"自分でインストール、自分のサーバーをダッシュボードに接続、または私たちのサーバーへデプロイ。ベータ期間中は無料。",
@@ -1450,8 +1450,7 @@ window.LF_MESSAGES = {
 		"tour.c7": "每个工作区已预留和已使用的资源，对比其配额。",
 		"tour.c8": "每个操作都记录谁在何时改了什么。",
 		"stats.title": "我们帮你数好了",
-		"stats.lead":
-			"这些数字直接来自 CI 和发布记录。没有虚荣指标，而且我们核对了两遍。",
+		"stats.lead": "数据来自 CI 运行和发布记录。数字有变化，这里也会同步。",
 		"s1.t": "自动化测试",
 		"s1.d": "每次推送都会运行单元、集成和真实 Docker Swarm 测试。",
 		"s2.t": "API 延迟 p95",
@@ -1508,7 +1507,7 @@ window.LF_MESSAGES = {
 		"dd.ref": "功能参考",
 		"dd.ref.d": "每个页面和设置",
 		"dd.releases.d": "每次变更都会发布新版本",
-		"works.title": "部署任何能在容器中运行的东西",
+		"works.title": "支持你已经在用的技术栈",
 		"plans.title": "按你的方式运行",
 		"plans.lead":
 			"自己安装、把自己的服务器连接到我们的控制台，或部署到我们的服务器。测试期间免费。",
