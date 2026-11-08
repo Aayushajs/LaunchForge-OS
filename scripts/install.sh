@@ -235,13 +235,23 @@ pull_image() {
 }
 
 bootstrap_host() {
+	# Recreating a running Traefik would drop live traffic and collide with its
+	# own endpoint on the overlay network; the dashboard manages it from here on.
+	if [ -n "$(docker ps -q --filter "name=^${TRAEFIK_CONTAINER}$" --filter status=running)" ]; then
+		ok "Traefik is running"
+		return
+	fi
 	info "Configuring the reverse proxy"
 	mkdir -p "$BASE_PATH"
 	docker pull "$TRAEFIK_IMAGE" >/dev/null
+	# The bootstrap never touches the database or sessions; placeholder values
+	# keep the modules it imports from warning about missing secrets.
 	docker run --rm \
 		--network "$NETWORK" \
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v "${BASE_PATH}:${BASE_PATH}" \
+		-e DATABASE_URL=postgres://bootstrap@127.0.0.1:1/unused \
+		-e BETTER_AUTH_SECRET=bootstrap-unused \
 		"$IMAGE" node dist/bootstrap.mjs
 	ok "Traefik is running"
 }
