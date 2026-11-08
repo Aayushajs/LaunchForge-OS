@@ -224,10 +224,7 @@ await caption(
 await pause(3500);
 await screenshot("application-general");
 
-await page
-	.getByRole("tab", { name: /deployments/i })
-	.click()
-	.catch(() => {});
+await openTab(/deployments/i);
 await caption(
 	"STEP 4",
 	"Health-gated rollout",
@@ -238,10 +235,7 @@ const deployed = await waitFor(async () => {
 	return body?.applicationStatus === "done";
 }, 240_000);
 await page.reload();
-await page
-	.getByRole("tab", { name: /deployments/i })
-	.click()
-	.catch(() => {});
+await openTab(/deployments/i);
 await caption(
 	"STEP 4",
 	deployed ? "Deployment finished: done" : "Deployment still running",
@@ -250,10 +244,7 @@ await caption(
 await pause(3500);
 await screenshot("deployments");
 
-await page
-	.getByRole("tab", { name: /domains/i })
-	.click()
-	.catch(() => {});
+await openTab(/domains/i);
 await caption(
 	"STEP 5",
 	"Domains and HTTPS",
@@ -274,10 +265,7 @@ await screenshot("live-site");
 
 // ── 6. Logs ──────────────────────────────────────────────────────────────
 await page.goto(appUrl);
-await page
-	.getByRole("tab", { name: /^logs$/i })
-	.click()
-	.catch(() => {});
+await openTab(/^logs$/i);
 await caption(
 	"STEP 6",
 	"Live logs",
