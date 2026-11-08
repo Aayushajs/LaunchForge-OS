@@ -1,4 +1,5 @@
 import { IS_CLOUD, isAdminPresent, validateRequest } from "@dokploy/server";
+import { enabledSocialProviders } from "@dokploy/server/lib/auth";
 import { isPublicSignupEnabled } from "@dokploy/server/services/platform";
 import { standardSchemaResolver as zodResolver } from "@hookform/resolvers/standard-schema";
 import { AlertTriangle } from "lucide-react";
@@ -9,12 +10,14 @@ import { type ReactElement, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { SocialSignIn } from "@/components/auth/social-sign-in";
+import {
+	type SocialProvider,
+	SocialSignIn,
+} from "@/components/auth/social-sign-in";
 import { OnboardingLayout } from "@/components/layouts/onboarding-layout";
 import { AlertBlock } from "@/components/shared/alert-block";
-import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
-import { CardContent, CardDescription, CardTitle } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import {
 	Form,
 	FormControl,
@@ -53,8 +56,8 @@ const registerSchema = z
 			.min(1, {
 				message: "Password is required",
 			})
-			.refine((password) => password === "" || password.length >= 8, {
-				message: "Password must be at least 8 characters",
+			.refine((password) => password === "" || password.length >= 12, {
+				message: "Password must be at least 12 characters",
 			}),
 		confirmPassword: z
 			.string()
@@ -63,9 +66,9 @@ const registerSchema = z
 			})
 			.refine(
 				(confirmPassword) =>
-					confirmPassword === "" || confirmPassword.length >= 8,
+					confirmPassword === "" || confirmPassword.length >= 12,
 				{
-					message: "Password must be at least 8 characters",
+					message: "Password must be at least 12 characters",
 				},
 			),
 	})
@@ -80,9 +83,10 @@ interface Props {
 	hasAdmin: boolean;
 	isCloud: boolean;
 	publicSignup?: boolean;
+	socialProviders?: SocialProvider[];
 }
 
-const Register = ({ isCloud, publicSignup }: Props) => {
+const Register = ({ isCloud, publicSignup, socialProviders }: Props) => {
 	const isSignup = isCloud || !!publicSignup;
 	const router = useRouter();
 	const { t } = useTranslation();
@@ -133,29 +137,16 @@ const Register = ({ isCloud, publicSignup }: Props) => {
 		<div className="">
 			<div className="flex  w-full items-center justify-center ">
 				<div className="flex flex-col items-center gap-4 w-full">
-					<CardTitle className="text-2xl font-bold flex  items-center gap-2">
-						<Link href="/" className="flex flex-row items-center gap-2">
-							<Logo
-								className="size-12"
-								logoUrl={
-									whitelabeling?.loginLogoUrl ||
-									whitelabeling?.logoUrl ||
-									undefined
-								}
-								logoLightUrl={
-									whitelabeling?.loginLogoLightUrl ||
-									whitelabeling?.logoLightUrl ||
-									undefined
-								}
-							/>
-						</Link>
-						{isSignup ? t("Sign up") : t("Set up the server")}
-					</CardTitle>
-					<CardDescription>
-						{isSignup
-							? t("Enter your email and password to create an account")
-							: t("Create the owner account for this server")}
-					</CardDescription>
+					<div className="mb-6 flex w-full flex-col gap-2">
+						<h1 className="text-2xl font-semibold tracking-tight">
+							{isSignup ? t("Create your account") : t("Set up the server")}
+						</h1>
+						<p className="text-sm text-muted-foreground">
+							{isSignup
+								? t("Enter your email and password to create an account")
+								: t("Create the owner account for this server")}
+						</p>
+					</div>
 					<div className="mx-auto w-full max-w-lg bg-transparent">
 						{isError && (
 							<div className="my-2 flex flex-row items-center gap-2 rounded-lg bg-red-50 p-2 dark:bg-red-950">
@@ -174,7 +165,7 @@ const Register = ({ isCloud, publicSignup }: Props) => {
 							</AlertBlock>
 						)}
 						<CardContent className="p-0">
-							{isCloud && <SocialSignIn />}
+							<SocialSignIn providers={socialProviders ?? []} />
 							<Form {...form}>
 								<form
 									method="post"
@@ -319,6 +310,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			props: {
 				trpcState: helpers.dehydrate(),
 				isCloud: true,
+				socialProviders: enabledSocialProviders(),
 			},
 		};
 	}
@@ -336,6 +328,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 		props: {
 			trpcState: helpers.dehydrate(),
 			isCloud: false,
+			socialProviders: enabledSocialProviders(),
 			publicSignup: hasAdmin,
 		},
 	};

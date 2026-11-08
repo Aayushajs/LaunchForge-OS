@@ -67,6 +67,14 @@ const resolveTrustedOrigins = async () => {
 	}
 };
 
+/** OAuth providers whose client id and secret are configured. */
+export const enabledSocialProviders = () =>
+	(["github", "google"] as const).filter(
+		(provider) =>
+			!!process.env[`${provider.toUpperCase()}_CLIENT_ID`] &&
+			!!process.env[`${provider.toUpperCase()}_CLIENT_SECRET`],
+	);
+
 const createBetterAuth = () =>
 	betterAuth({
 		database: drizzleAdapter(db, {
@@ -108,14 +116,32 @@ const createBetterAuth = () =>
 			},
 		},
 		appName: "LaunchForge",
-		socialProviders: {
-			github: {
-				clientId: process.env.GITHUB_CLIENT_ID as string,
-				clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-			},
-			google: {
-				clientId: process.env.GOOGLE_CLIENT_ID as string,
-				clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+		socialProviders: Object.fromEntries(
+			enabledSocialProviders().map((provider) => [
+				provider,
+				{
+					clientId: process.env[
+						`${provider.toUpperCase()}_CLIENT_ID`
+					] as string,
+					clientSecret: process.env[
+						`${provider.toUpperCase()}_CLIENT_SECRET`
+					] as string,
+				},
+			]),
+		),
+		// Sign-in and account endpoints are the ones worth guessing at, so they
+		// get much tighter limits than the default.
+		rateLimit: {
+			enabled: process.env.NODE_ENV === "production",
+			window: 60,
+			max: 120,
+			customRules: {
+				"/sign-in/email": { window: 60, max: 5 },
+				"/sign-up/email": { window: 60, max: 3 },
+				"/forget-password": { window: 300, max: 3 },
+				"/reset-password": { window: 300, max: 5 },
+				"/two-factor/verify-totp": { window: 60, max: 5 },
+				"/two-factor/verify-backup-code": { window: 60, max: 5 },
 			},
 		},
 		logger: {
@@ -167,6 +193,8 @@ const createBetterAuth = () =>
 		},
 		emailAndPassword: {
 			enabled: true,
+			minPasswordLength: 12,
+			maxPasswordLength: 128,
 			autoSignIn: !IS_CLOUD,
 			requireEmailVerification:
 				IS_CLOUD && process.env.NODE_ENV === "production",

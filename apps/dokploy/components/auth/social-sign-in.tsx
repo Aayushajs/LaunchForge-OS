@@ -2,8 +2,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
+import { useTranslation } from "@/lib/i18n";
 
-type Provider = "github" | "google";
+export type SocialProvider = "github" | "google";
+type Provider = SocialProvider;
 
 const LABELS: Record<Provider, string> = {
 	github: "Continue with GitHub",
@@ -40,8 +42,9 @@ const GoogleMark = () => (
 	</svg>
 );
 
-export const SocialSignIn = () => {
+export const SocialSignIn = ({ providers }: { providers: Provider[] }) => {
 	const [pending, setPending] = useState<Provider | null>(null);
+	const { t } = useTranslation();
 
 	const signIn = async (provider: Provider) => {
 		setPending(provider);
@@ -55,9 +58,11 @@ export const SocialSignIn = () => {
 		}
 	};
 
+	if (providers.length === 0) return null;
+
 	return (
 		<div className="flex flex-col gap-2">
-			{(["github", "google"] as const).map((provider) => (
+			{providers.map((provider) => (
 				<Button
 					key={provider}
 					type="button"
@@ -68,12 +73,12 @@ export const SocialSignIn = () => {
 					onClick={() => signIn(provider)}
 				>
 					{provider === "github" ? <GithubMark /> : <GoogleMark />}
-					{LABELS[provider]}
+					{t(LABELS[provider])}
 				</Button>
 			))}
-			<div className="flex items-center gap-3 py-1 text-xs text-muted-foreground">
+			<div className="flex items-center gap-3 py-2 text-xs text-muted-foreground">
 				<span className="h-px flex-1 bg-border" />
-				or
+				{t("or continue with email")}
 				<span className="h-px flex-1 bg-border" />
 			</div>
 		</div>

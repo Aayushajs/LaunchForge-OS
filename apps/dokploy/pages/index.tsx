@@ -1,5 +1,8 @@
 import { IS_CLOUD, isAdminPresent } from "@dokploy/server";
-import { validateRequest } from "@dokploy/server/lib/auth";
+import {
+	enabledSocialProviders,
+	validateRequest,
+} from "@dokploy/server/lib/auth";
 import { isPublicSignupEnabled } from "@dokploy/server/services/platform";
 import { standardSchemaResolver as zodResolver } from "@hookform/resolvers/standard-schema";
 import { Fingerprint } from "lucide-react";
@@ -10,10 +13,12 @@ import { type ReactElement, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { SocialSignIn } from "@/components/auth/social-sign-in";
+import {
+	type SocialProvider,
+	SocialSignIn,
+} from "@/components/auth/social-sign-in";
 import { OnboardingLayout } from "@/components/layouts/onboarding-layout";
 import { AlertBlock } from "@/components/shared/alert-block";
-import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardDescription } from "@/components/ui/card";
 import {
@@ -54,8 +59,13 @@ type LoginForm = z.infer<typeof LoginSchema>;
 interface Props {
 	IS_CLOUD: boolean;
 	publicSignup?: boolean;
+	socialProviders?: SocialProvider[];
 }
-export default function Home({ IS_CLOUD, publicSignup }: Props) {
+export default function Home({
+	IS_CLOUD,
+	publicSignup,
+	socialProviders,
+}: Props) {
 	const router = useRouter();
 	const { t } = useTranslation();
 	const { config: whitelabeling } = useWhitelabelingPublic();
@@ -235,7 +245,7 @@ export default function Home({ IS_CLOUD, publicSignup }: Props) {
 
 	const loginContent = (
 		<>
-			{IS_CLOUD && <SocialSignIn />}
+			<SocialSignIn providers={socialProviders ?? []} />
 			<Form {...loginForm}>
 				<form
 					method="post"
@@ -307,27 +317,14 @@ export default function Home({ IS_CLOUD, publicSignup }: Props) {
 
 	return (
 		<>
-			<div className="flex flex-col space-y-2 text-center">
+			<div className="mb-8 flex flex-col gap-2">
 				<h1 className="text-2xl font-semibold tracking-tight">
-					<div className="flex flex-row items-center justify-center gap-2">
-						<Logo
-							className="size-12"
-							logoUrl={
-								whitelabeling?.loginLogoUrl ||
-								whitelabeling?.logoUrl ||
-								undefined
-							}
-							logoLightUrl={
-								whitelabeling?.loginLogoLightUrl ||
-								whitelabeling?.logoLightUrl ||
-								undefined
-							}
-						/>
-						{t("Sign in")}
-					</div>
+					{t("Sign in to {name}", {
+						name: whitelabeling?.appName || "LaunchForge",
+					})}
 				</h1>
 				<p className="text-sm text-muted-foreground">
-					{t("Enter your email and password to sign in")}
+					{t("Welcome back. Enter your details to continue.")}
 				</p>
 			</div>
 			{error && (
@@ -553,6 +550,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			props: {
 				trpcState: helpers.dehydrate(),
 				IS_CLOUD: IS_CLOUD,
+				socialProviders: enabledSocialProviders(),
 			},
 		};
 	}
@@ -583,6 +581,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			trpcState: helpers.dehydrate(),
 			hasAdmin,
 			publicSignup: isPublicSignupEnabled(),
+			socialProviders: enabledSocialProviders(),
 		},
 	};
 }

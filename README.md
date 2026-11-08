@@ -227,6 +227,8 @@ docker service update --env-add BUILD_TIMEOUT_SECONDS=1800 dokploy
 | `ALLOW_PUBLIC_SIGNUP` | off | `true` lets anyone register; each sign-up gets its own workspace ([public platform](docs/guide/14-public-platform.md)) |
 | `SIGNUP_QUOTA_MEMORY_MB`, `SIGNUP_QUOTA_CPU`, `SIGNUP_QUOTA_APPLICATIONS`, `SIGNUP_QUOTA_DATABASES`, `SIGNUP_QUOTA_DOMAINS` | `1024`, `1`, `3`, `2`, `5` | Quota given to a workspace created by sign-up |
 | `SMTP_SERVER`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM_ADDRESS` | unset | Email for password resets |
+| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | unset | Show "Continue with GitHub" on sign-in. Create an OAuth app at github.com/settings/developers with the callback `https://<dashboard>/api/auth/callback/github` |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | unset | Show "Continue with Google"; callback `https://<dashboard>/api/auth/callback/google` |
 | `BIND_MOUNT_ALLOWED_ROOTS` | – | Comma-separated directories that bind mounts must live under |
 | `ALLOW_COMPOSE_TRAEFIK_LABELS` | `false` | Allow raw `traefik.*` labels in compose files |
 | `CONTAINER_PIDS_LIMIT` | `4096` | Max processes per container (`0` = unlimited) |

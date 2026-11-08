@@ -50,8 +50,8 @@ const registerSchema = z
 			.min(1, {
 				message: "Password is required",
 			})
-			.refine((password) => password === "" || password.length >= 8, {
-				message: "Password must be at least 8 characters",
+			.refine((password) => password === "" || password.length >= 12, {
+				message: "Password must be at least 12 characters",
 			}),
 		confirmPassword: z
 			.string()
@@ -60,9 +60,9 @@ const registerSchema = z
 			})
 			.refine(
 				(confirmPassword) =>
-					confirmPassword === "" || confirmPassword.length >= 8,
+					confirmPassword === "" || confirmPassword.length >= 12,
 				{
-					message: "Password must be at least 8 characters",
+					message: "Password must be at least 12 characters",
 				},
 			),
 	})
