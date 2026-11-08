@@ -65,6 +65,7 @@ export const buildMariadb = async (rawMariadb: MariadbNested) => {
 			cpuLimit,
 			cpuReservation,
 		}),
+		mariadb.serverId,
 	);
 	const envVariables = prepareEnvironmentVariables(
 		defaultMariadbEnv,

@@ -71,6 +71,7 @@ export const buildLibsql = async (rawLibsql: LibsqlNested) => {
 			cpuLimit,
 			cpuReservation,
 		}),
+		libsql.serverId,
 	);
 	const envVariables = prepareEnvironmentVariables(
 		defaultLibsqlEnv,

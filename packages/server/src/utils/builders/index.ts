@@ -108,6 +108,7 @@ export const mechanizeDockerContainer = async (
 			cpuLimit,
 			cpuReservation,
 		}),
+		application.serverId,
 	);
 
 	const volumesMount = generateVolumeMounts(mounts);

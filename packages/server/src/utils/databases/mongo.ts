@@ -112,6 +112,7 @@ ${command ?? "wait $MONGOD_PID"}`;
 			cpuLimit,
 			cpuReservation,
 		}),
+		mongo.serverId,
 	);
 
 	const envVariables = prepareEnvironmentVariables(

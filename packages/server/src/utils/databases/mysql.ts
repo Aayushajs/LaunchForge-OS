@@ -71,6 +71,7 @@ export const buildMysql = async (rawMysql: MysqlNested) => {
 			cpuLimit,
 			cpuReservation,
 		}),
+		mysql.serverId,
 	);
 	const envVariables = prepareEnvironmentVariables(
 		defaultMysqlEnv,

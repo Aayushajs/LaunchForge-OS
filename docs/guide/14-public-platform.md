@@ -62,6 +62,8 @@ Every sign-up gets a quota. Choose values that fit your server. On a 24 GB Oracl
 
 You can change any single workspace's quota later under **Settings → Usage & Quotas**, which, as the operator, shows every workspace and what it uses.
 
+The memory and CPU quota only covers services running on your servers. A workspace that connects its own server (**Settings → Remote Servers**, then **Setup Server**, which installs Docker and everything else over SSH in one click) can run anything there without touching its quota. That gives your users both options: deploy on your platform within the free allowance, like Render or Railway, or bring a server and use your dashboard to run it, like a hosted control panel.
+
 ## Step 4: Turn on email
 
 Password-reset emails need an SMTP server. Any provider works; Brevo, Resend and Mailjet have free plans.

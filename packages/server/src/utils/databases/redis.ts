@@ -62,6 +62,7 @@ export const buildRedis = async (rawRedis: RedisNested) => {
 			cpuLimit,
 			cpuReservation,
 		}),
+		redis.serverId,
 	);
 	const envVariables = prepareEnvironmentVariables(
 		defaultRedisEnv,

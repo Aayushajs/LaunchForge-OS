@@ -7,7 +7,12 @@ const state = {
 	quota: null as Record<string, number | null> | null,
 	// Rows returned per service table, in resourceTables order.
 	serviceRows: [] as Array<
-		Array<{ id: string; memoryLimit: string | null; cpuLimit: string | null }>
+		Array<{
+			id: string;
+			memoryLimit: string | null;
+			cpuLimit: string | null;
+			serverId?: string | null;
+		}>
 	>,
 };
 
@@ -114,6 +119,32 @@ describe("withWorkspaceQuota", () => {
 		state.quota = { maxMemoryMb: 1024, maxCpu: null };
 		state.serviceRows = [
 			[{ id: "app-1", memoryLimit: String(1024 * MB), cpuLimit: null }],
+		];
+		await expect(
+			withWorkspaceQuota("org-1", "app-1", resources(1024)),
+		).resolves.toBeDefined();
+	});
+
+	it("does not charge a service that runs on the workspace's own server", async () => {
+		state.quota = { maxMemoryMb: 512, maxCpu: 0.5 };
+		const input = resources(8192, 4);
+
+		await expect(
+			withWorkspaceQuota("org-1", "app-1", input, "server-own"),
+		).resolves.toBe(input);
+	});
+
+	it("leaves services on the workspace's own servers out of the platform total", async () => {
+		state.quota = { maxMemoryMb: 1024, maxCpu: null };
+		state.serviceRows = [
+			[
+				{
+					id: "on-own-server",
+					memoryLimit: String(4096 * MB),
+					cpuLimit: null,
+					serverId: "server-own",
+				},
+			],
 		];
 		await expect(
 			withWorkspaceQuota("org-1", "app-1", resources(1024)),

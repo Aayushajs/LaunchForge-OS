@@ -101,8 +101,10 @@ const effectiveCpu = (limit: string | null) =>
 	limit ? Number.parseInt(limit, 10) : defaultServiceNanoCpus();
 
 /**
- * Memory and CPU reserved by every service of a workspace, counting a
- * service without explicit limits at the default limit it would run with.
+ * Memory and CPU reserved on the platform's own servers by a workspace's
+ * services, counting a service without explicit limits at the default limit
+ * it would run with. Services on the workspace's own servers count towards
+ * the service totals but not towards memory or CPU.
  */
 export const workspaceAllocation = async (
 	organizationId: string,
@@ -120,12 +122,13 @@ export const workspaceAllocation = async (
 				id,
 				memoryLimit: table.memoryLimit,
 				cpuLimit: table.cpuLimit,
+				serverId: table.serverId,
 			})
 			.from(table)
 			.where(inArray(table.environmentId, environmentIds));
 		counts[kind] += rows.length;
 		for (const row of rows) {
-			if (row.id === excludeServiceId) continue;
+			if (row.id === excludeServiceId || row.serverId) continue;
 			memoryBytes += effectiveMemory(row.memoryLimit);
 			nanoCpus += effectiveCpu(row.cpuLimit);
 		}
@@ -138,12 +141,16 @@ export const workspaceAllocation = async (
  * deployed with: services without explicit limits get the default limits
  * (so "unlimited" cannot be used to escape the quota), and the deploy is
  * rejected if the workspace's total would go over its CPU or memory quota.
+ * A service on one of the workspace's own servers uses that server's
+ * capacity, so the quota does not apply to it.
  */
 export const withWorkspaceQuota = async (
 	organizationId: string,
 	serviceId: string,
 	resources: ResourceRequirements,
+	serverId?: string | null,
 ): Promise<ResourceRequirements> => {
+	if (serverId) return resources;
 	const quota = await getWorkspaceQuota(organizationId);
 	if (!quota || (quota.maxMemoryMb === null && quota.maxCpu === null)) {
 		return resources;
