@@ -461,10 +461,22 @@ const MENU: Menu = {
  * Creates a menu based on the current user's role and permissions
  * @returns a menu object with the home, settings, and help items
  */
+// Pages that administer the machine LaunchForge runs on; tenant workspaces
+// cannot use them, so they are hidden there.
+const HOST_PAGES = new Set([
+	"/dashboard/monitoring",
+	"/dashboard/traefik",
+	"/dashboard/docker",
+	"/dashboard/requests",
+	"/dashboard/settings/server",
+	"/dashboard/settings/deployments",
+]);
+
 function createMenuForAuthUser(opts: {
 	auth?: AuthQueryOutput;
 	permissions?: PermissionsOutput;
 	isCloud: boolean;
+	isPlatform?: boolean;
 }): Menu {
 	const filterEnabled = <
 		T extends {
@@ -474,13 +486,18 @@ function createMenuForAuthUser(opts: {
 		items: readonly T[],
 	): T[] =>
 		items.filter((item) =>
-			!item.isEnabled
-				? true
-				: item.isEnabled({
-						auth: opts.auth,
-						permissions: opts.permissions,
-						isCloud: opts.isCloud,
-					}),
+			opts.isPlatform === false &&
+			"url" in item &&
+			typeof item.url === "string" &&
+			HOST_PAGES.has(item.url)
+				? false
+				: !item.isEnabled
+					? true
+					: item.isEnabled({
+							auth: opts.auth,
+							permissions: opts.permissions,
+							isCloud: opts.isCloud,
+						}),
 		) as T[];
 
 	return {
@@ -929,6 +946,7 @@ export default function Page({ children }: Props) {
 
 	const includesProjects = pathname?.includes("/dashboard/project");
 	const { data: isCloud } = api.settings.isCloud.useQuery();
+	const { data: isPlatform } = api.workspace.isPlatform.useQuery();
 
 	const {
 		home: filteredHome,
@@ -938,6 +956,7 @@ export default function Page({ children }: Props) {
 		auth,
 		permissions,
 		isCloud: !!isCloud,
+		isPlatform,
 	});
 
 	const activeItem = findActiveNavItem(
@@ -1180,7 +1199,7 @@ export default function Page({ children }: Props) {
 				</SidebarContent>
 				<SidebarFooter>
 					<SidebarMenu className="flex flex-col gap-2">
-						{!isCloud && permissions?.organization.update && (
+						{!isCloud && isPlatform && permissions?.organization.update && (
 							<SidebarMenuItem>
 								<UpdateServerButton />
 							</SidebarMenuItem>

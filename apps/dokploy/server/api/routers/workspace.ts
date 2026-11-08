@@ -1,6 +1,7 @@
 import { db } from "@dokploy/server/db";
 import { organization } from "@dokploy/server/db/schema";
 import { apiSetWorkspaceQuota } from "@dokploy/server/db/schema/workspace-quota";
+import { isPlatformWorkspace } from "@dokploy/server/services/platform";
 import {
 	getWorkspaceUsageSummary,
 	isPlatformOperator,
@@ -41,6 +42,10 @@ export const workspaceRouter = createTRPCRouter({
 
 	isOperator: protectedProcedure.query(({ ctx }) =>
 		isPlatformOperator(ctx.user.id),
+	),
+
+	isPlatform: protectedProcedure.query(({ ctx }) =>
+		isPlatformWorkspace(ctx.session.activeOrganizationId),
 	),
 
 	all: operatorProcedure.query(async () => {

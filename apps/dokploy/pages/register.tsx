@@ -1,4 +1,5 @@
 import { IS_CLOUD, isAdminPresent, validateRequest } from "@dokploy/server";
+import { isPublicSignupEnabled } from "@dokploy/server/services/platform";
 import { standardSchemaResolver as zodResolver } from "@hookform/resolvers/standard-schema";
 import { AlertTriangle } from "lucide-react";
 import type { GetServerSidePropsContext } from "next";
@@ -78,9 +79,11 @@ type Register = z.infer<typeof registerSchema>;
 interface Props {
 	hasAdmin: boolean;
 	isCloud: boolean;
+	publicSignup?: boolean;
 }
 
-const Register = ({ isCloud }: Props) => {
+const Register = ({ isCloud, publicSignup }: Props) => {
+	const isSignup = isCloud || !!publicSignup;
 	const router = useRouter();
 	const { t } = useTranslation();
 	const { config: whitelabeling } = useWhitelabelingPublic();
@@ -146,10 +149,10 @@ const Register = ({ isCloud }: Props) => {
 								}
 							/>
 						</Link>
-						{isCloud ? t("Sign up") : t("Set up the server")}
+						{isSignup ? t("Sign up") : t("Set up the server")}
 					</CardTitle>
 					<CardDescription>
-						{isCloud
+						{isSignup
 							? t("Enter your email and password to create an account")
 							: t("Create the owner account for this server")}
 					</CardDescription>
@@ -265,7 +268,7 @@ const Register = ({ isCloud }: Props) => {
 								</form>
 							</Form>
 							<div className="flex flex-row justify-between flex-wrap">
-								{isCloud && (
+								{isSignup && (
 									<div className="mt-4 text-center text-sm flex gap-2 text-muted-foreground">
 										{t("Already have an account?")}
 										<Link className="underline" href="/">
@@ -321,7 +324,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	}
 	const hasAdmin = await isAdminPresent();
 
-	if (hasAdmin) {
+	if (hasAdmin && !isPublicSignupEnabled()) {
 		return {
 			redirect: {
 				permanent: false,
@@ -333,6 +336,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 		props: {
 			trpcState: helpers.dehydrate(),
 			isCloud: false,
+			publicSignup: hasAdmin,
 		},
 	};
 }

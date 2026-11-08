@@ -6,10 +6,10 @@ import {
 } from "@dokploy/server";
 import { TRPCError } from "@trpc/server";
 import { apiUpdateWebServerMonitoring } from "@/server/db/schema";
-import { adminProcedure, createTRPCRouter } from "../trpc";
+import { createTRPCRouter, hostAdminProcedure } from "../trpc";
 
 export const adminRouter = createTRPCRouter({
-	setupMonitoring: adminProcedure
+	setupMonitoring: hostAdminProcedure
 		.input(apiUpdateWebServerMonitoring)
 		.mutation(async ({ input }) => {
 			try {

@@ -20,10 +20,12 @@ import {
 	getUserByToken,
 } from "../services/admin";
 import { createAuditLog } from "../services/audit-log";
+import { isPublicSignupEnabled } from "../services/platform";
 import {
 	getWebServerSettings,
 	updateWebServerSettings,
 } from "../services/web-server-settings";
+import { signupWorkspaceQuota } from "../services/workspace-quota";
 import { getHubSpotUTK, submitToHubSpot } from "../utils/tracking/hubspot";
 import { captureEvent, getPostHogSessionId } from "../utils/tracking/posthog";
 import {
@@ -220,7 +222,7 @@ const createBetterAuth = () =>
 										message: "Email does not match invitation",
 									});
 								}
-							} else {
+							} else if (!isPublicSignupEnabled()) {
 								const isAdminPresent = await db.query.member.findFirst({
 									where: eq(schema.member.role, "owner"),
 								});
@@ -268,12 +270,22 @@ const createBetterAuth = () =>
 							}
 						}
 
-						if (IS_CLOUD || !isAdminPresent) {
+						// A public sign-up gets its own tenant workspace with the
+						// sign-up quota; invited users join the inviting workspace.
+						const isPublicSignup =
+							!IS_CLOUD &&
+							!!isAdminPresent &&
+							isPublicSignupEnabled() &&
+							!context?.request?.headers?.get("x-dokploy-token");
+
+						if (IS_CLOUD || !isAdminPresent || isPublicSignup) {
 							const createdOrganization = await db.transaction(async (tx) => {
 								const organization = await tx
 									.insert(schema.organization)
 									.values({
-										name: "My Organization",
+										name: isPublicSignup
+											? `${user.name || user.email.split("@")[0]}'s workspace`
+											: "My Organization",
 										ownerId: user.id,
 										createdAt: new Date(),
 									})
@@ -287,6 +299,12 @@ const createBetterAuth = () =>
 									createdAt: new Date(),
 									isDefault: true, // Mark first organization as default
 								});
+
+								if (isPublicSignup && organization) {
+									await tx
+										.insert(schema.workspaceQuota)
+										.values(signupWorkspaceQuota(organization.id));
+								}
 
 								return organization;
 							});

@@ -31,6 +31,13 @@ vi.mock("@/server/utils/backup", () => ({
 	schedule: vi.fn(),
 }));
 
+const mockAssertHostAccess = vi.hoisted(() => vi.fn());
+
+// The host-access rule has its own tests; these exercise the router itself.
+vi.mock("@dokploy/server/services/platform", () => ({
+	assertHostAccess: mockAssertHostAccess,
+}));
+
 const { settingsRouter } = await import("@/server/api/routers/settings");
 
 const caller = settingsRouter.createCaller({

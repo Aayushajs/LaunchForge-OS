@@ -40,6 +40,21 @@ export const getWorkspaceQuota = async (organizationId: string) =>
 		where: eq(workspaceQuota.organizationId, organizationId),
 	})) ?? null;
 
+const envNumber = (name: string, fallback: number) => {
+	const value = Number(process.env[name]);
+	return Number.isFinite(value) && value > 0 ? value : fallback;
+};
+
+/** Quota for a workspace created through public sign-up. */
+export const signupWorkspaceQuota = (organizationId: string) => ({
+	organizationId,
+	maxMemoryMb: envNumber("SIGNUP_QUOTA_MEMORY_MB", 1024),
+	maxCpu: envNumber("SIGNUP_QUOTA_CPU", 1),
+	maxApplications: envNumber("SIGNUP_QUOTA_APPLICATIONS", 3),
+	maxDatabases: envNumber("SIGNUP_QUOTA_DATABASES", 2),
+	maxDomains: envNumber("SIGNUP_QUOTA_DOMAINS", 5),
+});
+
 export const setWorkspaceQuota = async (
 	input: z.infer<typeof apiSetWorkspaceQuota>,
 ) => {

@@ -1,5 +1,6 @@
 import { IS_CLOUD, isAdminPresent } from "@dokploy/server";
 import { validateRequest } from "@dokploy/server/lib/auth";
+import { isPublicSignupEnabled } from "@dokploy/server/services/platform";
 import { standardSchemaResolver as zodResolver } from "@hookform/resolvers/standard-schema";
 import { Fingerprint } from "lucide-react";
 import type { GetServerSidePropsContext } from "next";
@@ -52,8 +53,9 @@ type LoginForm = z.infer<typeof LoginSchema>;
 
 interface Props {
 	IS_CLOUD: boolean;
+	publicSignup?: boolean;
 }
-export default function Home({ IS_CLOUD }: Props) {
+export default function Home({ IS_CLOUD, publicSignup }: Props) {
 	const router = useRouter();
 	const { t } = useTranslation();
 	const { config: whitelabeling } = useWhitelabelingPublic();
@@ -483,7 +485,7 @@ export default function Home({ IS_CLOUD }: Props) {
 
 				<div className="flex flex-row justify-between flex-wrap">
 					<div className="mt-4 text-center text-sm flex flex-row justify-center gap-2">
-						{IS_CLOUD && (
+						{(IS_CLOUD || publicSignup) && (
 							<Link
 								className="hover:underline text-muted-foreground"
 								href="/register"
@@ -580,6 +582,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 		props: {
 			trpcState: helpers.dehydrate(),
 			hasAdmin,
+			publicSignup: isPublicSignupEnabled(),
 		},
 	};
 }

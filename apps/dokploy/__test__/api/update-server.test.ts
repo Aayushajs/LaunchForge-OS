@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockGetDockerResourceType = vi.hoisted(() => vi.fn());
@@ -84,6 +85,13 @@ vi.mock("@/server/utils/backup", () => ({
 	schedule: vi.fn(),
 }));
 
+const mockAssertHostAccess = vi.hoisted(() => vi.fn());
+
+// The host-access rule has its own tests; these exercise the router itself.
+vi.mock("@dokploy/server/services/platform", () => ({
+	assertHostAccess: mockAssertHostAccess,
+}));
+
 const { settingsRouter } = await import("@/server/api/routers/settings");
 
 const caller = settingsRouter.createCaller({
@@ -94,6 +102,18 @@ const caller = settingsRouter.createCaller({
 describe("settings.updateServer", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+	});
+
+	it("refuses to let a tenant workspace replace the panel image", async () => {
+		mockAssertHostAccess.mockRejectedValueOnce(
+			new TRPCError({ code: "FORBIDDEN", message: "platform workspace only" }),
+		);
+
+		await expect(caller.updateServer()).rejects.toMatchObject({
+			code: "FORBIDDEN",
+		});
+		expect(mockGetDockerResourceType).not.toHaveBeenCalled();
+		expect(mockSpawnAsync).not.toHaveBeenCalled();
 	});
 
 	it("fails with a clear error when no dokploy docker resource exists", async () => {

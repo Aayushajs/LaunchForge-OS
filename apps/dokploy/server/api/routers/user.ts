@@ -49,8 +49,8 @@ import {
 	resolveMetricsEndpoint,
 } from "@/server/utils/metrics-endpoint";
 import {
-	adminProcedure,
 	createTRPCRouter,
+	hostAdminProcedure,
 	protectedProcedure,
 	publicProcedure,
 	withPermission,
@@ -231,7 +231,7 @@ export const userRouter = createTRPCRouter({
 	haveRootAccess: protectedProcedure.query(async ({ ctx }) => {
 		return hasRootAccess(ctx);
 	}),
-	getBackups: adminProcedure.query(async ({ ctx }) => {
+	getBackups: hostAdminProcedure.query(async ({ ctx }) => {
 		try {
 			const memberResult = await db.query.member.findFirst({
 				where: and(

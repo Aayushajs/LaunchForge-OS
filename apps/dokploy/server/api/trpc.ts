@@ -15,6 +15,7 @@ import {
 	checkPermission,
 	resolvePermissions,
 } from "@dokploy/server/services/permission";
+import { assertHostAccess } from "@dokploy/server/services/platform";
 import type { OpenApiMeta } from "@dokploy/trpc-openapi";
 import { initTRPC, TRPCError } from "@trpc/server";
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
@@ -224,14 +225,44 @@ export const adminProcedure = t.procedure.use(({ ctx, next }) => {
  *     .input(...)
  *     .mutation(async ({ ctx, input }) => { ... })
  */
+// Resources that act on a Docker host rather than on a workspace's own
+// services: granting them to a tenant's owner would hand over the host.
+const HOST_RESOURCES = new Set<Resource>(["docker", "traefikFiles"]);
+
+const serverIdOf = (rawInput: unknown) =>
+	rawInput && typeof rawInput === "object" && "serverId" in rawInput
+		? (rawInput as { serverId?: unknown }).serverId
+		: undefined;
+
 export const withPermission = <R extends Resource>(
 	resource: R,
 	action: ActionOf<R>,
 ) =>
-	protectedProcedure.use(async ({ ctx, next }) => {
+	protectedProcedure.use(async ({ ctx, next, getRawInput }) => {
 		await checkPermission(ctx, { [resource]: [action] } as any);
+		if (HOST_RESOURCES.has(resource)) {
+			await assertHostAccess(ctx, serverIdOf(await getRawInput()));
+		}
 		return next();
 	});
+
+/** A permission on a resource, scoped to a host the workspace may manage. */
+export const withHostPermission = <R extends Resource>(
+	resource: R,
+	action: ActionOf<R>,
+) =>
+	withPermission(resource, action).use(async ({ ctx, next, getRawInput }) => {
+		await assertHostAccess(ctx, serverIdOf(await getRawInput()));
+		return next();
+	});
+
+/** Administration of a host: owner or admin of the platform workspace. */
+export const hostAdminProcedure = adminProcedure.use(
+	async ({ ctx, next, getRawInput }) => {
+		await assertHostAccess(ctx, serverIdOf(await getRawInput()));
+		return next();
+	},
+);
 
 export const withAnyPermission = <R extends Resource>(
 	resource: R,
