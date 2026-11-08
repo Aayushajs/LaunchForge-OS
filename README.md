@@ -14,7 +14,7 @@ A self-hosted Platform-as-a-Service for teams: Git-to-production deployments, ma
 [![Release](https://github.com/Aayushajs/LaunchForge-OS/actions/workflows/release.yml/badge.svg)](https://github.com/Aayushajs/LaunchForge-OS/actions/workflows/release.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-[Quickstart](docs/guide/02-quickstart.md) · [Documentation](docs/README.md) · [Engineering case study](docs/engineering/CASE_STUDY.md) · [Architecture](docs/02-architecture/SYSTEM_ARCHITECTURE.md) · [Roadmap](docs/engineering/ROADMAP.md)
+[Website](https://aayushajs.github.io/LaunchForge-OS/) · [Quickstart](docs/guide/02-quickstart.md) · [Documentation](docs/README.md) · [Engineering case study](docs/engineering/CASE_STUDY.md) · [Architecture](docs/02-architecture/SYSTEM_ARCHITECTURE.md) · [Roadmap](docs/engineering/ROADMAP.md)
 
 </div>
 
@@ -289,6 +289,7 @@ LaunchForge-OS/
 ├── tests/load/                     k6 load-test scenarios
 ├── tests/demo/                     Recorded end-to-end walkthrough (Playwright)
 ├── docs/                           User guide, design docs, ADRs, security, performance, runbooks
+├── website/                        Product site (8 languages, light and dark) published to GitHub Pages
 └── .github/                        CI/CD workflows, Dependabot, issue templates
 ```
 
@@ -337,6 +338,7 @@ pnpm run dokploy:dev        # http://localhost:3000
 | [Load test](.github/workflows/load-test.yml) | Weekly, manual | Real install + k6 with latency thresholds; publishes a report |
 | [Demo video](.github/workflows/demo.yml) | Every release, manual | Records the walkthrough video and screenshots on a fresh install |
 | [Docs](.github/workflows/docs.yml) | Markdown changes | Link check across all documentation |
+| [Website](.github/workflows/pages.yml) | `website/` changes, manual | Publishes the multi-language product site to GitHub Pages |
 | [Label pull requests](.github/workflows/labeler.yml) | PRs | Area labels from changed paths |
 | [Stale](.github/workflows/stale.yml) | Weekly | Inactive issue and PR housekeeping |
 | Dependabot | Weekly | npm, GitHub Actions, Docker and Go updates |
