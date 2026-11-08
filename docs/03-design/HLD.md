@@ -65,7 +65,7 @@ stateDiagram-v2
 | Privileges | Compose: no privileged, host namespaces, devices, dangerous capabilities, unconfined profiles |
 | Resources | Per-container PIDs limit; per-workspace CPU/memory quotas with default limits; build timeout |
 | Secrets | Encrypted at rest; never in rollback snapshots in plaintext |
-| Network | **Shared** overlay network across workspaces (gap) |
+| Network | Private overlay network per workspace (`lf-ws-<organizationId>`); Traefik is the only shared member |
 
 ## 7. Quotas and metering
 

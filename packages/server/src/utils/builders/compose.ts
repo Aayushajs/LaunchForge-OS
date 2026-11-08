@@ -10,6 +10,10 @@ import {
 	prepareEnvironmentVariables,
 	prepareEnvironmentVariablesForFile,
 } from "../docker/utils";
+import {
+	ensureWorkspaceNetwork,
+	isWorkspaceNetworkIsolationEnabled,
+} from "../docker/workspace-network";
 import { withResolvedVaultRefs } from "../vault";
 
 export type ComposeNested = InferResultType<
@@ -32,6 +36,10 @@ export const getBuildComposeCommand = async (rawCompose: ComposeNested) => {
 	const exportEnvCommand = getExportEnvCommand(compose);
 
 	const newCompose = await writeDomainsToCompose(compose, domains);
+	const organizationId = compose.environment?.project?.organizationId;
+	if (organizationId && isWorkspaceNetworkIsolationEnabled()) {
+		await ensureWorkspaceNetwork(organizationId, compose.serverId);
+	}
 	const logContent = `
 App Name: ${appName}
 Build Compose 🐳

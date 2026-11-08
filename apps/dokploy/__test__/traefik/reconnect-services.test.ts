@@ -1,5 +1,5 @@
 import { reconnectServicesToTraefik } from "@dokploy/server/services/settings";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
 	findMany: vi.fn(),
@@ -22,10 +22,28 @@ vi.mock("@dokploy/server/utils/process/execAsync", () => ({
 	execAsyncRemote: mocks.execAsyncRemote,
 }));
 
+const WORKSPACE_NETWORKS = `for net in $(docker network ls --filter "label=launchforge.workspace" --format '{{.Name}}'); do docker network connect "$net" dokploy-traefik >/dev/null 2>&1 || true; done\n`;
+
 describe("reconnectServicesToTraefik", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mocks.findMany.mockResolvedValue([]);
+		process.env.WORKSPACE_NETWORK_ISOLATION = "false";
+	});
+
+	afterEach(() => {
+		delete process.env.WORKSPACE_NETWORK_ISOLATION;
+	});
+
+	it("reattaches Traefik to every workspace network after isolated deployments", async () => {
+		delete process.env.WORKSPACE_NETWORK_ISOLATION;
+		mocks.findMany.mockResolvedValue([{ appName: "first-compose" }]);
+
+		await reconnectServicesToTraefik();
+
+		expect(mocks.execAsync).toHaveBeenCalledWith(
+			`docker network connect first-compose $(docker ps --filter "name=dokploy-traefik" -q) >/dev/null 2>&1\n${WORKSPACE_NETWORKS}`,
+		);
 	});
 
 	it("does not execute an empty local command when no isolated deployments exist", async () => {

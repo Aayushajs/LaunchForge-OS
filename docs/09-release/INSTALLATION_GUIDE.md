@@ -56,6 +56,7 @@ docker service update --env-add BUILD_TIMEOUT_SECONDS=1800 dokploy
 | Variable | Default | Effect |
 |---|---|---|
 | `WORKLOAD_POLICY` | `strict` | `permissive` disables the mount/compose policy (single-owner installs only) |
+| `WORKSPACE_NETWORK_ISOLATION` | `true` | `false` puts every service back on the shared `dokploy-network` (single-owner installs only) |
 | `BIND_MOUNT_ALLOWED_ROOTS` | unset | Comma-separated directories bind mounts must live under |
 | `ALLOW_COMPOSE_TRAEFIK_LABELS` | `false` | Allow raw `traefik.*` labels in compose files |
 | `CONTAINER_PIDS_LIMIT` | `4096` | Max processes per container (`0` = unlimited) |

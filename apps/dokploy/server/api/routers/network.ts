@@ -8,6 +8,7 @@ import {
 	removeNetwork,
 	resyncNetwork,
 } from "@dokploy/server";
+import { assertReferencesAccessible } from "@dokploy/server/services/reference-access";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
@@ -52,6 +53,7 @@ export const networkRouter = createTRPCRouter({
 	create: protectedProcedure
 		.input(apiCreateNetwork)
 		.mutation(async ({ ctx, input }) => {
+			await assertReferencesAccessible(ctx, { serverId: input.serverId });
 			const created = await createNetwork(
 				input,
 				ctx.session.activeOrganizationId,
@@ -67,6 +69,7 @@ export const networkRouter = createTRPCRouter({
 	networksToSync: protectedProcedure
 		.input(z.object({ serverId: z.string().optional() }))
 		.query(async ({ ctx, input }) => {
+			await assertReferencesAccessible(ctx, { serverId: input.serverId });
 			return findNetworksToSync(
 				ctx.session.activeOrganizationId,
 				input.serverId ?? null,
@@ -81,6 +84,7 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			await assertReferencesAccessible(ctx, { serverId: input.serverId });
 			const result = await importDockerNetworks(
 				ctx.session.activeOrganizationId,
 				input.serverId ?? null,

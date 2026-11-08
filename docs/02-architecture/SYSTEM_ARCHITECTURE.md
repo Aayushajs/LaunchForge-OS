@@ -106,4 +106,4 @@ sequenceDiagram
 | Workload → host | Containers and builds | Workload policy (no socket / host paths / privileged / host namespaces), PIDs limit, build timeout, quota limits |
 | Control plane → remote servers | SSH | Per-org server access lists; host key verification is **not implemented yet** |
 
-Known architectural gaps: all workspaces share one overlay network (`dokploy-network`); builds use the host Docker daemon (bounded but not sandboxed); DNS-based domain verification is not implemented.
+Known architectural gaps: builds use the host Docker daemon (bounded but not sandboxed); DNS-based domain verification is not implemented.

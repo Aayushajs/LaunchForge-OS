@@ -5,7 +5,7 @@ import { db } from "@dokploy/server/db";
 import { network, patch } from "@dokploy/server/db/schema";
 import type { Compose } from "@dokploy/server/services/compose";
 import type { Domain } from "@dokploy/server/services/domain";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { quote } from "shell-quote";
 import { parse, stringify } from "yaml";
 import { execAsyncRemote } from "../process/execAsync";
@@ -25,6 +25,10 @@ import type {
 	PropertiesNetworks,
 } from "./types";
 import { encodeBase64 } from "./utils";
+import {
+	confineComposeToWorkspaceNetwork,
+	isWorkspaceNetworkIsolationEnabled,
+} from "./workspace-network";
 
 export const cloneCompose = async (compose: Compose) => {
 	let command = "set -e;";
@@ -418,12 +422,17 @@ export const addDomainToCompose = async (
 		declareUsedNetworksInRoot(result, injectedNetworkNames);
 	}
 
+	const organizationId = compose.environment?.project?.organizationId;
+	if (organizationId && isWorkspaceNetworkIsolationEnabled()) {
+		confineComposeToWorkspaceNetwork(result, organizationId);
+	}
+
 	return result;
 };
 
 export const applyServiceNetworks = async (
 	result: ComposeSpecification,
-	compose: Compose,
+	compose: ComposeWithMetadata,
 ) => {
 	const injectedNetworkNames = new Set<string>();
 	const serviceNetworks = compose.serviceNetworks ?? [];
@@ -432,10 +441,16 @@ export const applyServiceNetworks = async (
 	const allNetworkIds = [
 		...new Set(serviceNetworks.flatMap((s) => s.networkIds)),
 	];
+	const organizationId = compose.environment?.project?.organizationId;
 	const networks =
 		allNetworkIds.length > 0
 			? await db.query.network.findMany({
-					where: inArray(network.networkId, allNetworkIds),
+					where: and(
+						inArray(network.networkId, allNetworkIds),
+						...(organizationId
+							? [eq(network.organizationId, organizationId)]
+							: []),
+					),
 				})
 			: [];
 

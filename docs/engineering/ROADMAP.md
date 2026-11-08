@@ -6,7 +6,6 @@ What is missing today, then how LaunchForge grows from "safe self-hosted PaaS" t
 
 | Item | Why | Effort | Skill |
 |---|---|---|---|
-| Per-workspace overlay networks | Workspaces can currently reach each other's services on the shared network (threat S7) | M | Container networking, migrations of live services |
 | SSH host-key pinning | Remote servers are trusted on first use without verification (S14) | S | Secure transport |
 | Cluster router: require `serverId`, operator-only | Swarm join tokens of the control plane are reachable (S10 remainder) | S | AuthZ |
 | SSRF guard for templates `baseUrl` and custom webhooks | Server-side fetch of caller URLs (S8 remainder) | S | Network security (private-range blocking, DNS rebinding) |

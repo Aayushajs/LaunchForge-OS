@@ -2,10 +2,18 @@ import { db } from "@dokploy/server/db";
 import { type apiCreateNetwork, network } from "@dokploy/server/db/schema";
 import { TRPCError } from "@trpc/server";
 import type Dockerode from "dockerode";
-import { and, eq, inArray, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull, ne } from "drizzle-orm";
 import type { z } from "zod";
 import { IS_CLOUD } from "../constants";
 import type { ApplicationNested } from "../utils/builders";
+import {
+	assertNetworkTargetsAllowed,
+	ensureWorkspaceNetwork,
+	isPlatformNetworkName,
+	isWorkspaceNetworkIsolationEnabled,
+	SHARED_NETWORK,
+	workspaceNetworkName,
+} from "../utils/docker/workspace-network";
 import { getRemoteDocker } from "../utils/servers/remote-docker";
 
 const RESERVED_NETWORKS = [
@@ -50,6 +58,7 @@ const parseMtu = (value: string | undefined) => {
 
 const isImportableDockerNetwork = (dockerNetwork: DockerNetworkInfo) =>
 	!RESERVED_NETWORKS.includes(dockerNetwork.Name) &&
+	!isPlatformNetworkName(dockerNetwork.Name) &&
 	!dockerNetwork.Ingress &&
 	(dockerNetwork.Driver === "bridge" || dockerNetwork.Driver === "overlay");
 
@@ -91,6 +100,22 @@ const findNetworksByServer = async (
 	});
 };
 
+// Another workspace's network must stay invisible and unclaimable, or a
+// tenant could import it and attach services to the other tenant's traffic.
+const namesClaimedByOtherWorkspaces = async (
+	organizationId: string,
+	serverId: string | null,
+) => {
+	const rows = await db.query.network.findMany({
+		where: and(
+			ne(network.organizationId, organizationId),
+			serverId ? eq(network.serverId, serverId) : isNull(network.serverId),
+		),
+		columns: { name: true },
+	});
+	return new Set(rows.map((row) => row.name));
+};
+
 export const findNetworksToSync = async (
 	organizationId: string,
 	serverId: string | null,
@@ -119,13 +144,15 @@ export const findNetworksToSync = async (
 
 	const existing = await findNetworksByServer(organizationId, serverId);
 	const existingNames = new Set(existing.map((row) => row.name));
+	const claimed = await namesClaimedByOtherWorkspaces(organizationId, serverId);
 	const dockerByName = new Map(dockerNetworks.map((d) => [d.Name, d] as const));
 
 	const importable = dockerNetworks
 		.filter(
 			(dockerNetwork) =>
 				isImportableDockerNetwork(dockerNetwork) &&
-				!existingNames.has(dockerNetwork.Name),
+				!existingNames.has(dockerNetwork.Name) &&
+				!claimed.has(dockerNetwork.Name),
 		)
 		.map((dockerNetwork) => ({
 			name: dockerNetwork.Name,
@@ -176,6 +203,7 @@ export const importDockerNetworks = async (
 	const docker = await getRemoteDocker(serverId);
 	const existing = await findNetworksByServer(organizationId, serverId);
 	const existingNames = new Set(existing.map((row) => row.name));
+	const claimed = await namesClaimedByOtherWorkspaces(organizationId, serverId);
 
 	const imported: string[] = [];
 	const errors: { name: string; error: string }[] = [];
@@ -183,6 +211,10 @@ export const importDockerNetworks = async (
 	for (const name of names) {
 		if (existingNames.has(name)) {
 			errors.push({ name, error: "Already imported" });
+			continue;
+		}
+		if (claimed.has(name)) {
+			errors.push({ name, error: "Network is reserved or not supported" });
 			continue;
 		}
 		try {
@@ -282,6 +314,16 @@ export const createNetwork = async (
 		}
 	}
 
+	if (
+		RESERVED_NETWORKS.includes(input.name) ||
+		isPlatformNetworkName(input.name)
+	) {
+		throw new TRPCError({
+			code: "BAD_REQUEST",
+			message: `"${input.name}" is reserved for the platform`,
+		});
+	}
+
 	const created = await db.transaction(async (tx) => {
 		const [row] = await tx
 			.insert(network)
@@ -360,10 +402,34 @@ export const recreateNetwork = async (networkId: string) => {
 	return row;
 };
 
+const ownedNetworkNames = async (organizationId: string) => {
+	const rows = await db.query.network.findMany({
+		where: eq(network.organizationId, organizationId),
+		columns: { name: true },
+	});
+	return new Set(rows.map((row) => row.name));
+};
+
 export const resolveServiceNetworks = async (
 	application: Partial<ApplicationNested>,
 ) => {
+	const organizationId = application.environment?.project?.organizationId;
+	const isolate = isWorkspaceNetworkIsolationEnabled() && !!organizationId;
+
 	if (application.networkSwarm) {
+		if (isolate) {
+			const targets = application.networkSwarm
+				.map((entry) => entry.Target)
+				.filter((target): target is string => !!target);
+			assertNetworkTargetsAllowed(
+				targets,
+				organizationId,
+				await ownedNetworkNames(organizationId),
+			);
+			if (targets.includes(workspaceNetworkName(organizationId))) {
+				await ensureWorkspaceNetwork(organizationId, application.serverId);
+			}
+		}
 		return application.networkSwarm;
 	}
 
@@ -374,12 +440,22 @@ export const resolveServiceNetworks = async (
 					where: and(
 						inArray(network.networkId, networkIds),
 						eq(network.driver, "overlay"),
+						...(organizationId
+							? [eq(network.organizationId, organizationId)]
+							: []),
 					),
 					columns: { name: true },
 				})
 			: [];
 
-	const networks = detachDokployNetwork ? [] : ["dokploy-network"];
+	const networks: string[] = [];
+	if (!detachDokployNetwork) {
+		networks.push(
+			isolate
+				? await ensureWorkspaceNetwork(organizationId, application.serverId)
+				: SHARED_NETWORK,
+		);
+	}
 	for (const row of rows) {
 		networks.push(row.name);
 	}

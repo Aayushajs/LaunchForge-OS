@@ -217,6 +217,7 @@ docker service update --env-add BUILD_TIMEOUT_SECONDS=1800 dokploy
 | Variable | Default | Effect |
 |---|---|---|
 | `WORKLOAD_POLICY` | `strict` | `permissive` turns off the mount/compose policy (single-owner installs only) |
+| `WORKSPACE_NETWORK_ISOLATION` | `true` | `false` puts every service back on the shared `dokploy-network` (single-owner installs only) |
 | `BIND_MOUNT_ALLOWED_ROOTS` | – | Comma-separated directories that bind mounts must live under |
 | `ALLOW_COMPOSE_TRAEFIK_LABELS` | `false` | Allow raw `traefik.*` labels in compose files |
 | `CONTAINER_PIDS_LIMIT` | `4096` | Max processes per container (`0` = unlimited) |
@@ -234,13 +235,14 @@ Full reference: [Installation guide → Configuration](docs/09-release/INSTALLAT
 |---|---|---|
 | Container escape through mounts or compose | Workload policy at save and deploy time | [`workload-policy.test.ts`](apps/dokploy/__test__/mounts/workload-policy.test.ts) |
 | Using another workspace's servers, registries, SSH keys or Git installations | Central reference-ownership checks | [`reference-access.test.ts`](apps/dokploy/__test__/permissions/reference-access.test.ts) |
+| Reaching another workspace's services over the network | Private overlay network per workspace; shared and foreign networks rejected in compose, Swarm settings and network import | [`workspace-network.test.ts`](apps/dokploy/__test__/compose/network/workspace-network.test.ts) |
 | Route hijacking | Hostname ownership | [`host-ownership.test.ts`](apps/dokploy/__test__/domains/host-ownership.test.ts) |
 | Forged webhooks | Raw-body HMAC / token verification, POST only | [`webhook-auth.test.ts`](apps/dokploy/__test__/deploy/webhook-auth.test.ts) |
 | Leaked database dumps | AES-256-GCM for 27 credential columns; sealed rollback snapshots | [`rollback-snapshot.test.ts`](apps/dokploy/__test__/services/rollback-snapshot.test.ts) |
 | Resource starvation | Quotas with default limits, PIDs limit, build timeout | [`workspace-quota.test.ts`](apps/dokploy/__test__/quotas/workspace-quota.test.ts) |
 | Unattributed changes | Always-on audit log | [`create-audit-log.test.ts`](apps/dokploy/__test__/audit-log/create-audit-log.test.ts) |
 
-Also: 2FA and passkeys, API keys scoped to one workspace, CodeQL and Trivy on every push. **Open risks** (shared overlay network, builds on the host Docker daemon, no SSH host-key pinning yet) are tracked in the [threat model](docs/06-security/THREAT_MODEL.md); until they close, give workspace-admin rights only to people you would trust with the host. Report vulnerabilities privately per [SECURITY.md](SECURITY.md).
+Also: 2FA and passkeys, API keys scoped to one workspace, CodeQL and Trivy on every push. **Open risks** (builds on the host Docker daemon, no SSH host-key pinning yet) are tracked in the [threat model](docs/06-security/THREAT_MODEL.md); until they close, give workspace-admin rights only to people you would trust with the host. Report vulnerabilities privately per [SECURITY.md](SECURITY.md).
 
 ## Performance
 
@@ -377,7 +379,7 @@ sudo bash install.sh upgrade --version 0.2.0   # move to another
 
 | Horizon | Items |
 |---|---|
-| **Now** | Per-workspace overlay networks · SSH host-key pinning · DNS TXT domain verification and wildcard domains · registry-free rollback |
+| **Now** | SSH host-key pinning · DNS TXT domain verification and wildcard domains · registry-free rollback |
 | **Next** | Highly available control plane (Postgres `SKIP LOCKED` queue, multiple replicas) · rootless build workers · autoscaling · canary and blue-green releases · PostgreSQL point-in-time recovery · infrastructure as code (`launchforge.yaml`) · CLI |
 | **Later** | Usage-based billing · multi-region clusters · managed object storage · OpenTelemetry tracing · image signing and SBOMs · SSO |
 

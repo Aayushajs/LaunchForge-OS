@@ -17,6 +17,10 @@ import {
 	TRAEFIK_VERSION,
 	type TraefikOptions,
 } from "../setup/traefik-setup";
+import {
+	isWorkspaceNetworkIsolationEnabled,
+	WORKSPACE_NETWORK_LABEL,
+} from "../utils/docker/workspace-network";
 export interface IUpdateData {
 	latestVersion: string | null;
 	updateAvailable: boolean;
@@ -582,13 +586,16 @@ export const reconnectServicesToTraefik = async (serverId?: string) => {
 		),
 	});
 
-	if (composeResult.length === 0) {
-		return;
-	}
 	let commands = "";
-
 	for (const compose of composeResult) {
 		commands += `docker network connect ${compose.appName} $(docker ps --filter "name=dokploy-traefik" -q) >/dev/null 2>&1\n`;
+	}
+	if (isWorkspaceNetworkIsolationEnabled()) {
+		// A recreated Traefik container loses every network it was attached to.
+		commands += `for net in $(docker network ls --filter "label=${WORKSPACE_NETWORK_LABEL}" --format '{{.Name}}'); do docker network connect "$net" dokploy-traefik >/dev/null 2>&1 || true; done\n`;
+	}
+	if (!commands) {
+		return;
 	}
 
 	if (serverId) {
