@@ -22,6 +22,14 @@
 
 **Is my data encrypted?** Secrets (env vars, database passwords, SSH keys, Git tokens, registry and S3 keys, certificate keys) are encrypted at rest with AES-256-GCM. Keep the encryption key (a Docker secret created by the installer) with your backups.
 
+**I forgot my password.** Use **Forgot password?** on the sign-in page. If the server has no email set up, run this on the server and sign in with the password it prints:
+
+```bash
+docker exec $(docker ps -qf name=dokploy.1) node dist/reset-password.mjs you@example.com
+```
+
+**GitHub says the hook URL is not reachable (localhost).** GitHub only accepts webhooks it can reach from the internet. On a local or private address LaunchForge now creates the GitHub App without webhooks: repositories connect and deploy, but pushes do not deploy on their own until the dashboard has a public domain (**Settings → Web Server**).
+
 **Can two teams share one server safely?** Yes for routine use: workspaces cannot see each other's resources, steal domains, mount the host or exceed their quotas. Only the platform workspace can administer the server itself. Before opening sign-ups to strangers, read the [public platform checklist](14-public-platform.md#security-checklist).
 
 **Does a restart lose deployments?** No. Queued deployments are stored in the database and resumed; a build that was running is restarted.

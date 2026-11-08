@@ -119,7 +119,9 @@ A Compose service runs a whole `docker-compose.yml` or a Swarm stack. [Compose a
 | Audit log | **Settings → Audit Logs** | Who did what and when, for every change. Always on. |
 | Sessions | **Settings → Sessions** | See where you are signed in and sign other sessions out. |
 | Two-factor and passkeys | **Settings → Profile** | Authenticator app codes with backup codes, and passkeys. |
-| Sign in with GitHub or Google | Sign-in page | Appears once `GITHUB_CLIENT_ID`/`GITHUB_CLIENT_SECRET` or the Google pair are set. Existing accounts sign in; new accounts follow the same rules as email sign-up. |
+| Sign in with GitHub or Google | **Settings → Sign-in & Email** | Paste the client id and secret of a GitHub OAuth app or a Google OAuth client; the page shows the callback URL to register. The button appears on the sign-in page immediately, without a restart. Environment variables work too. |
+| Email | **Settings → Sign-in & Email** | Any SMTP server (Brevo, Resend, Mailjet and Gmail all work). Used for password resets and invitations; **Send a test email** checks it. The password is stored encrypted. |
+| Forgot password | Sign-in page, **Forgot password?** | With email set up, users get a reset link. Without it, the page shows the command an administrator runs on the server to issue a new password. |
 | Sign-in protection | Automatic | New passwords need at least 12 characters; sign-in, sign-up, password reset and 2FA checks are rate-limited per address. |
 | API keys | **Settings → Profile → API keys** | Keys scoped to one workspace, with optional expiry and rate limits. |
 | Public sign-up | `ALLOW_PUBLIC_SIGNUP=true` | Anyone can register and gets their own workspace with a bounded quota. [Public platform](14-public-platform.md) |

@@ -21,6 +21,7 @@ import {
 } from "../services/admin";
 import { createAuditLog } from "../services/audit-log";
 import { isPublicSignupEnabled } from "../services/platform";
+import { loadAuthProviders } from "../services/sign-in-config";
 import {
 	getWebServerSettings,
 	updateWebServerSettings,
@@ -67,15 +68,21 @@ const resolveTrustedOrigins = async () => {
 	}
 };
 
-/** OAuth providers whose client id and secret are configured. */
-export const enabledSocialProviders = () =>
-	(["github", "google"] as const).filter(
-		(provider) =>
-			!!process.env[`${provider.toUpperCase()}_CLIENT_ID`] &&
-			!!process.env[`${provider.toUpperCase()}_CLIENT_SECRET`],
+type SocialProviders = Awaited<ReturnType<typeof loadAuthProviders>>;
+
+const envSocialProviders = (): SocialProviders =>
+	Object.fromEntries(
+		(["github", "google"] as const).flatMap((provider) => {
+			const clientId = process.env[`${provider.toUpperCase()}_CLIENT_ID`];
+			const clientSecret =
+				process.env[`${provider.toUpperCase()}_CLIENT_SECRET`];
+			return clientId && clientSecret
+				? [[provider, { clientId, clientSecret }]]
+				: [];
+		}),
 	);
 
-const createBetterAuth = () =>
+const createBetterAuth = (socialProviders: SocialProviders) =>
 	betterAuth({
 		database: drizzleAdapter(db, {
 			provider: "pg",
@@ -116,19 +123,7 @@ const createBetterAuth = () =>
 			},
 		},
 		appName: "LaunchForge",
-		socialProviders: Object.fromEntries(
-			enabledSocialProviders().map((provider) => [
-				provider,
-				{
-					clientId: process.env[
-						`${provider.toUpperCase()}_CLIENT_ID`
-					] as string,
-					clientSecret: process.env[
-						`${provider.toUpperCase()}_CLIENT_SECRET`
-					] as string,
-				},
-			]),
-		),
+		socialProviders,
 		// Sign-in and account endpoints are the ones worth guessing at, so they
 		// get much tighter limits than the default.
 		rateLimit: {
@@ -499,19 +494,51 @@ const createBetterAuth = () =>
 
 // Una sola instancia de better-auth por proceso aunque el módulo esté
 // duplicado en varios bundles.
+type BetterAuthInstance = ReturnType<typeof createBetterAuth>;
+
 const globalForAuth = globalThis as unknown as {
-	betterAuthInstance?: ReturnType<typeof createBetterAuth>;
+	betterAuthInstance?: BetterAuthInstance;
+	socialProviders?: SocialProviders;
 };
 
 if (!globalForAuth.betterAuthInstance) {
-	globalForAuth.betterAuthInstance = createBetterAuth();
+	globalForAuth.socialProviders = envSocialProviders();
+	globalForAuth.betterAuthInstance = createBetterAuth(
+		globalForAuth.socialProviders,
+	);
 }
 
-const { handler, api } = globalForAuth.betterAuthInstance;
+// The instance is rebuilt when sign-in providers change, so callers always
+// go through this accessor instead of keeping a reference.
+const instance = () => globalForAuth.betterAuthInstance as BetterAuthInstance;
+const api = new Proxy({} as BetterAuthInstance["api"], {
+	get: (_target, key) => instance().api[key as keyof BetterAuthInstance["api"]],
+});
+
+/** OAuth providers that sign-in currently offers. */
+export const enabledSocialProviders = () =>
+	Object.keys(globalForAuth.socialProviders ?? {}) as ("github" | "google")[];
+
+/**
+ * Re-reads the OAuth apps saved in the dashboard (falling back to the
+ * environment) and rebuilds sign-in with them. Called at start-up and after
+ * the settings change.
+ */
+export const reloadAuthProviders = async () => {
+	const providers = await loadAuthProviders();
+	globalForAuth.socialProviders = providers;
+	globalForAuth.betterAuthInstance = createBetterAuth(providers);
+	return Object.keys(providers);
+};
 
 const _auth = {
-	handler,
-	createApiKey: api.createApiKey,
+	handler: (request: Request) => instance().handler(request),
+	createApiKey: ((
+		...args: Parameters<BetterAuthInstance["api"]["createApiKey"]>
+	) =>
+		instance().api.createApiKey(
+			...args,
+		)) as BetterAuthInstance["api"]["createApiKey"],
 };
 
 export type AuthType = typeof _auth;

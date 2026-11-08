@@ -299,6 +299,14 @@ const MENU: Menu = {
 		},
 		{
 			isSingle: true,
+			title: "Sign-in & Email",
+			url: "/dashboard/settings/sign-in",
+			icon: KeyRound,
+			isEnabled: ({ permissions, isCloud }) =>
+				!!(permissions?.organization.update && !isCloud),
+		},
+		{
+			isSingle: true,
 			title: "Profile",
 			url: "/dashboard/settings/profile",
 			icon: User,
@@ -469,6 +477,7 @@ const HOST_PAGES = new Set([
 	"/dashboard/docker",
 	"/dashboard/requests",
 	"/dashboard/settings/server",
+	"/dashboard/settings/sign-in",
 	"/dashboard/settings/deployments",
 ]);
 

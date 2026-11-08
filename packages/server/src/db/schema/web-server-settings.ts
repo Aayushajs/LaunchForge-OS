@@ -14,6 +14,42 @@ import { organization } from "./account";
 import { certificateType } from "./shared";
 import { encryptedText } from "./utils";
 
+export type AuthProviderName = "github" | "google";
+
+export interface AuthProviderCredentials {
+	clientId: string;
+	/** Encrypted at rest. */
+	clientSecret: string;
+}
+
+export type AuthProvidersConfig = Partial<
+	Record<AuthProviderName, AuthProviderCredentials>
+>;
+
+export interface SmtpConfig {
+	host: string;
+	port: number;
+	username: string;
+	/** Encrypted at rest. */
+	password: string;
+	fromAddress: string;
+}
+
+export const apiSaveAuthProvider = z.object({
+	provider: z.enum(["github", "google"]),
+	clientId: z.string().trim().max(256),
+	// Empty keeps the stored secret, so the form never has to show it.
+	clientSecret: z.string().trim().max(512),
+});
+
+export const apiSaveSmtpConfig = z.object({
+	host: z.string().trim().min(1).max(255),
+	port: z.number().int().min(1).max(65535),
+	username: z.string().trim().max(255),
+	password: z.string().max(512),
+	fromAddress: z.string().trim().min(3).max(320),
+});
+
 export const webServerSettings = pgTable("webServerSettings", {
 	id: text("id")
 		.notNull()
@@ -83,6 +119,14 @@ export const webServerSettings = pgTable("webServerSettings", {
 				},
 			},
 		}),
+	// OAuth sign-in apps. Client secrets are stored encrypted.
+	authProviders: jsonb("authProviders")
+		.$type<AuthProvidersConfig>()
+		.notNull()
+		.default({}),
+	// Outgoing email for password resets and invitations. The password is
+	// stored encrypted.
+	smtpConfig: jsonb("smtpConfig").$type<SmtpConfig | null>(),
 	// Whitelabeling Configuration (Enterprise / Proprietary)
 	whitelabelingConfig: jsonb("whitelabelingConfig")
 		.$type<{

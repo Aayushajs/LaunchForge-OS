@@ -14,6 +14,7 @@ import {
 	sendDokployRestartNotifications,
 	setupDirectories,
 } from "@dokploy/server";
+import { reloadAuthProviders } from "@dokploy/server/lib/auth";
 import { config } from "dotenv";
 import next from "next";
 import packageInfo from "../package.json";
@@ -56,6 +57,10 @@ void app.prepare().then(async () => {
 		if (!IS_CLOUD) {
 			setupDockerStatsMonitoringSocketServer(server);
 		}
+
+		await reloadAuthProviders().catch((error) => {
+			console.error("Failed to load sign-in providers:", error);
+		});
 
 		server.listen(PORT, HOST);
 		console.log(`Server Started on: http://${HOST}:${PORT}`);

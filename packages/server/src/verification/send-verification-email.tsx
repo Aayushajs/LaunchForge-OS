@@ -2,6 +2,7 @@ import { render } from "@react-email/components";
 import AccountDeletionCodeTemplate from "../emails/emails/account-deletion-code";
 import InvitationEmail from "../emails/emails/invitation";
 import VerifyEmailTemplate from "../emails/emails/verify-email";
+import { getSmtpConfig } from "../services/sign-in-config";
 import { sendEmailNotification } from "../utils/notifications/utils";
 
 export const sendEmail = async ({
@@ -15,14 +16,20 @@ export const sendEmail = async ({
 	text: string;
 	attachments?: { filename: string; content: Buffer }[];
 }) => {
+	const smtp = await getSmtpConfig();
+	if (!smtp) {
+		throw new Error(
+			"Email is not set up on this server. An administrator can set it up under Settings, Email.",
+		);
+	}
 	await sendEmailNotification(
 		{
-			fromAddress: process.env.SMTP_FROM_ADDRESS || "",
+			fromAddress: smtp.fromAddress,
 			toAddresses: [email],
-			smtpServer: process.env.SMTP_SERVER || "",
-			smtpPort: Number(process.env.SMTP_PORT),
-			username: process.env.SMTP_USERNAME || "",
-			password: process.env.SMTP_PASSWORD || "",
+			smtpServer: smtp.host,
+			smtpPort: smtp.port,
+			username: smtp.username,
+			password: smtp.password,
 		},
 		subject,
 		text,

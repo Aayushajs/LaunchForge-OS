@@ -1408,6 +1408,13 @@
       "when": 1794057584499,
       "tag": "0200_workspace_quota_usage",
       "breakpoints": true
+    },
+    {
+      "idx": 201,
+      "version": "7",
+      "when": 1794134870333,
+      "tag": "0201_sign_in_and_email",
+      "breakpoints": true
     }
   ]
 }

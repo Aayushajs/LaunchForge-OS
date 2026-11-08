@@ -54,6 +54,7 @@ import { transferRouter } from "./routers/transfer";
 import { userRouter } from "./routers/user";
 import { vaultProviderRouter } from "./routers/vault-provider";
 import { volumeBackupsRouter } from "./routers/volume-backups";
+import { signInRouter } from "./routers/sign-in";
 import { workspaceRouter } from "./routers/workspace";
 /**
  * This is the primary router for your server.
@@ -109,6 +110,7 @@ export const appRouter = createTRPCRouter({
 	organization: organizationRouter,
 	customRole: customRoleRouter,
 	auditLog: auditLogRouter,
+	signIn: signInRouter,
 	workspace: workspaceRouter,
 	schedule: scheduleRouter,
 	rollback: rollbackRouter,

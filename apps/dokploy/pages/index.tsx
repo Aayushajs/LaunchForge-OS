@@ -271,7 +271,17 @@ export default function Home({
 						name="password"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>{t("Password")}</FormLabel>
+								<div className="flex items-center justify-between">
+									<FormLabel>{t("Password")}</FormLabel>
+									{!hasCustomPasswordReset && (
+										<Link
+											href="/send-reset-password"
+											className="text-xs text-muted-foreground hover:text-foreground"
+										>
+											{t("Forgot password?")}
+										</Link>
+									)}
+								</div>
 								<FormControl>
 									<Input
 										type="password"
@@ -480,46 +490,29 @@ export default function Home({
 					</>
 				)}
 
-				<div className="flex flex-row justify-between flex-wrap">
-					<div className="mt-4 text-center text-sm flex flex-row justify-center gap-2">
-						{(IS_CLOUD || publicSignup) && (
+				<div className="mt-6 flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
+					{(IS_CLOUD || publicSignup) && (
+						<span>
+							{t("New here?")}{" "}
 							<Link
-								className="hover:underline text-muted-foreground"
+								className="font-medium text-foreground hover:underline"
 								href="/register"
 							>
 								{t("Create an account")}
 							</Link>
-						)}
-					</div>
-
-					<div className="mt-4 text-sm flex flex-row justify-center gap-2">
-						{IS_CLOUD ? (
-							<Link
-								className="hover:underline text-muted-foreground"
-								href="/send-reset-password"
-							>
-								{t("Lost your password?")}
-							</Link>
-						) : hasCustomPasswordReset && !isTwoFactor ? (
-							<button
-								type="button"
-								className="hover:underline text-muted-foreground"
-								onClick={() => setShowForgotPassword((prev) => !prev)}
-							>
-								{showForgotPassword
-									? t("Go back to login")
-									: t("Lost your password?")}
-							</button>
-						) : !hasCustomPasswordReset ? (
-							<Link
-								className="hover:underline text-muted-foreground"
-								href="https://github.com/Aayushajs/LaunchForge-OS#readme"
-								target="_blank"
-							>
-								{t("Lost your password?")}
-							</Link>
-						) : null}
-					</div>
+						</span>
+					)}
+					{hasCustomPasswordReset && !isTwoFactor && (
+						<button
+							type="button"
+							className="hover:text-foreground"
+							onClick={() => setShowForgotPassword((prev) => !prev)}
+						>
+							{showForgotPassword
+								? t("Go back to login")
+								: t("Lost your password?")}
+						</button>
+					)}
 				</div>
 				<div className="p-2" />
 			</CardContent>

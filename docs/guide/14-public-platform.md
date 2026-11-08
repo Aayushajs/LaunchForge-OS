@@ -66,7 +66,7 @@ The memory and CPU quota only covers services running on your servers. A workspa
 
 ## Step 4: Turn on email
 
-Password-reset emails need an SMTP server. Any provider works; Brevo, Resend and Mailjet have free plans.
+Password-reset and invitation emails need an SMTP server. Any provider works; Brevo, Resend and Mailjet have free plans. The easiest way is **Settings → Sign-in & Email** in the dashboard: fill in the server and press **Send a test email**. Environment variables work as well:
 
 | Variable | Example |
 |---|---|
