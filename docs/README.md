@@ -20,6 +20,9 @@ LaunchForge is a self-hosted Platform-as-a-Service. You give it a server and a G
 | 10 | [Monitoring, alerts and usage](guide/10-monitoring.md) | Metrics, logs, notifications, usage and quotas |
 | 11 | [API and automation](guide/11-api.md) | API keys, REST/tRPC, webhooks, CI/CD recipes |
 | 12 | [Troubleshooting and FAQ](guide/12-troubleshooting.md) | Every error message and what to do |
+| 13 | [Run it for free](guide/13-free-hosting.md) | Oracle Cloud Always Free step by step, free domains and HTTPS, small machines |
+| 14 | [Run a public platform](guide/14-public-platform.md) | Open sign-ups like Heroku or Render: wildcard domains, quotas, email, security checklist |
+| 15 | [Feature reference](guide/15-feature-reference.md) | Every feature, where it is and how to use it, plus all operator settings |
 
 Operating an installation: [Installation](09-release/INSTALLATION_GUIDE.md) · [Upgrades](09-release/UPGRADE_GUIDE.md) · [Backup & restore](09-release/BACKUP_RESTORE.md) · [Runbook](09-release/OPERATIONS_RUNBOOK.md)
 

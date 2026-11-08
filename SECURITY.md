@@ -18,4 +18,4 @@ Only the latest release receives security fixes.
 
 ## Known risk areas
 
-LaunchForge runs user-supplied builds and containers. Until the workspace-isolation work on the roadmap ships, treat every user with permission to create services as trusted with the host. See [docs/01-discovery/REPO_AUDIT.md](docs/01-discovery/REPO_AUDIT.md#6-security-findings-prioritised) for the current findings.
+LaunchForge runs user-supplied builds and containers. Workspaces are isolated from each other and from the host (separate networks, workload policy, quotas, host administration limited to the platform workspace), but builds still run on the host's Docker daemon and remote servers are trusted on first SSH connection. The open items are tracked in the [threat model](docs/06-security/THREAT_MODEL.md); read the [public platform checklist](docs/guide/14-public-platform.md#security-checklist) before opening sign-ups to strangers.

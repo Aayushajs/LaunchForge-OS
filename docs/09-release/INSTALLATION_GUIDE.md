@@ -57,6 +57,9 @@ docker service update --env-add BUILD_TIMEOUT_SECONDS=1800 dokploy
 |---|---|---|
 | `WORKLOAD_POLICY` | `strict` | `permissive` disables the mount/compose policy (single-owner installs only) |
 | `WORKSPACE_NETWORK_ISOLATION` | `true` | `false` puts every service back on the shared `dokploy-network` (single-owner installs only) |
+| `ALLOW_PUBLIC_SIGNUP` | off | `true` lets anyone register; each sign-up gets its own workspace ([public platform](../guide/14-public-platform.md)) |
+| `SIGNUP_QUOTA_MEMORY_MB`, `SIGNUP_QUOTA_CPU`, `SIGNUP_QUOTA_APPLICATIONS`, `SIGNUP_QUOTA_DATABASES`, `SIGNUP_QUOTA_DOMAINS` | `1024`, `1`, `3`, `2`, `5` | Quota given to a workspace created by sign-up |
+| `SMTP_SERVER`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM_ADDRESS` | unset | Email for password resets |
 | `BIND_MOUNT_ALLOWED_ROOTS` | unset | Comma-separated directories bind mounts must live under |
 | `ALLOW_COMPOSE_TRAEFIK_LABELS` | `false` | Allow raw `traefik.*` labels in compose files |
 | `CONTAINER_PIDS_LIMIT` | `4096` | Max processes per container (`0` = unlimited) |

@@ -22,7 +22,7 @@
 
 **Is my data encrypted?** Secrets (env vars, database passwords, SSH keys, Git tokens, registry and S3 keys, certificate keys) are encrypted at rest with AES-256-GCM. Keep the encryption key (a Docker secret created by the installer) with your backups.
 
-**Can two teams share one server safely?** Yes for routine use: workspaces cannot see each other's resources, steal domains, mount the host or exceed their quotas. Still treat workspace admins as trusted until SSH host-key checks ship ([threat model](../06-security/THREAT_MODEL.md)).
+**Can two teams share one server safely?** Yes for routine use: workspaces cannot see each other's resources, steal domains, mount the host or exceed their quotas. Only the platform workspace can administer the server itself. Before opening sign-ups to strangers, read the [public platform checklist](14-public-platform.md#security-checklist).
 
 **Does a restart lose deployments?** No. Queued deployments are stored in the database and resumed; a build that was running is restarted.
 

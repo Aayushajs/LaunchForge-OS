@@ -10,6 +10,8 @@ Each control, why it exists, and the test that proves it. Tests are in `apps/dok
 | Custom roles work without a license; role names and actions validated | Least privilege for every install | `permissions/server-terminal.test.ts` |
 | Private overlay network per workspace; Traefik joins each one | Every service shared `dokploy-network`, so any tenant could reach any other tenant's databases | `compose/network/workspace-network.test.ts` |
 | Networks are registered to one workspace; platform names cannot be created or imported | Network import and server ids were unchecked, so a tenant could claim another's network or server | `compose/network/workspace-network.test.ts` |
+| Host administration only from the platform workspace | Workspace owners could change Traefik, prune Docker, read Swarm join tokens and write any Docker volume | `permissions/host-access.test.ts`, `api/update-server.test.ts` |
+| Public sign-up creates a separate workspace with a bounded quota | Open registration must not join strangers to the operator's workspace or give unlimited resources | `permissions/host-access.test.ts` |
 | Hostname owned by one workspace | Prevent route hijacking | `domains/host-ownership.test.ts` |
 | Workload policy for mounts and compose | Container escape is the main multi-tenant risk | `mounts/workload-policy.test.ts` |
 | Webhooks: POST only, raw-body signatures | Forged deliveries and GET-triggered deploys | `deploy/webhook-auth.test.ts`, `deploy/refresh-token-handler.test.ts`, `deploy/github-webhook-handler.test.ts` |

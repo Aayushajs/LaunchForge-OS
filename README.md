@@ -149,6 +149,8 @@ Details: [system architecture](docs/02-architecture/SYSTEM_ARCHITECTURE.md) · [
 | Disk | 20 GB free | 40 GB+ SSD |
 | Network | Public IP; TCP 22, 80, 443, 3000 open | A domain name |
 
+No server yet? Oracle Cloud's Always Free tier runs LaunchForge at no cost: [Run it for free](docs/guide/13-free-hosting.md). Want strangers to sign up and deploy, like Heroku or Render? See [Run a public platform](docs/guide/14-public-platform.md). Every feature is listed in the [feature reference](docs/guide/15-feature-reference.md).
+
 ### 2. Install
 
 ```bash
@@ -169,7 +171,7 @@ Pin a version with `--version 0.1.0`; see every flag with `--help`.
 
 ### 3. First login
 
-Open `http://<server-ip>:3000` and create the owner account. The first account is the **platform operator** and can set quotas for every workspace.
+Open `http://<server-ip>:3000` and create the owner account. The first account is the **platform operator**: its workspace is the only one that can administer the server, and it sets quotas for every other workspace.
 
 ### 4. Deploy your first app
 
@@ -222,6 +224,9 @@ docker service update --env-add BUILD_TIMEOUT_SECONDS=1800 dokploy
 |---|---|---|
 | `WORKLOAD_POLICY` | `strict` | `permissive` turns off the mount/compose policy (single-owner installs only) |
 | `WORKSPACE_NETWORK_ISOLATION` | `true` | `false` puts every service back on the shared `dokploy-network` (single-owner installs only) |
+| `ALLOW_PUBLIC_SIGNUP` | off | `true` lets anyone register; each sign-up gets its own workspace ([public platform](docs/guide/14-public-platform.md)) |
+| `SIGNUP_QUOTA_MEMORY_MB`, `SIGNUP_QUOTA_CPU`, `SIGNUP_QUOTA_APPLICATIONS`, `SIGNUP_QUOTA_DATABASES`, `SIGNUP_QUOTA_DOMAINS` | `1024`, `1`, `3`, `2`, `5` | Quota given to a workspace created by sign-up |
+| `SMTP_SERVER`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM_ADDRESS` | unset | Email for password resets |
 | `BIND_MOUNT_ALLOWED_ROOTS` | – | Comma-separated directories that bind mounts must live under |
 | `ALLOW_COMPOSE_TRAEFIK_LABELS` | `false` | Allow raw `traefik.*` labels in compose files |
 | `CONTAINER_PIDS_LIMIT` | `4096` | Max processes per container (`0` = unlimited) |
@@ -239,6 +244,7 @@ Full reference: [Installation guide → Configuration](docs/09-release/INSTALLAT
 |---|---|---|
 | Container escape through mounts or compose | Workload policy at save and deploy time | [`workload-policy.test.ts`](apps/dokploy/__test__/mounts/workload-policy.test.ts) |
 | Using another workspace's servers, registries, SSH keys or Git installations | Central reference-ownership checks | [`reference-access.test.ts`](apps/dokploy/__test__/permissions/reference-access.test.ts) |
+| Tenants administering the server (Traefik, Docker volumes, updates, Swarm tokens) | Host administration only from the platform workspace; remote servers must belong to the caller | [`host-access.test.ts`](apps/dokploy/__test__/permissions/host-access.test.ts) |
 | Reaching another workspace's services over the network | Private overlay network per workspace; shared and foreign networks rejected in compose, Swarm settings and network import | [`workspace-network.test.ts`](apps/dokploy/__test__/compose/network/workspace-network.test.ts) |
 | Route hijacking | Hostname ownership | [`host-ownership.test.ts`](apps/dokploy/__test__/domains/host-ownership.test.ts) |
 | Forged webhooks | Raw-body HMAC / token verification, POST only | [`webhook-auth.test.ts`](apps/dokploy/__test__/deploy/webhook-auth.test.ts) |
@@ -246,7 +252,7 @@ Full reference: [Installation guide → Configuration](docs/09-release/INSTALLAT
 | Resource starvation | Quotas with default limits, PIDs limit, build timeout | [`workspace-quota.test.ts`](apps/dokploy/__test__/quotas/workspace-quota.test.ts) |
 | Unattributed changes | Always-on audit log | [`create-audit-log.test.ts`](apps/dokploy/__test__/audit-log/create-audit-log.test.ts) |
 
-Also: 2FA and passkeys, API keys scoped to one workspace, CodeQL and Trivy on every push. **Open risks** (builds on the host Docker daemon, no SSH host-key pinning yet) are tracked in the [threat model](docs/06-security/THREAT_MODEL.md); until they close, give workspace-admin rights only to people you would trust with the host. Report vulnerabilities privately per [SECURITY.md](SECURITY.md).
+Also: 2FA and passkeys, API keys scoped to one workspace, CodeQL and Trivy on every push. **Open risks** (builds on the host Docker daemon, no SSH host-key pinning yet) are tracked in the [threat model](docs/06-security/THREAT_MODEL.md); read the [public platform checklist](docs/guide/14-public-platform.md#security-checklist) before opening sign-ups. Report vulnerabilities privately per [SECURITY.md](SECURITY.md).
 
 ## Performance
 
