@@ -10,9 +10,12 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    # Patches are grouped; minor updates arrive one per PR so a breaking
+    # 0.x "minor" (drizzle-zod 0.5 to 0.8, for example) cannot hide among
+    # a hundred safe ones.
     groups:
-      minor-and-patch:
-        update-types: [minor, patch]
+      patches:
+        update-types: [patch]
   - package-ecosystem: github-actions
     directory: /
     schedule:
