@@ -1,0 +1,32 @@
+docs:
+  - changed-files:
+      - any-glob-to-any-file: ["docs/**", "**/*.md"]
+security:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "packages/server/src/services/permission.ts"
+          - "packages/server/src/services/reference-access.ts"
+          - "packages/server/src/utils/security/**"
+          - "packages/server/src/lib/auth.ts"
+          - "apps/dokploy/server/utils/webhook-auth.ts"
+deployments:
+  - changed-files:
+      - any-glob-to-any-file: ["packages/server/src/utils/builders/**", "apps/dokploy/server/queues/**"]
+installer:
+  - changed-files:
+      - any-glob-to-any-file: ["scripts/install.sh", "apps/dokploy/bootstrap.ts"]
+database:
+  - changed-files:
+      - any-glob-to-any-file: ["packages/server/src/db/schema/**", "apps/dokploy/drizzle/**"]
+ui:
+  - changed-files:
+      - any-glob-to-any-file: ["apps/dokploy/components/**", "apps/dokploy/pages/**"]
+monitoring:
+  - changed-files:
+      - any-glob-to-any-file: ["apps/monitoring/**", "packages/server/src/utils/metering/**"]
+ci:
+  - changed-files:
+      - any-glob-to-any-file: [".github/**"]
+tests:
+  - changed-files:
+      - any-glob-to-any-file: ["apps/dokploy/__test__/**", "tests/**"]
