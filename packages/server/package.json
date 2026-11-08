@@ -30,7 +30,7 @@
     "generate:drizzle": "pnpm dlx  @better-auth/cli generate --output auth-schema2.ts --config src/lib/auth-cli.ts"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.44",
+    "@ai-sdk/anthropic": "^4.0.97",
     "@ai-sdk/azure": "^3.0.30",
     "@ai-sdk/cohere": "^3.0.21",
     "@ai-sdk/deepinfra": "^2.0.34",
