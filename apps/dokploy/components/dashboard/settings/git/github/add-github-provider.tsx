@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { api } from "@/utils/api";
 import { DEFAULT_GITHUB_URL, resolveGithubBaseUrl } from "@/utils/github-utils";
+import { isPublicHost } from "@/utils/public-host";
 
 export const AddGithubProvider = () => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -29,17 +30,23 @@ export const AddGithubProvider = () => {
 	const { baseUrl, error: githubUrlError } = resolveGithubBaseUrl(githubUrl);
 
 	const randomString = () => Math.random().toString(36).slice(2, 8);
+	const [reachable, setReachable] = useState(true);
 
 	useEffect(() => {
 		const url = document.location.origin;
+		// GitHub rejects an app whose webhook URL it cannot reach, so a
+		// dashboard on localhost or a private address gets an app without
+		// webhooks: repositories work, pushes do not deploy by themselves.
+		const publicHost = isPublicHost(document.location.hostname);
+		setReachable(publicHost);
 		const manifest = JSON.stringify(
 			{
 				redirect_url: `${origin}/api/providers/github/setup?organizationId=${activeOrganization?.id ?? ""}&userId=${session?.user?.id ?? ""}&githubUrl=${encodeURIComponent(baseUrl)}`,
 				name: `LaunchForge-${format(new Date(), "yyyy-MM-dd")}-${randomString()}`,
 				url: origin,
-				hook_attributes: {
-					url: `${url}/api/deploy/github`,
-				},
+				...(publicHost
+					? { hook_attributes: { url: `${url}/api/deploy/github` } }
+					: {}),
 				callback_urls: [`${origin}/api/providers/github/setup`],
 				public: false,
 				request_oauth_on_install: true,
@@ -49,7 +56,7 @@ export const AddGithubProvider = () => {
 					emails: "read",
 					pull_requests: "write",
 				},
-				default_events: ["pull_request", "push"],
+				...(publicHost ? { default_events: ["pull_request", "push"] } : {}),
 			},
 			null,
 			4,
@@ -82,6 +89,15 @@ export const AddGithubProvider = () => {
 								straightforward and only takes a few minutes. Click the button
 								below to get started.
 							</p>
+							{!reachable && (
+								<p className="mt-3 rounded-lg border border-border bg-muted/40 p-3 text-sm text-muted-foreground">
+									This dashboard runs on a private address that GitHub cannot
+									reach, so the app is created without webhooks. You can still
+									connect repositories and deploy them; to deploy on every push,
+									give the dashboard a public domain under Settings, Web Server,
+									and create the app again.
+								</p>
+							)}
 							<div className="mt-4 flex flex-col gap-4">
 								<div className="flex flex-col gap-2">
 									<span className="text-sm">GitHub URL</span>

@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { api } from "@/utils/api";
+import { GetStarted } from "./get-started";
 
 type DeploymentStatus = "idle" | "running" | "done" | "error";
 
@@ -192,6 +193,14 @@ export const ShowHome = () => {
 							</Link>
 						</Button>
 					</div>
+
+					{(totals.services === 0 || recentDeployments.length === 0) && (
+						<GetStarted
+							projects={totals.projects}
+							services={totals.services}
+							deployments={recentDeployments.length}
+						/>
+					)}
 
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 						<StatCard
