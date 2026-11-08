@@ -48,13 +48,18 @@ COPY --from=build /prod/dokploy/node_modules ./node_modules
 # Install docker
 RUN curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh --version 28.5.2 && rm get-docker.sh && curl https://rclone.org/install.sh | bash
 
-# Install Nixpacks and tsx
-# | VERBOSE=1 VERSION=1.21.0 bash
-
+# Install Nixpacks and tsx. The release binary is fetched directly because
+# the upstream install script ignored NIXPACKS_VERSION and always installed
+# whatever was latest; this pins the version the image is tested with.
 ARG NIXPACKS_VERSION=1.41.0
-RUN curl -sSL https://nixpacks.com/install.sh -o install.sh \
-    && chmod +x install.sh \
-    && ./install.sh \
+RUN case "$(uname -m)" in \
+        x86_64) target=x86_64-unknown-linux-musl ;; \
+        aarch64) target=aarch64-unknown-linux-musl ;; \
+        *) echo "Unsupported architecture $(uname -m)" >&2; exit 1 ;; \
+    esac \
+    && curl -fsSL "https://github.com/railwayapp/nixpacks/releases/download/v${NIXPACKS_VERSION}/nixpacks-v${NIXPACKS_VERSION}-${target}.tar.gz" \
+        | tar -xz -C /usr/local/bin nixpacks \
+    && nixpacks --version \
     && pnpm install -g tsx
 
 # Install Railpack
