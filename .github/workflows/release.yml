@@ -60,8 +60,10 @@ jobs:
 
           BUMP="$REQUESTED"
           if [ "$BUMP" = "auto" ]; then
-            if echo "$MESSAGES" | grep -qE '^[a-z]+(\([^)]*\))?!:|BREAKING CHANGE'; then BUMP=major
-            elif echo "$MESSAGES" | grep -qE '^feat(\([^)]*\))?:'; then BUMP=minor
+            # Here-strings, not pipes: under pipefail, grep -q exiting early
+            # makes echo fail with SIGPIPE and the match is lost.
+            if grep -qE '^[a-z]+(\([^)]*\))?!:|BREAKING CHANGE' <<< "$MESSAGES"; then BUMP=major
+            elif grep -qE '^feat(\([^)]*\))?:' <<< "$MESSAGES"; then BUMP=minor
             else BUMP=patch; fi
           fi
 

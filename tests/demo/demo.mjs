@@ -19,6 +19,7 @@ mkdirSync(`${OUT}/screens`, { recursive: true });
 const browser = await chromium.launch();
 const context = await browser.newContext({
 	viewport: { width: 1440, height: 900 },
+	colorScheme: "dark",
 	recordVideo: { dir: `${OUT}/video`, size: { width: 1440, height: 900 } },
 });
 const page = await context.newPage();
@@ -51,13 +52,13 @@ const caption = async (step, title, detail = "") => {
 				bar.id = "lf-demo-caption";
 				bar.style.cssText =
 					"position:fixed;left:24px;right:24px;bottom:24px;z-index:2147483647;" +
-					"background:rgba(11,15,25,.94);color:#fafafa;border:1px solid #f97316;" +
+					"background:rgba(9,9,11,.92);color:#fafafa;border:1px solid rgba(255,255,255,.12);" +
 					"border-radius:14px;padding:16px 22px;font:16px/1.45 system-ui,sans-serif;" +
-					"box-shadow:0 12px 40px rgba(0,0,0,.45);pointer-events:none";
+					"backdrop-filter:blur(12px);box-shadow:0 20px 50px rgba(0,0,0,.6);pointer-events:none";
 				document.body.appendChild(bar);
 			}
 			bar.innerHTML =
-				`<div style="color:#f97316;font-weight:700;letter-spacing:.04em;font-size:13px">${step}</div>` +
+				`<div style="color:#8b8bff;font-weight:600;font-size:13px">${step}</div>` +
 				`<div style="font-size:22px;font-weight:700;margin:2px 0">${title}</div>` +
 				(detail ? `<div style="color:#cbd5e1">${detail}</div>` : "");
 		},
@@ -69,14 +70,14 @@ const caption = async (step, title, detail = "") => {
 const card = async (html, ms = 4500) => {
 	await page.setContent(`<!doctype html><html><body style="margin:0;height:100vh;
 		display:flex;align-items:center;justify-content:center;
-		background:radial-gradient(circle at 80% 10%,#7c2d12,#0b0f19 55%);
+		background:radial-gradient(ellipse at 50% 0%,rgba(91,91,246,.28),#000 60%);
 		color:#fafafa;font-family:system-ui,sans-serif">${html}</body></html>`);
 	await pause(ms);
 };
 
 const terminal = (title, lines) => `
 	<div style="width:1100px">
-		<div style="font-size:15px;color:#f97316;font-weight:700;margin-bottom:10px">${title}</div>
+		<div style="font-size:15px;color:#8b8bff;font-weight:600;margin-bottom:10px">${title}</div>
 		<pre style="background:#020617;border:1px solid #1e293b;border-radius:12px;padding:22px;
 			font:14px/1.55 ui-monospace,Menlo,monospace;color:#e2e8f0;white-space:pre-wrap;margin:0">${lines
 				.map((l) => l.replace(/&/g, "&amp;").replace(/</g, "&lt;"))
@@ -112,7 +113,7 @@ const waitFor = async (check, timeoutMs, everyMs = 3000) => {
 // ── Intro ────────────────────────────────────────────────────────────────
 await card(
 	`<div style="text-align:center">
-	<div style="font-size:64px;font-weight:800">Launch<span style="color:#f97316">Forge</span> OS</div>
+	<div style="font-size:64px;font-weight:700;letter-spacing:-0.03em">LaunchForge</div>
 	<div style="font-size:26px;color:#cbd5e1;margin-top:12px">Push to Git. Ship to production. On servers you own.</div>
 	<div style="font-size:18px;color:#94a3b8;margin-top:36px">A complete walkthrough on a fresh Ubuntu server</div>
 </div>`,
@@ -442,7 +443,7 @@ await screenshot("monitoring");
 // ── Outro ────────────────────────────────────────────────────────────────
 await card(
 	`<div style="text-align:center;max-width:1000px">
-	<div style="font-size:48px;font-weight:800">Launch<span style="color:#f97316">Forge</span> OS</div>
+	<div style="font-size:48px;font-weight:700;letter-spacing:-0.03em">LaunchForge</div>
 	<div style="font-size:22px;color:#cbd5e1;margin-top:18px;line-height:1.6">
 		Isolation · Quotas · Health-gated rollouts · Signed webhooks<br/>Encrypted secrets · Audit log · One-command install
 	</div>
