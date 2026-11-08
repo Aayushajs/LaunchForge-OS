@@ -102,12 +102,11 @@
 	<main id="main">
 		<section class="hero" id="top">
 			<div class="hero-grid" aria-hidden="true"></div>
-			<div class="hero-glow" aria-hidden="true"></div>
 			<div class="wrap hero-inner">
-				<a class="badge intro" style="--d: 0" href="#pricing">
-					<span aria-hidden="true">🚀</span>
-					<span class="badge-sep" aria-hidden="true"></span>
-					<span class="badge-text" data-i18n="hero.badge">Self-host free, or deploy on our servers</span>
+				<a class="badge intro" style="--d: 0" id="release-badge" href="https://github.com/Aayushajs/LaunchForge-OS/releases/latest">
+					<span class="badge-tag" data-i18n="hero.badge.tag">New</span>
+					<span class="badge-version" id="badge-version">v0.9</span>
+					<span class="badge-text" data-i18n="hero.badge">Public sign-up and private workspace networks</span>
 					<svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m4.5 3 3 3-3 3"/></svg>
 				</a>
 				<h1 class="hero-title">
@@ -138,14 +137,20 @@
 					<div class="laptop-lid">
 						<span class="laptop-camera" aria-hidden="true"></span>
 						<div class="laptop-screen">
-							<div class="safari" aria-hidden="true">
-								<svg viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg>
-								<svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
-								<svg viewBox="0 0 24 24"><path d="M3 6c3-1 6-1 9 1 3-2 6-2 9-1v13c-3-1-6-1-9 1-3-2-6-2-9-1Z"/><path d="M12 7v13"/></svg>
-								<div class="address"><span class="aa">AA</span><span class="url"><svg viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="9" rx="2"/><path d="M9 11V8a3 3 0 0 1 6 0v3"/></svg>deploy.yourdomain.com</span><svg class="reload" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></div>
-								<svg viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v8h14v-8"/></svg>
-								<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-								<svg viewBox="0 0 24 24"><rect x="4" y="8" width="12" height="12" rx="2"/><path d="M8 8V5h12v12h-4"/></svg>
+							<div class="window-bar" aria-hidden="true">
+								<span class="lights"><i></i><i></i><i></i></span>
+								<span class="nav-arrows">
+									<svg viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg>
+									<svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
+								</span>
+								<span class="url-pill">
+									<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+									<span>deploy.yourdomain.com</span>
+								</span>
+								<span class="bar-icons">
+									<svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg>
+									<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+								</span>
 							</div>
 							<div class="screen-body">
 								<video id="demo-video" src="assets/launchforge-demo.mp4" poster="assets/screens/application.png" muted loop playsinline preload="metadata"></video>
@@ -182,62 +187,62 @@
 				<div class="feature-grid">
 					<article class="cell" data-reveal style="--d: 0">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg>
-						<h3 data-i18n="f1.t">Any App, Any Language</h3>
+						<h3><span class="bar" aria-hidden="true"></span><span class="t" data-i18n="f1.t">Any App, Any Language</span></h3>
 						<p data-i18n="f1.d">Build from GitHub, GitLab, Gitea, Bitbucket or a Docker image with Nixpacks, buildpacks or your Dockerfile.</p>
 					</article>
 					<article class="cell" data-reveal style="--d: 1">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-						<h3 data-i18n="f2.t">Docker Compose Native</h3>
+						<h3><span class="bar" aria-hidden="true"></span><span class="t" data-i18n="f2.t">Docker Compose Native</span></h3>
 						<p data-i18n="f2.d">Run whole stacks from a compose file. LaunchForge adds domains, HTTPS and logs to every service.</p>
 					</article>
 					<article class="cell" data-reveal style="--d: 2">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></svg>
-						<h3 data-i18n="f3.t">Databases with Backups</h3>
+						<h3><span class="bar" aria-hidden="true"></span><span class="t" data-i18n="f3.t">Databases with Backups</span></h3>
 						<p data-i18n="f3.d">PostgreSQL, MySQL, MariaDB, MongoDB, Redis and libSQL, with scheduled backups to any S3 storage.</p>
 					</article>
 					<article class="cell" data-reveal style="--d: 3">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a5 5 0 1 1 .9-9.9A6 6 0 0 1 19 9.5a4.5 4.5 0 0 1-.5 8.5H7Z"/></svg>
-						<h3 data-i18n="f4.t">Multi-server</h3>
+						<h3><span class="bar" aria-hidden="true"></span><span class="t" data-i18n="f4.t">Multi-server</span></h3>
 						<p data-i18n="f4.d">Add servers over SSH and choose where each service runs. Build on one machine, deploy on another.</p>
 					</article>
 					<article class="cell" data-reveal style="--d: 0">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M22 2 16 8"/></svg>
-						<h3 data-i18n="f5.t">Zero-downtime Rollouts</h3>
+						<h3><span class="bar" aria-hidden="true"></span><span class="t" data-i18n="f5.t">Zero-downtime Rollouts</span></h3>
 						<p data-i18n="f5.d">A release takes traffic only after it passes its health check. Roll back to any earlier build in seconds.</p>
 					</article>
 					<article class="cell" data-reveal style="--d: 1">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
-						<h3 data-i18n="f6.t">Domains and HTTPS</h3>
+						<h3><span class="bar" aria-hidden="true"></span><span class="t" data-i18n="f6.t">Domains and HTTPS</span></h3>
 						<p data-i18n="f6.d">Free Let's Encrypt certificates, issued and renewed automatically for every domain you add.</p>
 					</article>
 					<article class="cell" data-reveal style="--d: 2">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
-						<h3 data-i18n="f7.t">Monitoring and Alerts</h3>
+						<h3><span class="bar" aria-hidden="true"></span><span class="t" data-i18n="f7.t">Monitoring and Alerts</span></h3>
 						<p data-i18n="f7.d">Live logs and CPU, memory and network charts, with alerts to Slack, Discord, Telegram or email.</p>
 					</article>
 					<article class="cell" data-reveal style="--d: 3">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg>
-						<h3 data-i18n="f8.t">Teams and Roles</h3>
+						<h3><span class="bar" aria-hidden="true"></span><span class="t" data-i18n="f8.t">Teams and Roles</span></h3>
 						<p data-i18n="f8.d">Invite your team, create custom roles and see every change in the audit log.</p>
 					</article>
 					<article class="cell" data-reveal style="--d: 0">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-						<h3 data-i18n="f9.t">Isolated Workspaces</h3>
+						<h3><span class="bar" aria-hidden="true"></span><span class="t" data-i18n="f9.t">Isolated Workspaces</span></h3>
 						<p data-i18n="f9.d">Each workspace gets its own private network and resource quota. Share one server safely.</p>
 					</article>
 					<article class="cell" data-reveal style="--d: 1">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 17 6-6-6-6M12 19h8"/></svg>
-						<h3 data-i18n="f10.t">API and Webhooks</h3>
+						<h3><span class="bar" aria-hidden="true"></span><span class="t" data-i18n="f10.t">API and Webhooks</span></h3>
 						<p data-i18n="f10.d">Every action is in the REST API. Trigger deploys from any CI with one request.</p>
 					</article>
 					<article class="cell" data-reveal style="--d: 2">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-						<h3 data-i18n="f11.t">One-click Templates</h3>
+						<h3><span class="bar" aria-hidden="true"></span><span class="t" data-i18n="f11.t">One-click Templates</span></h3>
 						<p data-i18n="f11.d">Start WordPress, Plausible, n8n, Uptime Kuma and many more in one click.</p>
 					</article>
 					<article class="cell" data-reveal style="--d: 3">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
-						<h3 data-i18n="f12.t">Self-hosted and Open Source</h3>
+						<h3><span class="bar" aria-hidden="true"></span><span class="t" data-i18n="f12.t">Self-hosted and Open Source</span></h3>
 						<p data-i18n="f12.d">Your servers, your data, your costs. Apache-2.0 licensed, no vendor lock-in.</p>
 					</article>
 				</div>
@@ -279,9 +284,12 @@
 				</header>
 				<div class="plans">
 					<article class="plan" data-reveal style="--d: 0">
+						<span class="plan-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg></span>
 						<h3 data-i18n="p1.name">Self-hosted</h3>
+						<p class="plan-for" data-i18n="p1.for">For teams that want full control</p>
 						<p class="price"><strong data-i18n="p1.price">Free</strong> <span data-i18n="p1.per">forever</span></p>
 						<p class="plan-desc" data-i18n="p1.desc">Install the whole platform on your server with one command.</p>
+						<hr>
 						<ul>
 							<li data-i18n="p1.b1">Every feature, no limits</li>
 							<li data-i18n="p1.b2">Your data never leaves your server</li>
@@ -292,9 +300,12 @@
 					</article>
 					<article class="plan featured" data-reveal style="--d: 1">
 						<span class="plan-tag" data-i18n="plans.popular">Most popular</span>
+						<span class="plan-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 22v-5M9 8V2M15 8V2"/><path d="M18 8v5a6 6 0 0 1-12 0V8Z"/></svg></span>
 						<h3 data-i18n="p2.name">Your server, our dashboard</h3>
+						<p class="plan-for" data-i18n="p2.for">For developers with a server of their own</p>
 						<p class="price"><strong data-i18n="p2.price">Free</strong> <span data-i18n="p2.per">in beta</span></p>
 						<p class="plan-desc" data-i18n="p2.desc">Sign up, connect any server over SSH and we set it up in one click. Your apps run on your server.</p>
+						<hr>
 						<ul>
 							<li data-i18n="p2.b1">One-click server setup</li>
 							<li data-i18n="p2.b2">No dashboard to maintain</li>
@@ -304,9 +315,12 @@
 						<a class="btn btn-light" href="#" data-panel="signup" data-i18n="p2.cta">Connect a server</a>
 					</article>
 					<article class="plan" data-reveal style="--d: 2">
+						<span class="plan-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 18a5 5 0 1 1 .9-9.9A6 6 0 0 1 19 9.5a4.5 4.5 0 0 1-.5 8.5H7Z"/></svg></span>
 						<h3 data-i18n="p3.name">Hosted apps</h3>
+						<p class="plan-for" data-i18n="p3.for">For side projects and portfolios</p>
 						<p class="price"><strong data-i18n="p3.price">Free</strong> <span data-i18n="p3.per">tier</span></p>
 						<p class="plan-desc" data-i18n="p3.desc">No server at all. Deploy on our servers, like Render or Railway.</p>
+						<hr>
 						<ul>
 							<li data-i18n="p3.b1">1 GB memory and 1 CPU</li>
 							<li data-i18n="p3.b2">3 apps and 2 databases</li>
@@ -316,35 +330,47 @@
 						<a class="btn btn-outline" href="#" data-panel="signup" data-i18n="p3.cta">Deploy on our servers</a>
 					</article>
 				</div>
+				<ul class="plans-note" data-reveal>
+					<li data-i18n="pn.1">Automatic HTTPS</li>
+					<li data-i18n="pn.2">Database backups</li>
+					<li data-i18n="pn.3">One-click rollbacks</li>
+					<li data-i18n="pn.4">Monitoring and alerts</li>
+					<li data-i18n="pn.5">Unlimited team members</li>
+				</ul>
 			</div>
 		</section>
 
-		<section class="section" aria-labelledby="stats-title">
+		<section class="section stats-section" aria-labelledby="stats-title">
+			<div class="stats-grid-bg" aria-hidden="true"></div>
 			<div class="wrap">
 				<header class="section-head" data-reveal>
-					<h2 id="stats-title" data-i18n="stats.title">Numbers We Can Back Up</h2>
-					<p data-i18n="stats.lead">Measured in CI on every change, not made up for a landing page.</p>
+					<h2 id="stats-title" data-i18n="stats.title">We Counted Things So You Don't Have To</h2>
+					<p data-i18n="stats.lead">A few numbers pulled straight from CI and our releases. No vanity metrics, and yes, we checked them twice.</p>
 				</header>
 				<div class="stats">
 					<article class="stat" data-reveal style="--d: 0">
-						<h3 data-i18n="s1.t">Automated tests</h3>
+						<span class="pixels" aria-hidden="true"></span>
+						<h3><span data-i18n="s1.t">Automated tests</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 18.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.5L14 9V3"/><path d="M7 15h10"/></svg></h3>
 						<p data-i18n="s1.d">Unit, integration and real Docker Swarm tests run on every push.</p>
 						<strong><span data-count="1750">1,750</span>+</strong>
 					</article>
 					<article class="stat" data-reveal style="--d: 1">
-						<h3 data-i18n="s2.t">API latency, p95</h3>
+						<span class="pixels" aria-hidden="true"></span>
+						<h3><span data-i18n="s4.t">Releases shipped</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg></h3>
+						<p data-i18n="s4.d">Every merge ships a versioned release with a changelog, automatically.</p>
+						<strong><span data-count="9" id="release-count">9</span></strong>
+					</article>
+					<article class="stat" data-reveal style="--d: 2">
+						<span class="pixels" aria-hidden="true"></span>
+						<h3><span data-i18n="s2.t">API latency, p95</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 13 16 9"/><path d="M3.3 17a9 9 0 1 1 17.4 0"/></svg></h3>
 						<p data-i18n="s2.d">Under load in the published k6 report, with zero errors in 10,826 requests.</p>
 						<strong><span data-count="176">176</span> ms</strong>
 					</article>
-					<article class="stat" data-reveal style="--d: 2">
-						<h3 data-i18n="s3.t">Languages</h3>
+					<article class="stat" data-reveal style="--d: 3">
+						<span class="pixels" aria-hidden="true"></span>
+						<h3><span data-i18n="s3.t">Languages</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></h3>
 						<p data-i18n="s3.d">The dashboard speaks English, Hindi, Spanish, Portuguese, German, French, Japanese and Chinese.</p>
 						<strong><span data-count="8">8</span></strong>
-					</article>
-					<article class="stat" data-reveal style="--d: 3">
-						<h3 data-i18n="s4.t">Minutes to install</h3>
-						<p data-i18n="s4.d">One command sets up Docker, Swarm, PostgreSQL, Traefik and the dashboard on amd64 or arm64.</p>
-						<strong>~<span data-count="5">5</span></strong>
 					</article>
 				</div>
 			</div>
@@ -394,9 +420,13 @@
 
 	<footer class="site-footer">
 		<div class="wrap footer-grid">
-			<div>
-				<a class="brand" href="#top"><img src="assets/icon.svg" alt="" width="24" height="24"><span>LaunchForge</span></a>
-				<p class="muted" data-i18n="footer.tag">Deploy apps and databases on your own servers.</p>
+			<div class="footer-brand">
+				<a class="brand" href="#top"><img src="assets/icon.svg" alt="" width="26" height="26"><span>LaunchForge</span></a>
+				<p data-i18n="footer.tag">Deploy apps and databases on your own servers.</p>
+				<div class="socials">
+					<a href="https://github.com/Aayushajs/LaunchForge-OS" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a>
+					<a href="https://github.com/Aayushajs/LaunchForge-OS/releases.atom" aria-label="Release feed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3a16 16 0 0 1 16 16h-3A13 13 0 0 0 5 6V3Zm0 6a10 10 0 0 1 10 10h-3a7 7 0 0 0-7-7V9Zm1.5 6a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"/></svg></a>
+				</div>
 				<div class="prefs">
 					<label class="lang">
 						<span class="sr-only" data-i18n="lang.label">Language</span>
@@ -420,19 +450,30 @@
 			<nav aria-label="Product">
 				<h4 data-i18n="footer.product">Product</h4>
 				<a href="#features" data-i18n="nav.features">Features</a>
+				<a href="#tour" data-i18n="nav.tour">Product</a>
 				<a href="#pricing" data-i18n="nav.pricing">Pricing</a>
-				<a href="https://github.com/Aayushajs/LaunchForge-OS/releases" data-i18n="nav.releases">Releases</a>
+				<a href="#faq" data-i18n="nav.faq">FAQ</a>
 			</nav>
 			<nav aria-label="Resources">
 				<h4 data-i18n="footer.resources">Resources</h4>
 				<a href="https://github.com/Aayushajs/LaunchForge-OS/tree/main/docs" data-i18n="nav.docs">Docs</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/blob/main/docs/guide/02-quickstart.md" data-i18n="footer.quickstart">Quickstart</a>
 				<a href="https://github.com/Aayushajs/LaunchForge-OS/blob/main/docs/guide/13-free-hosting.md" data-i18n="footer.free">Run it for free</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/blob/main/docs/guide/15-feature-reference.md" data-i18n="dd.ref">Feature reference</a>
+			</nav>
+			<nav aria-label="Project">
+				<h4 data-i18n="footer.project">Project</h4>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/releases" data-i18n="footer.changelog">Changelog</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/blob/main/CONTRIBUTING.md" data-i18n="footer.contributing">Contributing</a>
 				<a href="https://github.com/Aayushajs/LaunchForge-OS/blob/main/SECURITY.md" data-i18n="footer.security">Report a vulnerability</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/blob/main/LICENSE" data-i18n="footer.licenseLink">License</a>
 			</nav>
 		</div>
 		<div class="wrap footer-base">
-			<p class="muted"><span data-i18n="footer.license">Open source under the Apache-2.0 license.</span> © 2026 Aayush Jain</p>
+			<p><span data-i18n="footer.license">Open source under the Apache-2.0 license.</span> © 2026 Aayush Jain</p>
+			<p class="status"><span data-i18n="footer.version">Latest release</span>&nbsp;<span id="footer-version">v0.9</span></p>
 		</div>
+		<p class="wordmark" aria-hidden="true">LaunchForge</p>
 	</footer>
 
 	<dialog class="modal" id="panel-dialog" aria-labelledby="modal-title">

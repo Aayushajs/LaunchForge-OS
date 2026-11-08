@@ -258,5 +258,22 @@
 		})
 		.catch(() => {});
 
+	// The badge, footer and release count follow the published releases; the
+	// markup carries fallbacks for when the GitHub API is unreachable.
+	fetch(
+		"https://api.github.com/repos/Aayushajs/LaunchForge-OS/releases?per_page=100",
+	)
+		.then((response) => (response.ok ? response.json() : null))
+		.then((releases) => {
+			if (!Array.isArray(releases) || releases.length === 0) return;
+			const latest = releases[0].tag_name;
+			document.getElementById("badge-version").textContent = latest;
+			document.getElementById("footer-version").textContent = latest;
+			const count = document.getElementById("release-count");
+			count.dataset.count = String(releases.length);
+			count.textContent = String(releases.length);
+		})
+		.catch(() => {});
+
 	applyLanguage(pickLanguage());
 })();
