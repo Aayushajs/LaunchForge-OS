@@ -1186,6 +1186,30 @@ a {
 	border-bottom: 1px solid var(--line);
 }
 
+/* The hover wash follows the pointer but remains strictly white. */
+.cell::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	background: radial-gradient(
+		circle 220px at var(--mx, 50%) var(--my, 50%),
+		rgb(255 255 255 / 14%),
+		transparent 70%
+	);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	pointer-events: none;
+}
+
+.cell > * {
+	z-index: 1;
+}
+
+.cell:hover::before {
+	opacity: 1;
+}
+
 .cell svg {
 	position: relative;
 	display: block;
