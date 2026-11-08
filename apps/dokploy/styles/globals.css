@@ -481,31 +481,31 @@ body[data-scroll-locked] [data-slot="sidebar-inset"] {
 
 .dark {
 	--background: oklch(0 0 0);
-	--foreground: oklch(0.985 0 0);
-	--card: oklch(0.17 0.004 286);
-	--card-foreground: oklch(0.985 0 0);
-	--popover: oklch(0.17 0.004 286);
-	--popover-foreground: oklch(0.985 0 0);
-	--primary: oklch(0.985 0 0);
-	--primary-foreground: oklch(0.205 0 0);
-	--secondary: oklch(0.24 0.005 286);
-	--secondary-foreground: oklch(0.985 0 0);
-	--muted: oklch(0.21 0.005 286);
-	--muted-foreground: oklch(0.71 0.01 286);
-	--accent: oklch(0.24 0.005 286);
-	--accent-foreground: oklch(0.985 0 0);
-	--destructive: oklch(0.704 0.191 22.216);
-	--border: oklch(1 0 0 / 10%);
-	--input: oklch(1 0 0 / 14%);
-	--ring: oklch(0.556 0 0);
-	--sidebar: oklch(0.12 0.003 286);
-	--sidebar-foreground: oklch(0.92 0 0);
-	--sidebar-primary: oklch(0.985 0 0);
-	--sidebar-primary-foreground: oklch(0.205 0 0);
-	--sidebar-accent: oklch(0.22 0.005 286);
-	--sidebar-accent-foreground: oklch(0.985 0 0);
-	--sidebar-border: oklch(1 0 0 / 9%);
-	--sidebar-ring: oklch(0.556 0 0);
+	--foreground: oklch(0.96 0 0);
+	--card: oklch(0.145 0 0);
+	--card-foreground: oklch(0.96 0 0);
+	--popover: oklch(0.17 0 0);
+	--popover-foreground: oklch(0.96 0 0);
+	--primary: oklch(0.96 0 0);
+	--primary-foreground: oklch(0.15 0 0);
+	--secondary: oklch(0.205 0 0);
+	--secondary-foreground: oklch(0.96 0 0);
+	--muted: oklch(0.19 0 0);
+	--muted-foreground: oklch(0.68 0 0);
+	--accent: oklch(0.215 0 0);
+	--accent-foreground: oklch(0.98 0 0);
+	--destructive: oklch(0.66 0.2 22);
+	--border: oklch(0.25 0 0);
+	--input: oklch(0.27 0 0);
+	--ring: oklch(0.6 0.2 277);
+	--sidebar: oklch(0.085 0 0);
+	--sidebar-foreground: oklch(0.78 0 0);
+	--sidebar-primary: oklch(0.96 0 0);
+	--sidebar-primary-foreground: oklch(0.15 0 0);
+	--sidebar-accent: oklch(0.19 0 0);
+	--sidebar-accent-foreground: oklch(0.98 0 0);
+	--sidebar-border: oklch(0.21 0 0);
+	--sidebar-ring: oklch(0.6 0.2 277);
 	--brand-accent: oklch(0.62 0.2 277);
 	--brand-live: oklch(0.72 0.17 149);
 }
@@ -643,4 +643,255 @@ body[data-scroll-locked] [data-slot="sidebar-inset"] {
 			animation: none;
 		}
 	}
+}
+
+/*
+  LaunchForge dashboard layer. The app is dark only. These rules restyle the
+  shared shadcn primitives through their data-slot hooks, so every page
+  follows without editing each one. They are unlayered on purpose, so they
+  win over the utility classes written on individual pages.
+*/
+
+::selection {
+	background: oklch(0.55 0.2 277 / 45%);
+	color: #fff;
+}
+
+body {
+	font-feature-settings: "ss01", "cv11";
+}
+
+* {
+	scrollbar-width: thin;
+	scrollbar-color: oklch(0.3 0 0) transparent;
+}
+
+/* Sidebar: a flush, full-height rail instead of a floating card. */
+[data-slot="sidebar-container"] {
+	border-right: 1px solid var(--sidebar-border);
+}
+
+[data-slot="sidebar-inner"] {
+	background: var(--sidebar);
+}
+
+[data-slot="sidebar-group-label"] {
+	font-size: 0.72rem;
+	font-weight: 500;
+	letter-spacing: 0.01em;
+	color: oklch(0.5 0 0);
+}
+
+[data-slot="sidebar-menu-button"],
+[data-slot="sidebar-menu-sub-button"] {
+	height: 2rem;
+	border-radius: 7px;
+	color: var(--sidebar-foreground);
+	font-size: 0.86rem;
+	transition:
+		background-color 0.15s ease,
+		color 0.15s ease;
+}
+
+[data-slot="sidebar-menu-button"]:hover,
+[data-slot="sidebar-menu-sub-button"]:hover {
+	background: oklch(0.15 0 0);
+	color: var(--foreground);
+}
+
+[data-slot="sidebar-menu-button"][data-active="true"],
+[data-slot="sidebar-menu-sub-button"][data-active="true"] {
+	position: relative;
+	background: oklch(0.18 0 0);
+	color: #fff;
+	font-weight: 500;
+}
+
+[data-slot="sidebar-menu-button"][data-active="true"]::before {
+	content: "";
+	position: absolute;
+	left: -8px;
+	top: 7px;
+	bottom: 7px;
+	width: 2px;
+	border-radius: 2px;
+	background: var(--brand-accent);
+}
+
+[data-slot="sidebar-menu-button"][data-active="true"] svg {
+	color: #fff;
+}
+
+[data-slot="sidebar-inset"] {
+	background: var(--background);
+}
+
+/* Page frames: the card-in-a-card wrapper becomes one flat panel. */
+[data-slot="card"].bg-sidebar {
+	padding: 0;
+	background: transparent;
+	box-shadow: none;
+	border: 0;
+}
+
+[data-slot="card"].bg-sidebar > .bg-background {
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 14px;
+	box-shadow: none;
+}
+
+/* Cards */
+[data-slot="card"] {
+	border-radius: 12px;
+	box-shadow: 0 0 0 1px var(--border);
+}
+
+[data-slot="card"] [data-slot="card"] {
+	background: oklch(0.11 0 0);
+}
+
+[data-slot="card-title"] {
+	letter-spacing: -0.015em;
+}
+
+[data-slot="card-description"] {
+	color: oklch(0.62 0 0);
+}
+
+/* Tabs: an underline row, like a code host, not a pill bar. */
+[data-slot="tabs-list"][data-orientation="horizontal"] {
+	height: auto;
+	padding: 0;
+	gap: 2px;
+	border-radius: 0;
+	background: transparent;
+	border-bottom: 1px solid var(--border);
+	justify-content: flex-start;
+	overflow-x: auto;
+	scrollbar-width: none;
+}
+
+[data-slot="tabs-list"][data-orientation="horizontal"]
+	[data-slot="tabs-trigger"] {
+	flex: none;
+	height: 2.6rem;
+	padding: 0 0.85rem;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	color: oklch(0.6 0 0);
+	font-weight: 500;
+}
+
+[data-slot="tabs-list"][data-orientation="horizontal"]
+	[data-slot="tabs-trigger"]:hover {
+	color: var(--foreground);
+}
+
+[data-slot="tabs-list"][data-orientation="horizontal"]
+	[data-slot="tabs-trigger"][data-state="active"] {
+	background: transparent;
+	color: #fff;
+	box-shadow: inset 0 -2px 0 #fff;
+}
+
+/* Buttons */
+[data-slot="button"] {
+	border-radius: 8px;
+	letter-spacing: -0.005em;
+}
+
+[data-slot="button"][data-variant="default"] {
+	background: #ededed;
+	color: #0a0a0a;
+}
+
+[data-slot="button"][data-variant="default"]:hover {
+	background: #fff;
+}
+
+[data-slot="button"][data-variant="outline"],
+[data-slot="button"][data-variant="secondary"] {
+	background: oklch(0.13 0 0);
+	border-color: var(--border);
+}
+
+[data-slot="button"][data-variant="outline"]:hover,
+[data-slot="button"][data-variant="secondary"]:hover {
+	background: oklch(0.18 0 0);
+	border-color: oklch(0.32 0 0);
+}
+
+/* Form fields */
+[data-slot="input"],
+[data-slot="textarea"],
+[data-slot="select-trigger"] {
+	background: oklch(0.11 0 0);
+	border-color: var(--input);
+	border-radius: 8px;
+	transition:
+		border-color 0.15s ease,
+		box-shadow 0.15s ease;
+}
+
+[data-slot="input"]:hover,
+[data-slot="textarea"]:hover,
+[data-slot="select-trigger"]:hover {
+	border-color: oklch(0.34 0 0);
+}
+
+[data-slot="input"]:focus-visible,
+[data-slot="textarea"]:focus-visible,
+[data-slot="select-trigger"]:focus-visible {
+	border-color: var(--ring);
+	box-shadow: 0 0 0 3px oklch(0.6 0.2 277 / 22%);
+}
+
+/* Tables */
+[data-slot="table-container"] {
+	border: 1px solid var(--border);
+	border-radius: 12px;
+}
+
+[data-slot="table-header"] [data-slot="table-row"] {
+	background: oklch(0.11 0 0);
+}
+
+[data-slot="table-head"] {
+	height: 2.5rem;
+	font-size: 0.78rem;
+	font-weight: 500;
+	color: oklch(0.6 0 0);
+}
+
+[data-slot="table-row"] {
+	border-color: var(--border);
+}
+
+[data-slot="table-body"] [data-slot="table-row"]:hover {
+	background: oklch(0.12 0 0);
+}
+
+/* Overlays */
+[data-slot="dialog-content"],
+[data-slot="dropdown-menu-content"],
+[data-slot="select-content"],
+[data-slot="popover-content"] {
+	background: var(--popover);
+	border: 1px solid oklch(0.27 0 0);
+	box-shadow:
+		0 24px 60px -12px rgb(0 0 0 / 70%),
+		0 0 0 1px rgb(255 255 255 / 3%);
+}
+
+[data-slot="dialog-overlay"] {
+	background: rgb(0 0 0 / 70%);
+	backdrop-filter: blur(3px);
+}
+
+[data-slot="badge"] {
+	border-radius: 6px;
+	font-weight: 500;
 }

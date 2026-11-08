@@ -44,10 +44,9 @@ const MyApp = ({
 				<TooltipProvider>
 					<ThemeProvider
 						attribute="class"
-						defaultTheme="system"
-						enableSystem
+						defaultTheme="dark"
 						disableTransitionOnChange
-						forcedTheme={Component.theme}
+						forcedTheme="dark"
 					>
 						<NextTopLoader color="var(--primary)" showSpinner={false} />
 						<Analytics />

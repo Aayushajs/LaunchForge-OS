@@ -16,7 +16,6 @@ import { useTranslation } from "@/lib/i18n";
 import { getFallbackAvatarInitials } from "@/lib/utils";
 import { api } from "@/utils/api";
 import { LanguageSwitcher } from "../shared/language-switcher";
-import { ModeToggle } from "../ui/modeToggle";
 import { SidebarMenuButton } from "../ui/sidebar";
 
 const _AUTO_CHECK_UPDATES_INTERVAL_MINUTES = 7;
@@ -69,7 +68,6 @@ export const UserNav = () => {
 							{data?.user?.email}
 						</span>
 					</DropdownMenuLabel>
-					<ModeToggle />
 				</div>
 				<div className="px-2 pb-1.5">
 					<LanguageSwitcher className="w-full" />

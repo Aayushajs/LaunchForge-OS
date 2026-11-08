@@ -7,7 +7,6 @@ import { GithubIcon } from "../icons/data-tools-icons";
 import { LanguageSwitcher } from "../shared/language-switcher";
 import { Logo } from "../shared/logo";
 import { Button } from "../ui/button";
-import { ModeToggle } from "../ui/modeToggle";
 
 interface Props {
 	children: React.ReactNode;
@@ -124,7 +123,6 @@ export const OnboardingLayout = ({ children, leftPanel }: Props) => {
 			<main className="flex min-h-svh w-full flex-col">
 				<div className="flex items-center justify-end gap-2 p-4">
 					<LanguageSwitcher />
-					<ModeToggle />
 				</div>
 				<div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center space-y-6 px-6 py-8">
 					{children}
