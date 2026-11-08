@@ -40,7 +40,7 @@ vi.mock("@dokploy/server/utils/servers/remote-docker", async () => {
 });
 
 vi.mock("@dokploy/server/services/settings", () => ({
-	getDokployImageTag: vi.fn(() => "latest"),
+	getLaunchForgeImage: vi.fn(() => "ghcr.io/aayushajs/launchforge"),
 }));
 
 vi.mock("@dokploy/server/utils/docker/utils", () => ({
