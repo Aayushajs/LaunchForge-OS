@@ -91,7 +91,7 @@ const assertCanDeleteOwnAccount = async (ctx: {
 	if (!IS_CLOUD) {
 		throw new TRPCError({
 			code: "BAD_REQUEST",
-			message: "This feature is only available in Dokploy Cloud",
+			message: "This feature is only available in LaunchForge Cloud",
 		});
 	}
 
@@ -920,7 +920,7 @@ export const userRouter = createTRPCRouter({
 			try {
 				const toEmail = currentInvitation?.email || "";
 				const orgName = organization?.name || "organization";
-				const subject = `You've been invited to join ${orgName} on Dokploy`;
+				const subject = `You've been invited to join ${orgName} on LaunchForge`;
 				const html = await renderInvitationEmail({
 					email: toEmail,
 					inviteLink,

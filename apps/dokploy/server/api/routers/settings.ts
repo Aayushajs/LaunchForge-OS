@@ -778,7 +778,7 @@ export const settingsRouter = createTRPCRouter({
 			});
 
 			openApiDocument.info = {
-				title: "Dokploy API",
+				title: "LaunchForge API",
 				description: "Endpoints for dokploy",
 				version: packageInfo.version,
 			};
@@ -863,7 +863,7 @@ export const settingsRouter = createTRPCRouter({
 					throw new TRPCError({
 						code: "PRECONDITION_FAILED",
 						message:
-							"Configure a domain for the Dokploy panel before disabling port 3000",
+							"Configure a domain for the LaunchForge panel before disabling port 3000",
 					});
 				}
 				if (!isRequestFromPanelHost(ctx.req.headers.host, settings.host)) {

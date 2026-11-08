@@ -53,7 +53,7 @@ export const stripeRouter = createTRPCRouter({
 			if (!IS_CLOUD) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
-					message: "This feature is only available in Dokploy Cloud",
+					message: "This feature is only available in LaunchForge Cloud",
 				});
 			}
 
@@ -429,7 +429,7 @@ export const stripeRouter = createTRPCRouter({
 			if (!IS_CLOUD) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
-					message: "This feature is only available in Dokploy Cloud",
+					message: "This feature is only available in LaunchForge Cloud",
 				});
 			}
 			const owner = await findUserById(ctx.user.ownerId);

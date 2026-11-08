@@ -124,7 +124,7 @@ const cases: Array<[string, Parameters<typeof buildVectorConfigYaml>[0]]> = [
 			logProviders: logsOnly,
 			metricsProviders: [],
 			organizationId: "org_a",
-			serverName: "Dokploy Server (local)",
+			serverName: "LaunchForge Server (local)",
 		},
 	],
 	[
@@ -133,7 +133,7 @@ const cases: Array<[string, Parameters<typeof buildVectorConfigYaml>[0]]> = [
 			logProviders: [],
 			metricsProviders: metricsOnly,
 			organizationId: "org_a",
-			serverName: "Dokploy Server (local)",
+			serverName: "LaunchForge Server (local)",
 		},
 	],
 	[

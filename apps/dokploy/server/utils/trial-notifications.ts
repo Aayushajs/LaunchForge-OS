@@ -69,8 +69,8 @@ export const sendTrialExpiringEmail = async (
 		email: owner.email,
 		subject:
 			daysRemaining === 1
-				? "Your Dokploy trial ends tomorrow"
-				: `Your Dokploy trial ends in ${daysRemaining} days`,
+				? "Your LaunchForge trial ends tomorrow"
+				: `Your LaunchForge trial ends in ${daysRemaining} days`,
 		text: htmlContent,
 	});
 

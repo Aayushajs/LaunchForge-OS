@@ -59,7 +59,7 @@ export const sendInvoiceEmail = async (
 
 		await sendEmail({
 			email: admin.email,
-			subject: `Dokploy Invoice ${invoice.number || ""} - ${amountFormatted}`,
+			subject: `LaunchForge Invoice ${invoice.number || ""} - ${amountFormatted}`,
 			text: htmlContent,
 			attachments,
 		});
@@ -97,7 +97,7 @@ export const sendPaymentFailedEmail = async (
 
 		await sendEmail({
 			email: admin.email,
-			subject: `Action required: Dokploy payment failed - ${amountFormatted}`,
+			subject: `Action required: LaunchForge payment failed - ${amountFormatted}`,
 			text: htmlContent,
 		});
 

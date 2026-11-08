@@ -36,7 +36,7 @@ export const transferRouter = createTRPCRouter({
 			} else if (IS_CLOUD) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
-					message: "The Dokploy server is not available as a target",
+					message: "The LaunchForge server is not available as a target",
 				});
 			}
 

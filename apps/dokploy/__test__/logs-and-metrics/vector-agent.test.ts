@@ -23,7 +23,7 @@ const loadAgent = async (isCloud: boolean) => {
 	}));
 	const locks = new Map<string, Promise<unknown>>();
 	vi.doMock("@dokploy/server/setup/vector-setup", () => ({
-		LOCAL_SERVER_NAME: "Dokploy Server (local)",
+		LOCAL_SERVER_NAME: "LaunchForge Server (local)",
 		reconcileVectorAgent: mocks.reconcileVectorAgent,
 		removeVectorAgent: mocks.removeVectorAgent,
 		withVectorTargetLock: (

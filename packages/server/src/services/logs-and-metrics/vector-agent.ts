@@ -20,7 +20,7 @@ const assertLocalAgentAllowed = (serverId: string | undefined) => {
 		throw new TRPCError({
 			code: "BAD_REQUEST",
 			message:
-				"The Vector agent on the Dokploy host is not available in Dokploy Cloud",
+				"The Vector agent on the LaunchForge host is not available in LaunchForge Cloud",
 		});
 	}
 };

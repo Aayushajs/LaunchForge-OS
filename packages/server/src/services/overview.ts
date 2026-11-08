@@ -544,7 +544,7 @@ export const getAllBackupsForOrganization = async (
 				databaseType: deployment.backup.databaseType,
 				serviceType: null,
 				backupType: deployment.backup.backupType,
-				serviceName: owner?.name ?? "Dokploy Server",
+				serviceName: owner?.name ?? "LaunchForge Server",
 				serviceOwnerId: owner?.id ?? null,
 				serviceOwnerType: owner?.type ?? "web-server",
 				serverId: owner?.serverId ?? null,

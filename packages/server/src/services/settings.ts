@@ -375,7 +375,7 @@ export const togglePanelPort = async (enable: boolean) => {
 	const resourceType = await getDockerResourceType("dokploy");
 	if (resourceType !== "service") {
 		throw new Error(
-			"The Dokploy panel is not running as a Docker Swarm service, the port can't be managed from the UI",
+			"The LaunchForge panel is not running as a Docker Swarm service, the port can't be managed from the UI",
 		);
 	}
 	const publishFlag = enable

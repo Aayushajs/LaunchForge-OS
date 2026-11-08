@@ -41,7 +41,7 @@ export const CADVISOR_IMAGE = "ghcr.io/google/cadvisor:v0.60.6";
 export const CADVISOR_SERVICE_NAME = "dokploy-cadvisor";
 export const CADVISOR_PORT = 4510;
 export const METRICS_SCRAPE_INTERVAL_SECS = 30;
-export const LOCAL_SERVER_NAME = "Dokploy Server (local)";
+export const LOCAL_SERVER_NAME = "LaunchForge Server (local)";
 
 const DOKPLOY_LABELS = [
 	"dokploy.organization.id",

@@ -487,8 +487,8 @@ export const transferService = async (
 		}
 	}
 
-	const sourceName = service.server?.name ?? "Dokploy Server";
-	const targetName = targetServer?.name ?? "Dokploy Server";
+	const sourceName = service.server?.name ?? "LaunchForge Server";
+	const targetName = targetServer?.name ?? "LaunchForge Server";
 	const originalNetworkIds =
 		"networkIds" in service ? service.networkIds : undefined;
 	let switched = false;
