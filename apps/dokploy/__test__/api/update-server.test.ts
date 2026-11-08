@@ -25,6 +25,8 @@ vi.mock("@dokploy/server", () => ({
 	getDockerResourceType: mockGetDockerResourceType,
 	getDokployImageTag: () => "canary",
 	getLogCleanupStatus: noop,
+	getLaunchForgeImageFor: (version: string) =>
+		`ghcr.io/aayushajs/launchforge:${version.replace(/^v/, "")}`,
 	getUpdateData: mockGetUpdateData,
 	getWebServerSettings: noop,
 	IS_CLOUD: false,
@@ -143,7 +145,11 @@ describe("settings.updateServer", () => {
 
 		expect(mockSpawnAsync).toHaveBeenCalledWith(
 			"docker",
-			expect.arrayContaining(["service", "update", "dokploy/dokploy:v9.9.9"]),
+			expect.arrayContaining([
+				"service",
+				"update",
+				"ghcr.io/aayushajs/launchforge:9.9.9",
+			]),
 		);
 	});
 });

@@ -17,6 +17,7 @@ import {
 	getDockerDiskUsage,
 	getDockerResourceType,
 	getDokployImageTag,
+	getLaunchForgeImageFor,
 	getLogCleanupStatus,
 	getPostHogKey,
 	getTraefikOverview,
@@ -147,7 +148,7 @@ export const settingsRouter = createTRPCRouter({
 		if (IS_CLOUD) {
 			return true;
 		}
-		await reloadDockerResource("dokploy", undefined, packageInfo.version);
+		await reloadDockerResource("dokploy");
 		await audit(ctx, {
 			action: "reload",
 			resourceType: "settings",
@@ -603,18 +604,18 @@ export const settingsRouter = createTRPCRouter({
 			throw new TRPCError({
 				code: "BAD_REQUEST",
 				message:
-					"Dokploy is not running as a Docker service, so in-panel updates are unavailable here. Update manually instead.",
+					"LaunchForge is not running as a Docker service, so in-panel updates are unavailable here. Run `install.sh upgrade` instead.",
 			});
 		}
 
 		const data = await getUpdateData(packageInfo.version);
-		if (data.updateAvailable) {
+		if (data.updateAvailable && data.latestVersion) {
 			void spawnAsync("docker", [
 				"service",
 				"update",
 				"--force",
 				"--image",
-				`dokploy/dokploy:${data.latestVersion}`,
+				getLaunchForgeImageFor(data.latestVersion),
 				"dokploy",
 			]);
 			await audit(ctx, {
