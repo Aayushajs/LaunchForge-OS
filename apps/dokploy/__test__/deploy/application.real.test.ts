@@ -75,6 +75,15 @@ vi.mock("@dokploy/server/utils/notifications/build-error", () => ({
 	sendBuildErrorNotifications: vi.fn(),
 }));
 
+// Quotas and health gating have their own tests; the fixture apps here are not
+// long-running servers and the database is mocked without quota tables.
+vi.mock("@dokploy/server/services/workspace-quota", () => ({
+	withWorkspaceQuota: vi.fn(async (_org: string, _id: string, r: unknown) => r),
+}));
+vi.mock("@dokploy/server/utils/builders/rollout", () => ({
+	waitForRollout: vi.fn(async () => undefined),
+}));
+
 vi.mock("@dokploy/server/services/rollbacks", () => ({
 	createRollback: vi.fn(),
 }));

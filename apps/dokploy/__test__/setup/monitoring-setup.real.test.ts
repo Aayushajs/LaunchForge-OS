@@ -13,7 +13,7 @@ vi.mock("@dokploy/server/services/server", () => ({
 	findServerById: vi.fn().mockResolvedValue({
 		serverId: "test-server",
 		serverType: "deploy",
-		sshKeyId: null, // -> getRemoteDocker returns the local docker instance
+		sshKeyId: null,
 		metricsConfig: {
 			server: {
 				type: "Remote",
@@ -29,6 +29,15 @@ vi.mock("@dokploy/server/services/server", () => ({
 		},
 	}),
 }));
+
+// Talk to the local daemon for real; getRemoteDocker itself refuses servers
+// without an SSH key, so the remote client is pointed at the local one here.
+vi.mock("@dokploy/server/utils/servers/remote-docker", async () => {
+	const { docker } = await vi.importActual<
+		typeof import("@dokploy/server/constants")
+	>("@dokploy/server/constants");
+	return { getRemoteDocker: vi.fn(async () => docker) };
+});
 
 vi.mock("@dokploy/server/services/settings", () => ({
 	getDokployImageTag: vi.fn(() => "latest"),
