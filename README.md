@@ -11,7 +11,7 @@ A self-hosted Platform-as-a-Service for teams: Git-to-production deployments, ma
 [![CI](https://github.com/Aayushajs/LaunchForge-OS/actions/workflows/ci.yml/badge.svg)](https://github.com/Aayushajs/LaunchForge-OS/actions/workflows/ci.yml)
 [![Installer](https://github.com/Aayushajs/LaunchForge-OS/actions/workflows/installer.yml/badge.svg)](https://github.com/Aayushajs/LaunchForge-OS/actions/workflows/installer.yml)
 [![CodeQL](https://github.com/Aayushajs/LaunchForge-OS/actions/workflows/codeql.yml/badge.svg)](https://github.com/Aayushajs/LaunchForge-OS/actions/workflows/codeql.yml)
-[![Release images](https://github.com/Aayushajs/LaunchForge-OS/actions/workflows/release.yml/badge.svg)](https://github.com/Aayushajs/LaunchForge-OS/actions/workflows/release.yml)
+[![Release](https://github.com/Aayushajs/LaunchForge-OS/actions/workflows/release.yml/badge.svg)](https://github.com/Aayushajs/LaunchForge-OS/actions/workflows/release.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
 [Quickstart](docs/guide/02-quickstart.md) · [Documentation](docs/README.md) · [Engineering case study](docs/engineering/CASE_STUDY.md) · [Architecture](docs/02-architecture/SYSTEM_ARCHITECTURE.md) · [Roadmap](docs/engineering/ROADMAP.md)
@@ -329,11 +329,11 @@ pnpm run dokploy:dev        # http://localhost:3000
 |---|---|---|
 | [CI](.github/workflows/ci.yml) | Push, PR | Build, typecheck, full test suite against a real Docker Swarm, Go build, format check |
 | [Installer](.github/workflows/installer.yml) | Installer changes, manual | ShellCheck; install → re-install → upgrade → uninstall on Ubuntu 22.04 and 24.04 |
-| [Release images](.github/workflows/release.yml) | `main`, `v*` tags | Multi-arch (amd64/arm64) images to GHCR; GitHub release with generated notes on tags |
+| [Release](.github/workflows/release.yml) | Every merge to `main`, manual | Next semantic version from the commits → multi-arch images to GHCR → `vX.Y.Z` tag and GitHub release with changelog → demo recording |
 | [CodeQL](.github/workflows/codeql.yml) | Push, PR, weekly | Static security analysis of TypeScript and Go |
 | [Security scan](.github/workflows/security-scan.yml) | Push, PR, daily | Trivy: vulnerable dependencies, Dockerfile misconfigurations, committed secrets |
 | [Load test](.github/workflows/load-test.yml) | Weekly, manual | Real install + k6 with latency thresholds; publishes a report |
-| [Demo video](.github/workflows/demo.yml) | Releases, manual | Records the walkthrough video and screenshots on a fresh install |
+| [Demo video](.github/workflows/demo.yml) | Every release, manual | Records the walkthrough video and screenshots on a fresh install |
 | [Docs](.github/workflows/docs.yml) | Markdown changes | Link check across all documentation |
 | [Label pull requests](.github/workflows/labeler.yml) | PRs | Area labels from changed paths |
 | [Stale](.github/workflows/stale.yml) | Weekly | Inactive issue and PR housekeeping |
@@ -341,12 +341,32 @@ pnpm run dokploy:dev        # http://localhost:3000
 
 ## Releases and versioning
 
-Versions follow [Semantic Versioning](https://semver.org). Pushing a tag `vX.Y.Z` builds and publishes multi-arch images and a GitHub release:
+Releases are fully automated. Every merge to `main` that changes code (documentation-only merges are skipped) runs the [Release workflow](.github/workflows/release.yml):
 
-| Image tag | Built from |
+```mermaid
+flowchart LR
+  M[Merge to main] --> V[Next version<br/>from commits]
+  V --> B[Build amd64 + arm64<br/>stamped with version]
+  B --> I[Push images<br/>X.Y.Z · X.Y · latest · edge]
+  I --> R[Tag vX.Y.Z +<br/>GitHub release + changelog]
+  R --> D[Record demo<br/>on a fresh install]
+```
+
+The version follows [Semantic Versioning](https://semver.org) and is derived from [Conventional Commit](https://www.conventionalcommits.org) messages since the last tag:
+
+| Commits since the last release contain | Bump | Example |
+|---|---|---|
+| `feat!:`, `fix!:` or `BREAKING CHANGE` | major | `0.4.2` → `1.0.0` |
+| `feat:` | minor | `0.4.2` → `0.5.0` |
+| anything else (`fix:`, `chore:`, …) | patch | `0.4.2` → `0.4.3` |
+
+A maintainer can also run the workflow by hand from the Actions tab and force a `patch`, `minor` or `major` bump.
+
+| Image tag | Points to |
 |---|---|
-| `X.Y.Z`, `X.Y`, `latest` | Release tag `vX.Y.Z` |
-| `edge` | Every push to `main` |
+| `X.Y.Z` | That exact release |
+| `X.Y` | The newest patch of that minor version |
+| `latest`, `edge` | The newest release |
 
 ```bash
 sudo bash install.sh install --version 0.1.0   # pin a release

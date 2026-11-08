@@ -1,29 +1,83 @@
-name: Release images
+name: Release
 
-# Publishes multi-arch images to GitHub Container Registry using the built-in
-# GITHUB_TOKEN, so no repository secrets are required.
-#   push to main  -> :edge
-#   tag vX.Y.Z    -> :X.Y.Z, :X.Y, :latest
+# Every merge to main ships a release, with no manual steps:
+#   1. compute the next version from the commits since the last tag
+#      (feat: → minor, feat!: / BREAKING CHANGE → major, anything else → patch)
+#   2. build multi-arch images stamped with that version
+#   3. publish them to GHCR as X.Y.Z, X.Y, latest and edge
+#   4. create the vX.Y.Z tag and a GitHub release with the changelog
+#   5. record a fresh demo video of the release
+# Documentation-only changes do not release. Uses GITHUB_TOKEN only.
 on:
   push:
     branches: [main]
-    tags: ["v*.*.*"]
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/pull_request_template.md"
   workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump
+        type: choice
+        options: [auto, patch, minor, major]
+        default: auto
 
 permissions:
   contents: read
   packages: write
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release
   cancel-in-progress: false
 
 jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.next.outputs.version }}
+      previous: ${{ steps.next.outputs.previous }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Compute the next version
+        id: next
+        env:
+          REQUESTED: ${{ inputs.bump || 'auto' }}
+        run: |
+          PREVIOUS=$(git describe --tags --abbrev=0 --match 'v[0-9]*.[0-9]*.[0-9]*' 2>/dev/null || echo "v0.0.0")
+          RANGE=$([ "$PREVIOUS" = "v0.0.0" ] && echo HEAD || echo "$PREVIOUS..HEAD")
+          MESSAGES=$(git log --format='%s%n%b' "$RANGE")
+
+          BUMP="$REQUESTED"
+          if [ "$BUMP" = "auto" ]; then
+            if echo "$MESSAGES" | grep -qE '^[a-z]+(\([^)]*\))?!:|BREAKING CHANGE'; then BUMP=major
+            elif echo "$MESSAGES" | grep -qE '^feat(\([^)]*\))?:'; then BUMP=minor
+            else BUMP=patch; fi
+          fi
+
+          IFS=. read -r MAJOR MINOR PATCH <<< "${PREVIOUS#v}"
+          case "$BUMP" in
+            major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH + 1)) ;;
+          esac
+          VERSION="$MAJOR.$MINOR.$PATCH"
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "previous=$PREVIOUS" >> "$GITHUB_OUTPUT"
+          echo "### $PREVIOUS → v$VERSION ($BUMP)" >> "$GITHUB_STEP_SUMMARY"
+
   build:
     name: ${{ matrix.image.name }} (${{ matrix.platform.arch }})
+    needs: version
     runs-on: ${{ matrix.platform.runner }}
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         image:
           - name: launchforge
@@ -43,9 +97,13 @@ jobs:
       - name: Resolve image name
         run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${{ matrix.image.name }}" >> "$GITHUB_ENV"
 
-      - name: Prepare env file
+      # The dashboard shows and compares this version, so it must match the release.
+      - name: Stamp the version
         if: matrix.image.name == 'launchforge'
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
         run: |
+          sed -i -E "s/\"version\": \"[^\"]*\"/\"version\": \"v${VERSION}\"/" apps/dokploy/package.json
           cp apps/dokploy/.env.production.example .env.production
           cp apps/dokploy/.env.production.example apps/dokploy/.env.production
 
@@ -64,7 +122,9 @@ jobs:
           context: .
           file: ${{ matrix.image.dockerfile }}
           platforms: linux/${{ matrix.platform.arch }}
-          labels: org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.version=${{ needs.version.outputs.version }}
           outputs: type=image,name=${{ env.IMAGE }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha,scope=${{ matrix.image.name }}-${{ matrix.platform.arch }}
           cache-to: type=gha,mode=max,scope=${{ matrix.image.name }}-${{ matrix.platform.arch }}
@@ -84,10 +144,9 @@ jobs:
 
   manifest:
     name: ${{ matrix.image }} manifest
-    needs: build
+    needs: [version, build]
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         image: [launchforge, launchforge-monitoring]
     steps:
@@ -108,39 +167,72 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ env.IMAGE }}
-          tags: |
-            type=edge,branch=main
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-
       - name: Create manifest list and push
         working-directory: ${{ runner.temp }}/digests
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
         run: |
           docker buildx imagetools create \
-            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            -t "${IMAGE}:${VERSION}" \
+            -t "${IMAGE}:${VERSION%.*}" \
+            -t "${IMAGE}:latest" \
+            -t "${IMAGE}:edge" \
             $(printf "${IMAGE}@sha256:%s " *)
-
-      - name: Inspect
-        run: docker buildx imagetools inspect "${IMAGE}:${{ steps.meta.outputs.version }}"
+          docker buildx imagetools inspect "${IMAGE}:${VERSION}"
 
   github-release:
     name: GitHub release
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: manifest
+    needs: [version, manifest]
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: write
     steps:
-      - name: Create release with generated notes
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Write the changelog
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+          PREVIOUS: ${{ needs.version.outputs.previous }}
+        run: |
+          RANGE=$([ "$PREVIOUS" = "v0.0.0" ] && echo HEAD || echo "$PREVIOUS..HEAD")
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/launchforge"
+          {
+            echo "## Install or upgrade"
+            echo
+            echo '```bash'
+            echo "curl -fsSL https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/v${VERSION}/scripts/install.sh | sudo bash -s -- --version ${VERSION}"
+            echo "sudo bash install.sh upgrade --version ${VERSION}   # existing installs"
+            echo '```'
+            echo
+            echo "Images: \`${IMAGE}:${VERSION}\` and \`${IMAGE}-monitoring:${VERSION}\` (linux/amd64, linux/arm64)."
+            echo
+            echo "## Changes"
+            echo
+            git log --no-merges --format='- %s (%h)' "$RANGE"
+            if [ "$PREVIOUS" != "v0.0.0" ]; then
+              echo
+              echo "**Full changelog:** https://github.com/${GITHUB_REPOSITORY}/compare/${PREVIOUS}...v${VERSION}"
+            fi
+          } > notes.md
+
+      - name: Tag and publish the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.version.outputs.version }}
         run: |
-          gh release create "$GITHUB_REF_NAME" \
+          gh release create "v${VERSION}" \
             --repo "$GITHUB_REPOSITORY" \
-            --verify-tag \
-            --generate-notes \
-            --notes "Install or upgrade: \`curl -fsSL https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${GITHUB_REF_NAME}/scripts/install.sh | sudo bash -s -- --version ${GITHUB_REF_NAME#v}\`"
+            --target "$GITHUB_SHA" \
+            --title "LaunchForge v${VERSION}" \
+            --notes-file notes.md \
+            --latest
+
+      # Events from GITHUB_TOKEN do not start workflows, except workflow_dispatch.
+      - name: Record the demo for this release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run demo.yml --repo "$GITHUB_REPOSITORY" --ref main
