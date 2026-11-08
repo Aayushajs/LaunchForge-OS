@@ -33,6 +33,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
+import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { appRouter } from "@/server/api/root";
 import { generateServerSideHelper } from "@/utils/create-server-helpers";
@@ -54,6 +55,7 @@ interface Props {
 }
 export default function Home({ IS_CLOUD }: Props) {
 	const router = useRouter();
+	const { t } = useTranslation();
 	const { config: whitelabeling } = useWhitelabelingPublic();
 	const [isLoginLoading, setIsLoginLoading] = useState(false);
 	const [isPasskeyLoading, setIsPasskeyLoading] = useState(false);
@@ -244,7 +246,7 @@ export default function Home({ IS_CLOUD }: Props) {
 						name="email"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Email</FormLabel>
+								<FormLabel>{t("Email")}</FormLabel>
 								<FormControl>
 									<Input placeholder="john@example.com" {...field} />
 								</FormControl>
@@ -257,11 +259,11 @@ export default function Home({ IS_CLOUD }: Props) {
 						name="password"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Password</FormLabel>
+								<FormLabel>{t("Password")}</FormLabel>
 								<FormControl>
 									<Input
 										type="password"
-										placeholder="Enter your password"
+										placeholder={t("Enter your password")}
 										{...field}
 									/>
 								</FormControl>
@@ -270,7 +272,7 @@ export default function Home({ IS_CLOUD }: Props) {
 						)}
 					/>
 					<Button className="w-full" type="submit" isLoading={isLoginLoading}>
-						Login
+						{t("Sign in")}
 					</Button>
 				</form>
 			</Form>
@@ -282,7 +284,7 @@ export default function Home({ IS_CLOUD }: Props) {
 				isLoading={isPasskeyLoading}
 			>
 				<Fingerprint className="size-4" />
-				Sign in with Passkey
+				{t("Sign in with Passkey")}
 			</Button>
 		</>
 	);
@@ -291,10 +293,12 @@ export default function Home({ IS_CLOUD }: Props) {
 		<div className="flex flex-col gap-4">
 			<p className="text-sm text-muted-foreground whitespace-pre-line">
 				{whitelabeling?.passwordResetGuide ||
-					"To reset your password, please contact your administrator. They will help you regain access to your account."}
+					t(
+						"To reset your password, please contact your administrator. They will help you regain access to your account.",
+					)}
 			</p>
 			<Button className="w-full" asChild>
-				<a href={`mailto:${whitelabeling?.supportEmail}`}>Get Support</a>
+				<a href={`mailto:${whitelabeling?.supportEmail}`}>{t("Get Support")}</a>
 			</Button>
 		</div>
 	);
@@ -317,11 +321,11 @@ export default function Home({ IS_CLOUD }: Props) {
 								undefined
 							}
 						/>
-						Sign in
+						{t("Sign in")}
 					</div>
 				</h1>
 				<p className="text-sm text-muted-foreground">
-					Enter your email and password to sign in
+					{t("Enter your email and password to sign in")}
 				</p>
 			</div>
 			{error && (
@@ -346,7 +350,7 @@ export default function Home({ IS_CLOUD }: Props) {
 							autoComplete="on"
 						>
 							<div className="flex flex-col gap-2">
-								<Label htmlFor="totp-code">2FA Code</Label>
+								<Label htmlFor="totp-code">{t("2FA Code")}</Label>
 								{/* Visible input so password managers can autofill it */}
 								<div className="group relative isolate w-56">
 									<Input
@@ -386,14 +390,14 @@ export default function Home({ IS_CLOUD }: Props) {
 									</div>
 								</div>
 								<CardDescription>
-									Enter the 6-digit code from your authenticator app
+									{t("Enter the 6-digit code from your authenticator app")}
 								</CardDescription>
 								<button
 									type="button"
 									onClick={() => setIsBackupCodeModalOpen(true)}
 									className="text-sm text-muted-foreground hover:underline self-start mt-2"
 								>
-									Lost access to your authenticator app?
+									{t("Lost access to your authenticator app?")}
 								</button>
 							</div>
 
@@ -407,14 +411,14 @@ export default function Home({ IS_CLOUD }: Props) {
 										setTwoFactorCode("");
 									}}
 								>
-									Back
+									{t("Back")}
 								</Button>
 								<Button
 									className="w-full"
 									type="submit"
 									isLoading={isTwoFactorLoading}
 								>
-									Verify
+									{t("Verify")}
 								</Button>
 							</div>
 						</form>
@@ -425,9 +429,9 @@ export default function Home({ IS_CLOUD }: Props) {
 						>
 							<DialogContent>
 								<DialogHeader>
-									<DialogTitle>Enter Backup Code</DialogTitle>
+									<DialogTitle>{t("Enter Backup Code")}</DialogTitle>
 									<DialogDescription>
-										Enter one of your backup codes to access your account
+										{t("Enter one of your backup codes to access your account")}
 									</DialogDescription>
 								</DialogHeader>
 
@@ -437,16 +441,17 @@ export default function Home({ IS_CLOUD }: Props) {
 									className="space-y-4"
 								>
 									<div className="flex flex-col gap-2">
-										<Label>Backup Code</Label>
+										<Label>{t("Backup Code")}</Label>
 										<Input
 											value={backupCode}
 											onChange={(e) => setBackupCode(e.target.value)}
-											placeholder="Enter your backup code"
+											placeholder={t("Enter your backup code")}
 											className="font-mono"
 										/>
 										<CardDescription>
-											Enter one of the backup codes you received when setting up
-											2FA
+											{t(
+												"Enter one of the backup codes you received when setting up 2FA",
+											)}
 										</CardDescription>
 									</div>
 
@@ -460,14 +465,14 @@ export default function Home({ IS_CLOUD }: Props) {
 												setBackupCode("");
 											}}
 										>
-											Cancel
+											{t("Cancel")}
 										</Button>
 										<Button
 											className="w-full"
 											type="submit"
 											isLoading={isBackupCodeLoading}
 										>
-											Verify
+											{t("Verify")}
 										</Button>
 									</div>
 								</form>
@@ -483,7 +488,7 @@ export default function Home({ IS_CLOUD }: Props) {
 								className="hover:underline text-muted-foreground"
 								href="/register"
 							>
-								Create an account
+								{t("Create an account")}
 							</Link>
 						)}
 					</div>
@@ -494,7 +499,7 @@ export default function Home({ IS_CLOUD }: Props) {
 								className="hover:underline text-muted-foreground"
 								href="/send-reset-password"
 							>
-								Lost your password?
+								{t("Lost your password?")}
 							</Link>
 						) : hasCustomPasswordReset && !isTwoFactor ? (
 							<button
@@ -503,8 +508,8 @@ export default function Home({ IS_CLOUD }: Props) {
 								onClick={() => setShowForgotPassword((prev) => !prev)}
 							>
 								{showForgotPassword
-									? "Go back to login"
-									: "Lost your password?"}
+									? t("Go back to login")
+									: t("Lost your password?")}
 							</button>
 						) : !hasCustomPasswordReset ? (
 							<Link
@@ -512,7 +517,7 @@ export default function Home({ IS_CLOUD }: Props) {
 								href="https://github.com/Aayushajs/LaunchForge-OS#readme"
 								target="_blank"
 							>
-								Lost your password?
+								{t("Lost your password?")}
 							</Link>
 						) : null}
 					</div>

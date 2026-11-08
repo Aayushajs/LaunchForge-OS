@@ -7,13 +7,18 @@ name: Release
 #   3. publish them to GHCR as X.Y.Z, X.Y, latest and edge
 #   4. create the vX.Y.Z tag and a GitHub release with the changelog
 #   5. record a fresh demo video of the release
-# Documentation-only changes do not release. Uses GITHUB_TOKEN only.
+# Changes to docs, tests or the product site alone do not release.
+# Uses GITHUB_TOKEN only.
 on:
   push:
     branches: [main]
     paths-ignore:
       - "docs/**"
       - "**/*.md"
+      - "website/**"
+      - "tests/**"
+      - "**/__test__/**"
+      - ".github/workflows/pages.yml"
       - ".github/ISSUE_TEMPLATE/**"
       - ".github/pull_request_template.md"
   workflow_dispatch:

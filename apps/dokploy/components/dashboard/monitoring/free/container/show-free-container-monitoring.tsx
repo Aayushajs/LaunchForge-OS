@@ -1,15 +1,17 @@
-import { formatMb } from "@dokploy/server/monitoring/units";
+import { formatMb, toMb } from "@dokploy/server/monitoring/units";
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useTranslation } from "@/lib/i18n";
 import { api } from "@/utils/api";
-import { DockerBlockChart } from "./docker-block-chart";
-import { DockerCpuChart } from "./docker-cpu-chart";
+import { MetricChart } from "../../metric-chart";
 import { DockerDiskChart } from "./docker-disk-chart";
 import { DockerDiskUsageChart } from "./docker-disk-usage-chart";
-import { DockerMemoryChart } from "./docker-memory-chart";
-import { DockerNetworkChart } from "./docker-network-chart";
+
+const formatTime = (time: string) =>
+	time ? format(new Date(time), "HH:mm:ss") : "";
 
 const defaultData = {
 	cpu: {
@@ -123,6 +125,7 @@ export const ContainerFreeMonitoring = ({
 	appType = "application",
 	serviceId,
 }: Props) => {
+	const { t } = useTranslation();
 	const { data } = api.application.readAppMonitoring.useQuery(
 		{ appName },
 		{
@@ -225,56 +228,40 @@ export const ContainerFreeMonitoring = ({
 			</header>
 
 			<div className="grid gap-6 lg:grid-cols-2">
-				<Card className="bg-background">
-					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="text-sm font-medium">CPU Usage</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className="flex flex-col gap-2 w-full">
-							<span className="text-sm text-muted-foreground">
-								Used: {String(currentData.cpu.value ?? "0%")}
-							</span>
-							<Progress
-								value={Number.parseInt(
-									String(currentData.cpu.value ?? "0%").replace("%", ""),
-									10,
-								)}
-								className="w-full"
-							/>
-							<DockerCpuChart accumulativeData={accumulativeData.cpu} />
-						</div>
-					</CardContent>
-				</Card>
-				<Card className="bg-background">
-					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="text-sm font-medium">Memory Usage</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className="flex flex-col gap-2 w-full">
-							<span className="text-sm text-muted-foreground">
-								{`Used:  ${currentData.memory.value.used} / Limit: ${currentData.memory.value.total} `}
-							</span>
-							<Progress
-								value={
-									// @ts-expect-error
-									(convertMemoryToBytes(currentData.memory.value.used) /
-										// @ts-expect-error
-										convertMemoryToBytes(currentData.memory.value.total)) *
-									100
-								}
-								className="w-full"
-							/>
-							<DockerMemoryChart
-								accumulativeData={accumulativeData.memory}
-								memoryLimitGB={
-									// @ts-expect-error
-									convertMemoryToBytes(currentData.memory.value.total) /
-									1024 ** 3
-								}
-							/>
-						</div>
-					</CardContent>
-				</Card>
+				<MetricChart
+					title={t("CPU")}
+					value={String(currentData.cpu.value ?? "0%")}
+					data={accumulativeData.cpu.map((item) => ({
+						time: item.time,
+						usage: Number.parseFloat(String(item.value)) || 0,
+					}))}
+					series={[
+						{ key: "usage", label: t("CPU"), color: "hsl(var(--chart-1))" },
+					]}
+					formatValue={(v) => `${v.toFixed(1)}%`}
+					xKey="time"
+					formatX={formatTime}
+					changeUnit={t("pts")}
+				/>
+				<MetricChart
+					title={t("Memory")}
+					value={String(currentData.memory.value.used || "0B")}
+					caption={t("Limit {limit}", {
+						limit: String(currentData.memory.value.total || "—"),
+					})}
+					data={accumulativeData.memory.map((item) => ({
+						time: item.time,
+						// @ts-expect-error the stats API types memory as numbers but sends "12MiB" strings
+						usage: convertMemoryToBytes(item.value.used) / 1024 ** 2,
+					}))}
+					series={[
+						{ key: "usage", label: t("Memory"), color: "hsl(var(--chart-2))" },
+					]}
+					formatValue={(v) => formatMb(v)}
+					xKey="time"
+					formatX={formatTime}
+					changeUnit="MB"
+				/>
 				{appName === "dokploy" && (
 					<Card className="bg-background">
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -310,32 +297,40 @@ export const ContainerFreeMonitoring = ({
 					</Card>
 				)}
 
-				<Card className="bg-background">
-					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="text-sm font-medium">Block I/O</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className="flex flex-col gap-2 w-full">
-							<span className="text-sm text-muted-foreground">
-								{`Read: ${formatMb(currentData.block.value.readMb)} / Write: ${formatMb(currentData.block.value.writeMb)}`}
-							</span>
-							<DockerBlockChart accumulativeData={accumulativeData.block} />
-						</div>
-					</CardContent>
-				</Card>
-				<Card className="bg-background">
-					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="text-sm font-medium">Network I/O</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className="flex flex-col gap-2 w-full">
-							<span className="text-sm text-muted-foreground">
-								{`In: ${formatMb(currentData.network.value.inputMb)} / Out: ${formatMb(currentData.network.value.outputMb)}`}
-							</span>
-							<DockerNetworkChart accumulativeData={accumulativeData.network} />
-						</div>
-					</CardContent>
-				</Card>
+				<MetricChart
+					title={t("Disk reads and writes")}
+					data={accumulativeData.block.map((item) => ({
+						time: item.time,
+						read: toMb(item.value.readMb),
+						write: toMb(item.value.writeMb),
+					}))}
+					series={[
+						{ key: "read", label: t("Read"), color: "hsl(var(--chart-3))" },
+						{ key: "write", label: t("Written"), color: "hsl(var(--chart-4))" },
+					]}
+					formatValue={(v) => formatMb(v)}
+					xKey="time"
+					formatX={formatTime}
+				/>
+				<MetricChart
+					title={t("Network")}
+					data={accumulativeData.network.map((item) => ({
+						time: item.time,
+						received: toMb(item.value.inputMb),
+						sent: toMb(item.value.outputMb),
+					}))}
+					series={[
+						{
+							key: "received",
+							label: t("Received"),
+							color: "hsl(var(--chart-3))",
+						},
+						{ key: "sent", label: t("Sent"), color: "hsl(var(--chart-4))" },
+					]}
+					formatValue={(v) => formatMb(v)}
+					xKey="time"
+					formatX={formatTime}
+				/>
 			</div>
 		</div>
 	);

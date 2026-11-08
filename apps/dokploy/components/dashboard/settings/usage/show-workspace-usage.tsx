@@ -16,7 +16,9 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { useTranslation } from "@/lib/i18n";
 import { api } from "@/utils/api";
+import { MetricChart } from "../../monitoring/metric-chart";
 
 const SAMPLE_SECONDS = 60;
 
@@ -50,6 +52,14 @@ const QuotaBar = ({
 
 export const ShowWorkspaceUsage = () => {
 	const { data, isPending } = api.workspace.usage.useQuery({ hours: 24 });
+	const { t } = useTranslation();
+	const hourly = (data?.usage ?? []).map((row) => ({
+		hour: new Date(row.hour).toISOString(),
+		cpu: row.samples ? row.cpuCoreSeconds / (row.samples * SAMPLE_SECONDS) : 0,
+		avgMemory: row.avgMemoryMb,
+		peakMemory: row.peakMemoryMb,
+	}));
+	const latest = hourly[hourly.length - 1];
 
 	return (
 		<Card className="h-full bg-sidebar p-2.5 rounded-xl max-w-5xl mx-auto w-full">
@@ -105,38 +115,86 @@ export const ShowWorkspaceUsage = () => {
 									services are running.
 								</p>
 							) : (
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead>Hour</TableHead>
-											<TableHead>Avg CPU</TableHead>
-											<TableHead>Avg memory</TableHead>
-											<TableHead>Peak memory</TableHead>
-											<TableHead>Containers</TableHead>
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										{[...data.usage].reverse().map((row) => (
-											<TableRow key={new Date(row.hour).toISOString()}>
-												<TableCell className="whitespace-nowrap">
-													{format(new Date(row.hour), "PP HH:mm")}
-												</TableCell>
-												<TableCell>
-													{row.samples
-														? (
-																row.cpuCoreSeconds /
-																(row.samples * SAMPLE_SECONDS)
-															).toFixed(2)
-														: "0.00"}{" "}
-													CPU
-												</TableCell>
-												<TableCell>{Math.round(row.avgMemoryMb)} MB</TableCell>
-												<TableCell>{Math.round(row.peakMemoryMb)} MB</TableCell>
-												<TableCell>{row.containers}</TableCell>
+								<>
+									<div className="grid gap-4 lg:grid-cols-2">
+										<MetricChart
+											title={t("Average CPU")}
+											value={
+												latest
+													? t("{value} cores", { value: latest.cpu.toFixed(2) })
+													: undefined
+											}
+											caption={t("Last 24 hours, per hour")}
+											data={hourly}
+											xKey="hour"
+											formatX={(hour) => format(new Date(hour), "HH:mm")}
+											series={[
+												{
+													key: "cpu",
+													label: t("Average CPU"),
+													color: "hsl(var(--chart-1))",
+												},
+											]}
+											formatValue={(v) => v.toFixed(2)}
+										/>
+										<MetricChart
+											title={t("Memory")}
+											caption={t("Last 24 hours, per hour")}
+											data={hourly}
+											xKey="hour"
+											formatX={(hour) => format(new Date(hour), "HH:mm")}
+											series={[
+												{
+													key: "avgMemory",
+													label: t("Average"),
+													color: "hsl(var(--chart-2))",
+												},
+												{
+													key: "peakMemory",
+													label: t("Peak"),
+													color: "hsl(var(--chart-3))",
+												},
+											]}
+											formatValue={(v) => `${Math.round(v)} MB`}
+										/>
+									</div>
+									<Table>
+										<TableHeader>
+											<TableRow>
+												<TableHead>Hour</TableHead>
+												<TableHead>Avg CPU</TableHead>
+												<TableHead>Avg memory</TableHead>
+												<TableHead>Peak memory</TableHead>
+												<TableHead>Containers</TableHead>
 											</TableRow>
-										))}
-									</TableBody>
-								</Table>
+										</TableHeader>
+										<TableBody>
+											{[...data.usage].reverse().map((row) => (
+												<TableRow key={new Date(row.hour).toISOString()}>
+													<TableCell className="whitespace-nowrap">
+														{format(new Date(row.hour), "PP HH:mm")}
+													</TableCell>
+													<TableCell>
+														{row.samples
+															? (
+																	row.cpuCoreSeconds /
+																	(row.samples * SAMPLE_SECONDS)
+																).toFixed(2)
+															: "0.00"}{" "}
+														CPU
+													</TableCell>
+													<TableCell>
+														{Math.round(row.avgMemoryMb)} MB
+													</TableCell>
+													<TableCell>
+														{Math.round(row.peakMemoryMb)} MB
+													</TableCell>
+													<TableCell>{row.containers}</TableCell>
+												</TableRow>
+											))}
+										</TableBody>
+									</Table>
+								</>
 							)}
 						</>
 					)}

@@ -97,6 +97,7 @@ import {
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 import { BRANDING } from "@/lib/branding";
+import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { AppRouter } from "@/server/api/root";
 import { api } from "@/utils/api";
@@ -904,6 +905,7 @@ function MobileCloser() {
 }
 
 export default function Page({ children }: Props) {
+	const { t } = useTranslation();
 	const [defaultOpen, setDefaultOpen] = useState<boolean | undefined>(
 		undefined,
 	);
@@ -976,7 +978,7 @@ export default function Page({ children }: Props) {
 				</SidebarHeader>
 				<SidebarContent>
 					<SidebarGroup>
-						<SidebarGroupLabel>Home</SidebarGroupLabel>
+						<SidebarGroupLabel>{t("Home")}</SidebarGroupLabel>
 						<SidebarMenu>
 							{filteredHome.map((item) => {
 								const isSingle = item.isSingle !== false;
@@ -997,7 +999,7 @@ export default function Page({ children }: Props) {
 											{isSingle ? (
 												<SidebarMenuButton
 													asChild
-													tooltip={item.title}
+													tooltip={t(item.title)}
 													className={cn(isActive && "bg-border")}
 												>
 													<Link
@@ -1009,19 +1011,19 @@ export default function Page({ children }: Props) {
 																className={cn(isActive && "text-primary")}
 															/>
 														)}
-														<span>{item.title}</span>
+														<span>{t(item.title)}</span>
 													</Link>
 												</SidebarMenuButton>
 											) : (
 												<>
 													<CollapsibleTrigger asChild>
 														<SidebarMenuButton
-															tooltip={item.title}
+															tooltip={t(item.title)}
 															isActive={isActive}
 														>
 															{item.icon && <item.icon />}
 
-															<span>{item.title}</span>
+															<span>{t(item.title)}</span>
 															{item.items?.length && (
 																<ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
 															)}
@@ -1049,7 +1051,7 @@ export default function Page({ children }: Props) {
 																					/>
 																				</span>
 																			)}
-																			<span>{subItem.title}</span>
+																			<span>{t(subItem.title)}</span>
 																		</Link>
 																	</SidebarMenuSubButton>
 																</SidebarMenuSubItem>
@@ -1065,7 +1067,7 @@ export default function Page({ children }: Props) {
 						</SidebarMenu>
 					</SidebarGroup>
 					<SidebarGroup>
-						<SidebarGroupLabel>Settings</SidebarGroupLabel>
+						<SidebarGroupLabel>{t("Settings")}</SidebarGroupLabel>
 						<SidebarMenu className="gap-1">
 							{filteredSettings.map((item) => {
 								const isSingle = item.isSingle !== false;
@@ -1086,7 +1088,7 @@ export default function Page({ children }: Props) {
 											{isSingle ? (
 												<SidebarMenuButton
 													asChild
-													tooltip={item.title}
+													tooltip={t(item.title)}
 													className={cn(isActive && "bg-border")}
 												>
 													<Link
@@ -1098,19 +1100,19 @@ export default function Page({ children }: Props) {
 																className={cn(isActive && "text-primary")}
 															/>
 														)}
-														<span>{item.title}</span>
+														<span>{t(item.title)}</span>
 													</Link>
 												</SidebarMenuButton>
 											) : (
 												<>
 													<CollapsibleTrigger asChild>
 														<SidebarMenuButton
-															tooltip={item.title}
+															tooltip={t(item.title)}
 															isActive={isActive}
 														>
 															{item.icon && <item.icon />}
 
-															<span>{item.title}</span>
+															<span>{t(item.title)}</span>
 															{item.items?.length && (
 																<ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
 															)}
@@ -1138,7 +1140,7 @@ export default function Page({ children }: Props) {
 																					/>
 																				</span>
 																			)}
-																			<span>{subItem.title}</span>
+																			<span>{t(subItem.title)}</span>
 																		</Link>
 																	</SidebarMenuSubButton>
 																</SidebarMenuSubItem>
@@ -1154,7 +1156,7 @@ export default function Page({ children }: Props) {
 						</SidebarMenu>
 					</SidebarGroup>
 					<SidebarGroup className="group-data-[collapsible=icon]:hidden">
-						<SidebarGroupLabel>Extra</SidebarGroupLabel>
+						<SidebarGroupLabel>{t("Extra")}</SidebarGroupLabel>
 						<SidebarMenu>
 							{help.map((item: ExternalLink) => (
 								<SidebarMenuItem key={item.name}>
@@ -1193,7 +1195,7 @@ export default function Page({ children }: Props) {
 						)}
 						{dokployVersion && (
 							<div className="px-3 text-xs text-muted-foreground text-center group-data-[collapsible=icon]:hidden">
-								Version {dokployVersion}
+								{t("Version {version}", { version: dokployVersion })}
 							</div>
 						)}
 					</SidebarMenu>
@@ -1216,7 +1218,7 @@ export default function Page({ children }: Props) {
 													href={activeItem?.url || "/"}
 													className="flex items-center gap-1.5"
 												>
-													{activeItem?.title}
+													{activeItem ? t(activeItem.title) : null}
 												</Link>
 											</BreadcrumbLink>
 										</BreadcrumbItem>

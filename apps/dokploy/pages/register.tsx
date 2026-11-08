@@ -25,6 +25,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { pushToDataLayer } from "@/lib/analytics";
 import { authClient } from "@/lib/auth-client";
+import { useTranslation } from "@/lib/i18n";
 import { appRouter } from "@/server/api/root";
 import { generateServerSideHelper } from "@/utils/create-server-helpers";
 import { useWhitelabelingPublic } from "@/utils/hooks/use-whitelabeling";
@@ -81,6 +82,7 @@ interface Props {
 
 const Register = ({ isCloud }: Props) => {
 	const router = useRouter();
+	const { t } = useTranslation();
 	const { config: whitelabeling } = useWhitelabelingPublic();
 	const [isError, setIsError] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -144,11 +146,12 @@ const Register = ({ isCloud }: Props) => {
 								}
 							/>
 						</Link>
-						{isCloud ? "Sign Up" : "Setup the server"}
+						{isCloud ? t("Sign up") : t("Set up the server")}
 					</CardTitle>
 					<CardDescription>
-						Enter your email and password to{" "}
-						{isCloud ? "create an account" : "setup the server"}
+						{isCloud
+							? t("Enter your email and password to create an account")
+							: t("Create the owner account for this server")}
 					</CardDescription>
 					<div className="mx-auto w-full max-w-lg bg-transparent">
 						{isError && (
@@ -181,7 +184,7 @@ const Register = ({ isCloud }: Props) => {
 											name="name"
 											render={({ field }) => (
 												<FormItem>
-													<FormLabel>First Name</FormLabel>
+													<FormLabel>{t("First Name")}</FormLabel>
 													<FormControl>
 														<Input placeholder="John" {...field} />
 													</FormControl>
@@ -194,7 +197,7 @@ const Register = ({ isCloud }: Props) => {
 											name="lastName"
 											render={({ field }) => (
 												<FormItem>
-													<FormLabel>Last Name</FormLabel>
+													<FormLabel>{t("Last Name")}</FormLabel>
 													<FormControl>
 														<Input placeholder="Doe" {...field} />
 													</FormControl>
@@ -207,7 +210,7 @@ const Register = ({ isCloud }: Props) => {
 											name="email"
 											render={({ field }) => (
 												<FormItem>
-													<FormLabel>Email</FormLabel>
+													<FormLabel>{t("Email")}</FormLabel>
 													<FormControl>
 														<Input placeholder="you@example.com" {...field} />
 													</FormControl>
@@ -220,11 +223,11 @@ const Register = ({ isCloud }: Props) => {
 											name="password"
 											render={({ field }) => (
 												<FormItem>
-													<FormLabel>Password</FormLabel>
+													<FormLabel>{t("Password")}</FormLabel>
 													<FormControl>
 														<Input
 															type="password"
-															placeholder="Password"
+															placeholder={t("Password")}
 															{...field}
 														/>
 													</FormControl>
@@ -238,11 +241,11 @@ const Register = ({ isCloud }: Props) => {
 											name="confirmPassword"
 											render={({ field }) => (
 												<FormItem>
-													<FormLabel>Confirm Password</FormLabel>
+													<FormLabel>{t("Confirm Password")}</FormLabel>
 													<FormControl>
 														<Input
 															type="password"
-															placeholder="Password"
+															placeholder={t("Password")}
 															{...field}
 														/>
 													</FormControl>
@@ -256,7 +259,7 @@ const Register = ({ isCloud }: Props) => {
 											isLoading={form.formState.isSubmitting}
 											className="w-full"
 										>
-											Register
+											{t("Register")}
 										</Button>
 									</div>
 								</form>
@@ -264,21 +267,21 @@ const Register = ({ isCloud }: Props) => {
 							<div className="flex flex-row justify-between flex-wrap">
 								{isCloud && (
 									<div className="mt-4 text-center text-sm flex gap-2 text-muted-foreground">
-										Already have account?
+										{t("Already have an account?")}
 										<Link className="underline" href="/">
-											Sign in
+											{t("Sign in")}
 										</Link>
 									</div>
 								)}
 
 								<div className="mt-4 text-center text-sm flex flex-row justify-center gap-2  text-muted-foreground">
-									Need help?
+									{t("Need help?")}
 									<Link
 										className="underline"
 										href="https://github.com/Aayushajs/LaunchForge-OS"
 										target="_blank"
 									>
-										Contact us
+										{t("Contact us")}
 									</Link>
 								</div>
 							</div>

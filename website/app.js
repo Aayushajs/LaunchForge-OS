@@ -81,10 +81,19 @@
 
 	const show = (step) => {
 		stages.forEach((li, index) => {
-			li.classList.toggle("is-done", index < step || (step === stages.length - 1 && index === step));
-			li.classList.toggle("is-active", index === step && step < stages.length - 1);
+			li.classList.toggle(
+				"is-done",
+				index < step || (step === stages.length - 1 && index === step),
+			);
+			li.classList.toggle(
+				"is-active",
+				index === step && step < stages.length - 1,
+			);
 		});
-		heat.style.setProperty("--progress", `${((step + 1) / stages.length) * 100}%`);
+		heat.style.setProperty(
+			"--progress",
+			`${((step + 1) / stages.length) * 100}%`,
+		);
 		forge.classList.toggle("is-live", step === stages.length - 1);
 	};
 

@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
-import { Inter } from "next/font/google";
+import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import NextTopLoader from "nextjs-toploader";
 import type { ReactElement, ReactNode } from "react";
@@ -10,9 +10,14 @@ import { SearchCommand } from "@/components/dashboard/search-command";
 import { Analytics } from "@/components/shared/analytics";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { I18nProvider } from "@/lib/i18n";
 import { api } from "@/utils/api";
 
-const inter = Inter({ subsets: ["latin"] });
+const body = Figtree({ subsets: ["latin"] });
+const heading = Bricolage_Grotesque({
+	subsets: ["latin"],
+	weight: ["600", "700", "800"],
+});
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 	getLayout?: (page: ReactElement) => ReactNode;
@@ -34,25 +39,28 @@ const MyApp = ({
 			<style jsx global>
 				{`
 					:root {
-						--font-inter: ${inter.style.fontFamily};
+						--font-body: ${body.style.fontFamily};
+						--font-heading: ${heading.style.fontFamily};
 					}
 				`}
 			</style>
-			<TooltipProvider>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-					disableTransitionOnChange
-					forcedTheme={Component.theme}
-				>
-					<NextTopLoader color="hsl(var(--sidebar-ring))" />
-					<Analytics />
-					<Toaster richColors />
-					<SearchCommand />
-					{getLayout(<Component {...pageProps} />)}
-				</ThemeProvider>
-			</TooltipProvider>
+			<I18nProvider>
+				<TooltipProvider>
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="system"
+						enableSystem
+						disableTransitionOnChange
+						forcedTheme={Component.theme}
+					>
+						<NextTopLoader color="var(--primary)" showSpinner={false} />
+						<Analytics />
+						<Toaster richColors />
+						<SearchCommand />
+						{getLayout(<Component {...pageProps} />)}
+					</ThemeProvider>
+				</TooltipProvider>
+			</I18nProvider>
 		</>
 	);
 };
