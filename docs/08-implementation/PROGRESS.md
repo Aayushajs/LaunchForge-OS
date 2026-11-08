@@ -14,7 +14,7 @@ Workstreams from [GAP_ANALYSIS.md](../01-discovery/GAP_ANALYSIS.md). Updated 202
 | A8 | Secrets | Done | Encrypted credential columns, sealed rollback snapshots, crypto passwords | Notification tokens, vault/DNS provider configs |
 | A9 | Installer and operations | Done | `scripts/install.sh` (install/upgrade with backup + rollback/uninstall/status), bootstrap entrypoint, CI end-to-end on Ubuntu 22.04/24.04, release docs | Debian 12 in CI |
 | A10 | Observability | Partial | Per-workspace usage; SSRF-free metrics | Platform health page, Prometheus endpoint |
-| A11 | Quality and proof | Partial | Tests for every new module; k6 scenarios + weekly load-test workflow; design docs (HLD, LLD, ERD, API, threat model, ADRs) | First load-test report; sample app per language in CI |
+| A11 | Quality and proof | Partial | Tests for every new module; k6 scenarios + weekly load-test workflow; design docs (HLD, LLD, ERD, API, threat model, ADRs) | Sample app per language in CI |
 
 ## Commits
 

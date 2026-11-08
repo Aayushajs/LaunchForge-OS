@@ -49,8 +49,10 @@ jobs:
             echo
             echo "Runner: $(nproc) vCPU, $(awk '/MemTotal/ {printf "%.1f GB", $2/1024/1024}' /proc/meminfo) RAM, $(lsb_release -ds), commit ${GITHUB_SHA::7}"
             echo
-            cat reports/*.md 2>/dev/null || echo "No reports were produced."
-          } | tee reports/SUMMARY.md >> "$GITHUB_STEP_SUMMARY"
+            cat reports/api-read.md reports/webhooks.md 2>/dev/null || echo "No reports were produced."
+          } > SUMMARY.md
+          mv SUMMARY.md reports/SUMMARY.md
+          cat reports/SUMMARY.md >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v4
         if: always()

@@ -88,7 +88,12 @@ Quotas are enforced where resources are decided: `withWorkspaceQuota` wraps reso
 | Install | External script, hardcoded DB password | In-repo installer, generated secrets, tested in CI, safe upgrades |
 | Proof | — | 15 new test suites, 3 CI pipelines (CI, Installer e2e, Release), weekly k6 load test, 12 ADRs, threat model |
 
-Performance targets (p95 < 500 ms for dashboard reads at 50 concurrent users; webhook rejection p95 < 300 ms at 100 req/s) are enforced as k6 thresholds by the weekly workflow; measured reports are published in [`docs/07-performance/REPORTS`](../07-performance/REPORTS) from real runs only.
+Performance is measured by the weekly k6 workflow on a fresh install made with the production installer. First run ([report](../07-performance/REPORTS/2026-11-08-github-runner.md), 4 vCPU GitHub runner, single node):
+
+| Scenario | Requests | Errors | p50 | p95 | Target |
+|---|---|---|---|---|---|
+| Authenticated dashboard reads, ramping to 50 users | 10,826 (60 req/s) | 0 % | 27 ms | 176 ms | p95 < 500 ms |
+| Webhook burst (unknown token + wrong method) | 12,000 (200 req/s) | 0 % | 3 ms | 4 ms | p95 < 300 ms |
 
 ## 5. What was hard
 

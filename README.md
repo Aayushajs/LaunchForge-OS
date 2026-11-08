@@ -123,6 +123,15 @@ sudo bash install.sh uninstall [--purge]
 
 Every control is tied to a test ([security decisions](docs/06-security/SECURITY_DECISIONS.md)). Open risks are listed honestly in the [threat model](docs/06-security/THREAT_MODEL.md): workspaces still share one overlay network and builds use the host Docker daemon, so give workspace-admin rights only to people you would trust with the host until those land. Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
 
+## Performance
+
+Measured by the weekly [load-test workflow](.github/workflows/load-test.yml) on a fresh single-node install (4 vCPU runner), [full report](docs/07-performance/REPORTS/2026-11-08-github-runner.md):
+
+| Scenario | Requests | Errors | p95 |
+|---|---|---|---|
+| Authenticated dashboard reads, ramping to 50 users | 10,826 | 0 % | 176 ms |
+| Webhook burst at 200 req/s | 12,000 | 0 % | 4 ms |
+
 ## Repository layout
 
 ```text
