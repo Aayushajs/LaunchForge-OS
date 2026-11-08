@@ -40,7 +40,7 @@ const DeployPreview = () => {
 						key={label}
 						className="flex items-center gap-3 rounded-md px-2 py-1.5 text-white/85"
 					>
-						<span className="grid size-4 place-items-center rounded-full bg-[var(--brand-live)] text-[#0f1a2b]">
+						<span className="grid size-4 place-items-center rounded-full bg-[var(--brand-live)] text-black">
 							<Check className="size-3" strokeWidth={3} />
 						</span>
 						{t(label)}
@@ -51,7 +51,7 @@ const DeployPreview = () => {
 				))}
 			</ol>
 			<div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
-				<div className="h-full w-full rounded-full bg-gradient-to-r from-[#1b6f5f] to-[var(--brand-live)]" />
+				<div className="h-full w-full rounded-full bg-[var(--brand-live)]" />
 			</div>
 			<p className="mt-4 rounded-md bg-white/[0.04] px-3 py-2 font-mono text-xs text-white/80">
 				https://portfolio.example.dev
@@ -80,14 +80,14 @@ export const OnboardingLayout = ({ children, leftPanel }: Props) => {
 	return (
 		<div className="relative grid min-h-svh w-full lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
 			{/* The brand panel stays dark in both themes, like the product site. */}
-			<aside className="relative hidden flex-col overflow-hidden bg-[#0f1a2b] p-10 text-[#e7ecf3] lg:flex">
+			<aside className="relative hidden flex-col overflow-hidden bg-black bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:56px_56px] p-10 text-zinc-50 lg:flex">
 				<div
 					aria-hidden
-					className="pointer-events-none absolute -right-32 -top-32 size-[28rem] rounded-full bg-[radial-gradient(closest-side,rgba(242,98,46,0.22),transparent)]"
+					className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_30%_0%,rgba(91,91,246,0.28),transparent_65%),radial-gradient(ellipse_90%_70%_at_50%_100%,#000_30%,transparent)]"
 				/>
 				<Link
 					href="/"
-					className="relative z-10 flex items-center gap-3 font-[family-name:var(--font-display)] text-xl font-bold tracking-tight"
+					className="relative z-10 flex items-center gap-3 text-lg font-semibold tracking-tight"
 				>
 					<Logo
 						className="size-9"
@@ -99,7 +99,7 @@ export const OnboardingLayout = ({ children, leftPanel }: Props) => {
 				<div className="relative z-10 my-auto max-w-md py-12">
 					{leftPanel ?? (
 						<>
-							<h2 className="text-4xl font-extrabold leading-[1.08] tracking-tight xl:text-5xl">
+							<h2 className="text-4xl font-semibold leading-[1.05] tracking-[-0.04em] xl:text-5xl">
 								{whitelabeling?.appDescription ||
 									t("Push to git. Get a live URL. On your own servers.")}
 							</h2>

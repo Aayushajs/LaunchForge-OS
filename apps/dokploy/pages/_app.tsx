@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
-import { Bricolage_Grotesque, Figtree } from "next/font/google";
+import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import NextTopLoader from "nextjs-toploader";
 import type { ReactElement, ReactNode } from "react";
@@ -13,11 +13,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { I18nProvider } from "@/lib/i18n";
 import { api } from "@/utils/api";
 
-const body = Figtree({ subsets: ["latin"] });
-const heading = Bricolage_Grotesque({
-	subsets: ["latin"],
-	weight: ["600", "700", "800"],
-});
+const geist = Geist({ subsets: ["latin"] });
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 	getLayout?: (page: ReactElement) => ReactNode;
@@ -39,8 +35,8 @@ const MyApp = ({
 			<style jsx global>
 				{`
 					:root {
-						--font-body: ${body.style.fontFamily};
-						--font-heading: ${heading.style.fontFamily};
+						--font-body: ${geist.style.fontFamily};
+						--font-heading: ${geist.style.fontFamily};
 					}
 				`}
 			</style>

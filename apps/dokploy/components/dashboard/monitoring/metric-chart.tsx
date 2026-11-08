@@ -112,7 +112,7 @@ export const MetricChart = ({
 					)}
 				</div>
 				{value && (
-					<p className="font-[family-name:var(--font-display)] text-3xl font-bold tracking-tight tabular-nums">
+					<p className="text-3xl font-semibold tracking-tight tabular-nums">
 						{value}
 					</p>
 				)}
