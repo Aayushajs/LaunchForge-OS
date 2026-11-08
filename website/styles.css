@@ -353,6 +353,77 @@ a {
 	gap: 14px;
 }
 
+/* Language menu in the header */
+.lang-trigger {
+	gap: 6px;
+	padding: 8px 10px;
+	color: var(--text-soft);
+	font-size: 0.84rem;
+}
+
+.lang-trigger:hover,
+.lang-trigger[aria-expanded="true"] {
+	color: var(--text);
+}
+
+.lang-trigger .globe {
+	width: 17px;
+	height: 17px;
+	stroke-width: 1.6;
+}
+
+#lang-current {
+	font-family: var(--mono);
+	font-size: 0.78rem;
+	letter-spacing: 0.02em;
+}
+
+.lang-panel {
+	left: auto;
+	right: -8px;
+	width: 190px;
+	transform-origin: top right;
+}
+
+.lang-panel button {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 9px 12px;
+	border: 0;
+	border-radius: 9px;
+	background: none;
+	color: var(--text-soft);
+	font: 500 0.88rem var(--font);
+	text-align: left;
+	cursor: pointer;
+}
+
+.lang-panel button:hover {
+	background: var(--bg-soft);
+	color: var(--text);
+}
+
+.lang-panel button svg {
+	width: 14px;
+	height: 14px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.8;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	opacity: 0;
+}
+
+.lang-panel button[aria-checked="true"] {
+	color: var(--text);
+}
+
+.lang-panel button[aria-checked="true"] svg {
+	opacity: 1;
+}
+
 .stars {
 	position: relative;
 	display: inline-flex;

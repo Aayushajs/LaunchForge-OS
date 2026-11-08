@@ -85,16 +85,17 @@ window.LF_MESSAGES = {
 		"stats.lead":
 			"Taken from the CI runs and the release history. When a number moves, it moves here too.",
 		"s1.t": "Automated tests",
-		"s1.d": "Unit, integration and real Docker Swarm tests run on every push.",
+		"s1.d":
+			"Automated unit, integration, and real-world Docker Swarm testing on every push, ensuring reliable builds, service communication, and deployment readiness.",
 		"s2.t": "API latency, p95",
 		"s2.d":
-			"Under load in the published k6 report, with zero errors in 10,826 requests.",
+			"Successfully processed 10,826 requests with zero errors under load, backed by a published k6 performance report covering API reliability and system stability.",
 		"s3.t": "Languages",
 		"s3.d":
-			"The dashboard speaks English, Hindi, Spanish, Portuguese, German, French, Japanese and Chinese.",
+			"Delivered a multilingual dashboard supporting 8 languages: English, Hindi, Spanish, Portuguese, German, French, Japanese, and Chinese, making the platform accessible to a global audience.",
 		"s4.t": "Releases shipped",
 		"s4.d":
-			"Every merge ships a versioned release with a changelog, automatically.",
+			"Every merge automatically triggers a versioned release with a detailed changelog, keeping deployments traceable and release history organized",
 		"faq.title": "Frequently Asked Questions",
 		q1: "Is LaunchForge free?",
 		a1: "Yes. It is open source under the Apache-2.0 license. You only pay for the server you run it on, and Oracle Cloud's free tier is enough to start.",

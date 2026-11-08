@@ -42,6 +42,10 @@
 			el.setAttribute("aria-label", t(el.dataset.i18nAria));
 		}
 		document.getElementById("lang-select").value = code;
+		document.getElementById("lang-current").textContent = code.toUpperCase();
+		for (const item of document.querySelectorAll("[data-lang]")) {
+			item.setAttribute("aria-checked", String(item.dataset.lang === code));
+		}
 		requestAnimationFrame(movePill);
 	};
 
@@ -49,6 +53,18 @@
 		applyLanguage(event.target.value);
 		store.set("lf-lang", event.target.value);
 	});
+
+	for (const item of document.querySelectorAll("[data-lang]")) {
+		item.addEventListener("click", () => {
+			applyLanguage(item.dataset.lang);
+			store.set("lf-lang", item.dataset.lang);
+			const menu = item.closest(".menu");
+			menu.classList.remove("open");
+			menu
+				.querySelector(".menu-trigger")
+				.setAttribute("aria-expanded", "false");
+		});
+	}
 
 	document.getElementById("theme-toggle").addEventListener("click", () => {
 		const next = root.dataset.theme === "dark" ? "light" : "dark";
