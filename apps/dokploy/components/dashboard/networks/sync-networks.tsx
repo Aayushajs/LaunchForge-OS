@@ -138,8 +138,8 @@ export const SyncNetworks = ({ serverId }: Props) => {
 						Sync networks
 					</DialogTitle>
 					<DialogDescription>
-						Import networks that exist in Docker but not in LaunchForge, and clean
-						up records whose network no longer exists.
+						Import networks that exist in Docker but not in LaunchForge, and
+						clean up records whose network no longer exists.
 					</DialogDescription>
 				</DialogHeader>
 

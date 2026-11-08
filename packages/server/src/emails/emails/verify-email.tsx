@@ -23,7 +23,8 @@ export const VerifyEmailTemplate = ({
 	userName = "User",
 	verificationUrl = "https://launchforge.example.com/verify",
 }: TemplateProps) => {
-	const previewText = "Verify your email address to get started with LaunchForge";
+	const previewText =
+		"Verify your email address to get started with LaunchForge";
 	return (
 		<Html>
 			<Head />
@@ -48,8 +49,8 @@ export const VerifyEmailTemplate = ({
 								Verify Your Email
 							</Heading>
 							<Text className="text-[#71717a] text-[14px] leading-[22px] m-0 mb-[24px]">
-								Hello {userName}, thank you for signing up for LaunchForge. Please
-								verify your email address to activate your account.
+								Hello {userName}, thank you for signing up for LaunchForge.
+								Please verify your email address to activate your account.
 							</Text>
 
 							{/* CTA Button */}

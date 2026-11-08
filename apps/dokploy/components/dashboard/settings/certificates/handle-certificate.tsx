@@ -251,7 +251,9 @@ export const HandleCertificate = ({ certificateId }: Props) => {
 										>
 											<SelectTrigger>
 												<SelectValue
-													placeholder={!isCloud ? "LaunchForge" : "Select a Server"}
+													placeholder={
+														!isCloud ? "LaunchForge" : "Select a Server"
+													}
 												/>
 											</SelectTrigger>
 											<SelectContent>

@@ -480,7 +480,9 @@ export const AddDatabase = ({ environmentId, projectName }: Props) => {
 													<SelectTrigger>
 														<SelectValue
 															placeholder={
-																showLocalOption ? "LaunchForge" : "Select a Server"
+																showLocalOption
+																	? "LaunchForge"
+																	: "Select a Server"
 															}
 														/>
 													</SelectTrigger>

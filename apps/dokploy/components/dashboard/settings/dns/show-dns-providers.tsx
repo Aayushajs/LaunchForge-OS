@@ -45,8 +45,8 @@ export const ShowDnsProviders = () => {
 								DNS Providers
 							</CardTitle>
 							<CardDescription>
-								Connect a DNS provider so LaunchForge can create the A/CNAME record
-								for a domain instead of you setting it up by hand.
+								Connect a DNS provider so LaunchForge can create the A/CNAME
+								record for a domain instead of you setting it up by hand.
 							</CardDescription>
 						</CardHeader>
 						{permissions?.dnsProvider.create && <HandleDnsProvider />}

@@ -567,7 +567,9 @@ export const AddTemplate = ({ environmentId, baseUrl }: Props) => {
 																	<SelectTrigger>
 																		<SelectValue
 																			placeholder={
-																				!isCloud ? "LaunchForge" : "Select a Server"
+																				!isCloud
+																					? "LaunchForge"
+																					: "Select a Server"
 																			}
 																		/>
 																	</SelectTrigger>

@@ -430,8 +430,8 @@ export const HandleDnsProvider = ({ dnsProviderId }: Props) => {
 											</FormControl>
 											<FormDescription>
 												Create API keys at porkbun.com/account/api and make sure
-												API access is enabled for the domains you want LaunchForge
-												to manage.
+												API access is enabled for the domains you want
+												LaunchForge to manage.
 											</FormDescription>
 											<FormMessage />
 										</FormItem>
@@ -563,8 +563,8 @@ export const HandleDnsProvider = ({ dnsProviderId }: Props) => {
 												will only list and change records in it. Leave empty to
 												use every zone the credentials can access. When set, the{" "}
 												<code>GET /domain/zone</code> right is not needed. This
-												is enforced by LaunchForge only, so also limit the OVH token
-												to that zone if you need a hard guarantee.
+												is enforced by LaunchForge only, so also limit the OVH
+												token to that zone if you need a hard guarantee.
 											</FormDescription>
 											<FormMessage />
 										</FormItem>

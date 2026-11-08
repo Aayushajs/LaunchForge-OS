@@ -194,8 +194,8 @@ export const UpdateTraefikVersion = ({ children, serverId }: Props) => {
 								)}
 							{data.versionStatus === "newer" && (
 								<AlertBlock type="info" icon={<Info className="size-4" />}>
-									Traefik is newer than the version recommended by LaunchForge. No
-									update needed.
+									Traefik is newer than the version recommended by LaunchForge.
+									No update needed.
 								</AlertBlock>
 							)}
 							{data.versionStatus === "custom" && (

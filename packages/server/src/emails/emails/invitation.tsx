@@ -53,8 +53,8 @@ export const InvitationEmail = ({
 							<Text className="text-[#71717a] text-[14px] leading-[22px] m-0 mb-[24px]">
 								You have been invited to join{" "}
 								<strong className="text-[#09090b]">{organizationName}</strong>{" "}
-								on LaunchForge, the platform for deploying your apps to the cloud.
-								Click the button below to accept the invitation.
+								on LaunchForge, the platform for deploying your apps to the
+								cloud. Click the button below to accept the invitation.
 							</Text>
 
 							{/* CTA Button */}

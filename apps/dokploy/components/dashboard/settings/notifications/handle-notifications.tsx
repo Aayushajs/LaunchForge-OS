@@ -1894,7 +1894,8 @@ export const HandleNotifications = ({ notificationId }: Props) => {
 											<div className="space-y-0.5">
 												<FormLabel>LaunchForge Backup</FormLabel>
 												<FormDescription>
-													Trigger the action when a LaunchForge backup is created.
+													Trigger the action when a LaunchForge backup is
+													created.
 												</FormDescription>
 											</div>
 											<FormControl>

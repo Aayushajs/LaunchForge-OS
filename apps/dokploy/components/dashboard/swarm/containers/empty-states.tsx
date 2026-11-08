@@ -169,8 +169,8 @@ export const NoServices = ({ nodeCount, onRefresh }: NoServicesProps) => (
 			<ol className="list-decimal list-inside space-y-2 ml-1">
 				<li>
 					<strong>Deployed as Swarm services</strong> &mdash; Applications in
-					LaunchForge deploy to Swarm by default. Docker Compose projects need to
-					use{" "}
+					LaunchForge deploy to Swarm by default. Docker Compose projects need
+					to use{" "}
 					<code className="bg-muted px-1.5 py-0.5 rounded text-xs">Stack</code>{" "}
 					type (not{" "}
 					<code className="bg-muted px-1.5 py-0.5 rounded text-xs">
