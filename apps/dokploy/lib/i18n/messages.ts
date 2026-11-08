@@ -113,6 +113,7 @@ const hi: Messages = {
 	"Last 24 hours, per hour": "पिछले 24 घंटे, हर घंटे",
 	Average: "औसत",
 	Peak: "अधिकतम",
+	"The chart appears after the next sample": "अगले सैंपल के बाद चार्ट दिखेगा",
 };
 
 const es: Messages = {
@@ -222,6 +223,8 @@ const es: Messages = {
 	"Last 24 hours, per hour": "Últimas 24 horas, por hora",
 	Average: "Media",
 	Peak: "Pico",
+	"The chart appears after the next sample":
+		"El gráfico aparece tras la siguiente muestra",
 };
 
 const pt: Messages = {
@@ -331,6 +334,8 @@ const pt: Messages = {
 	"Last 24 hours, per hour": "Últimas 24 horas, por hora",
 	Average: "Média",
 	Peak: "Pico",
+	"The chart appears after the next sample":
+		"O gráfico aparece após a próxima amostra",
 };
 
 const de: Messages = {
@@ -440,6 +445,8 @@ const de: Messages = {
 	"Last 24 hours, per hour": "Letzte 24 Stunden, stündlich",
 	Average: "Durchschnitt",
 	Peak: "Spitze",
+	"The chart appears after the next sample":
+		"Das Diagramm erscheint nach dem nächsten Messwert",
 };
 
 const fr: Messages = {
@@ -549,6 +556,8 @@ const fr: Messages = {
 	"Last 24 hours, per hour": "Dernières 24 heures, par heure",
 	Average: "Moyenne",
 	Peak: "Pic",
+	"The chart appears after the next sample":
+		"Le graphique apparaît après la prochaine mesure",
 };
 
 const ja: Messages = {
@@ -658,6 +667,8 @@ const ja: Messages = {
 	"Last 24 hours, per hour": "過去 24 時間（1 時間ごと）",
 	Average: "平均",
 	Peak: "ピーク",
+	"The chart appears after the next sample":
+		"次のサンプルの後にグラフが表示されます",
 };
 
 const zh: Messages = {
@@ -764,6 +775,7 @@ const zh: Messages = {
 	"Last 24 hours, per hour": "过去 24 小时（每小时）",
 	Average: "平均",
 	Peak: "峰值",
+	"The chart appears after the next sample": "下一次采样后显示图表",
 };
 
 export const MESSAGES: Record<Locale, Messages> = {

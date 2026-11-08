@@ -22,6 +22,8 @@ interface Props {
 	data: Record<string, unknown>[];
 	series: MetricSeries[];
 	formatValue: (value: number) => string;
+	/** Shorter labels for the value axis; defaults to formatValue. */
+	formatAxis?: (value: number) => string;
 	/** Headline for single-series charts, usually the latest value. */
 	value?: string;
 	caption?: string;
@@ -78,6 +80,7 @@ export const MetricChart = ({
 	data,
 	series,
 	formatValue,
+	formatAxis = formatValue,
 	value,
 	caption,
 	xKey = "timestamp",
@@ -136,12 +139,14 @@ export const MetricChart = ({
 				)}
 			</CardHeader>
 			<CardContent className="px-2 pb-3">
-				{data.length === 0 ? (
+				{data.length < 2 ? (
 					<div
 						className="grid place-items-center text-sm text-muted-foreground"
 						style={{ height }}
 					>
-						{t("Waiting for the first data point")}
+						{data.length === 0
+							? t("Waiting for the first data point")
+							: t("The chart appears after the next sample")}
 					</div>
 				) : (
 					<ChartContainer
@@ -194,7 +199,7 @@ export const MetricChart = ({
 								tickLine={false}
 								axisLine={false}
 								tick={{ fontSize: 11 }}
-								tickFormatter={(v: number) => formatValue(v)}
+								tickFormatter={(v: number) => formatAxis(v)}
 							/>
 							<ChartTooltip
 								cursor={{

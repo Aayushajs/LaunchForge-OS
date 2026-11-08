@@ -13,6 +13,10 @@ import { DockerDiskUsageChart } from "./docker-disk-usage-chart";
 const formatTime = (time: string) =>
 	time ? format(new Date(time), "HH:mm:ss") : "";
 
+// Axis labels must stay short enough to fit on one line.
+const formatMbAxis = (mb: number) =>
+	mb >= 1024 ? `${(mb / 1024).toFixed(1)} GB` : `${Math.round(mb)} MB`;
+
 const defaultData = {
 	cpu: {
 		value: "0%",
@@ -258,6 +262,7 @@ export const ContainerFreeMonitoring = ({
 						{ key: "usage", label: t("Memory"), color: "hsl(var(--chart-2))" },
 					]}
 					formatValue={(v) => formatMb(v)}
+					formatAxis={formatMbAxis}
 					xKey="time"
 					formatX={formatTime}
 					changeUnit="MB"
@@ -309,6 +314,7 @@ export const ContainerFreeMonitoring = ({
 						{ key: "write", label: t("Written"), color: "hsl(var(--chart-4))" },
 					]}
 					formatValue={(v) => formatMb(v)}
+					formatAxis={formatMbAxis}
 					xKey="time"
 					formatX={formatTime}
 				/>
@@ -328,6 +334,7 @@ export const ContainerFreeMonitoring = ({
 						{ key: "sent", label: t("Sent"), color: "hsl(var(--chart-4))" },
 					]}
 					formatValue={(v) => formatMb(v)}
+					formatAxis={formatMbAxis}
 					xKey="time"
 					formatX={formatTime}
 				/>
