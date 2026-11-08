@@ -98,7 +98,7 @@
     "@types/dockerode": "3.3.23",
     "@types/lodash": "4.17.4",
     "@types/micromatch": "4.0.9",
-    "@types/node": "^24.4.0",
+    "@types/node": "^26.6.6",
     "@types/node-schedule": "2.1.6",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19.2.0",
