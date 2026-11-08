@@ -5,8 +5,8 @@
 	--mono: "Geist Mono", ui-monospace, "Cascadia Code", monospace;
 	--accent: #5b5bf6;
 	--accent-hover: #6d6dff;
-	--max: 1200px;
-	--gutter: clamp(16px, 4vw, 32px);
+	--max: 1240px;
+	--gutter: clamp(16px, 3vw, 24px);
 	--radius: 14px;
 	--ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -237,7 +237,7 @@ a {
 	display: flex;
 	align-items: center;
 	gap: 36px;
-	min-height: 80px;
+	min-height: 72px;
 }
 
 .brand {
@@ -453,7 +453,7 @@ a {
 .hero {
 	position: relative;
 	overflow: hidden;
-	padding: clamp(36px, 5vw, 64px) 0 clamp(64px, 7vw, 96px);
+	padding: clamp(28px, 4vw, 52px) 0 clamp(48px, 6vw, 72px);
 }
 
 .hero-grid {
@@ -710,7 +710,7 @@ a {
 /* Laptop */
 .laptop {
 	width: min(100%, 1000px);
-	margin: 76px 0 0;
+	margin: 52px 0 0;
 }
 
 .laptop-lid {
@@ -957,7 +957,7 @@ a {
 
 /* Marquee */
 .marquee-band {
-	padding: 24px 0 64px;
+	padding: 8px 0 40px;
 }
 
 .marquee-title {
@@ -1035,12 +1035,12 @@ a {
 
 /* Sections */
 .section {
-	padding: clamp(80px, 10vw, 136px) 0;
+	padding: clamp(56px, 7vw, 96px) 0;
 }
 
 .section-head {
 	max-width: 760px;
-	margin: 0 auto 56px;
+	margin: 0 auto 44px;
 	text-align: center;
 }
 
@@ -1063,7 +1063,7 @@ a {
 
 /* Feature grid */
 .features-section .wrap {
-	max-width: 1320px;
+	max-width: 1280px;
 }
 
 .features-section .section-head {
@@ -1086,7 +1086,7 @@ a {
 
 .cell {
 	position: relative;
-	padding: 52px 0 56px;
+	padding: 40px 0 44px;
 	border-right: 1px solid var(--line);
 	overflow: hidden;
 }
@@ -1123,7 +1123,7 @@ a {
 	display: block;
 	width: 24px;
 	height: 24px;
-	margin: 0 40px;
+	margin: 0 30px;
 	fill: none;
 	stroke: var(--text-soft);
 	stroke-width: 1.5;
@@ -1133,8 +1133,8 @@ a {
 
 .cell h3 {
 	position: relative;
-	margin: 22px 0 0;
-	padding: 0 40px;
+	margin: 18px 0 0;
+	padding: 0 30px;
 	font-size: 1.15rem;
 	font-weight: 600;
 	letter-spacing: -0.01em;
@@ -1170,8 +1170,8 @@ a {
 
 .cell p {
 	position: relative;
-	margin: 12px 0 0;
-	padding: 0 40px;
+	margin: 10px 0 0;
+	padding: 0 30px;
 	max-width: 340px;
 	font-size: 0.96rem;
 	line-height: 1.7;
@@ -1296,7 +1296,7 @@ a {
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	padding: 28px;
+	padding: 24px;
 	border: 1px solid var(--line);
 	border-radius: 20px;
 	background: var(--bg-raised);
@@ -1482,8 +1482,8 @@ a {
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	min-height: 300px;
-	padding: 28px 26px;
+	min-height: 270px;
+	padding: 24px 22px;
 	border: 1px solid var(--line);
 	border-radius: 24px;
 	background: var(--bg-raised);
@@ -1610,7 +1610,7 @@ a {
 
 /* CTA */
 .cta {
-	padding: clamp(80px, 10vw, 128px) 0;
+	padding: clamp(56px, 7vw, 96px) 0;
 	border-top: 1px solid var(--line);
 	background: radial-gradient(
 		ellipse 60% 80% at 50% 100%,
@@ -1628,7 +1628,7 @@ a {
 	position: relative;
 	overflow: hidden;
 	border-top: 1px solid var(--line);
-	padding: 64px 0 0;
+	padding: 52px 0 0;
 	font-size: 0.875rem;
 }
 
@@ -1728,8 +1728,8 @@ a {
 	flex-wrap: wrap;
 	justify-content: space-between;
 	gap: 12px;
-	margin-top: 56px;
-	padding-top: 22px;
+	margin-top: 44px;
+	padding-top: 20px;
 	padding-bottom: 22px;
 	border-top: 1px solid var(--line);
 	color: var(--text-dim);
