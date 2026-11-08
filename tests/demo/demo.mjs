@@ -32,6 +32,16 @@ const screenshot = (name) =>
 	});
 
 /** Shows a caption bar on top of whatever page is open. */
+/** Clicks a tab once the page has hydrated (clicks before that are lost). */
+const openTab = async (name) => {
+	await page.waitForLoadState("networkidle").catch(() => {});
+	await page
+		.getByRole("tab", { name })
+		.click()
+		.catch(() => {});
+	await pause(600);
+};
+
 const caption = async (step, title, detail = "") => {
 	await page.evaluate(
 		({ step, title, detail }) => {

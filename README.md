@@ -24,8 +24,24 @@ curl -fsSL https://raw.githubusercontent.com/Aayushajs/LaunchForge-OS/main/scrip
 
 ---
 
+## Demo
+
+**▶ [Watch the demo video](docs/assets/demo/launchforge-demo.mp4)** — recorded on a fresh Ubuntu server right after a real install: signup, deploy, live site, database, security policy, quotas, audit log. [Step-by-step walkthrough with screenshots](docs/DEMO.md).
+
+<table>
+  <tr>
+    <td><a href="docs/DEMO.md#deployment-finished"><img src="docs/assets/demo/04-deployments.png" alt="Application deployed" /></a></td>
+    <td><a href="docs/DEMO.md#the-deployed-app-served-through-traefik"><img src="docs/assets/demo/06-live-site.png" alt="Live site" /></a></td>
+  </tr>
+  <tr>
+    <td><a href="docs/DEMO.md#usage--quotas-operator-view"><img src="docs/assets/demo/09-usage-quotas.png" alt="Usage and quotas" /></a></td>
+    <td><a href="docs/DEMO.md#audit-log"><img src="docs/assets/demo/11-audit-log.png" alt="Audit log" /></a></td>
+  </tr>
+</table>
+
 ## Table of contents
 
+- [Demo](#demo)
 - [Why LaunchForge](#why-launchforge)
 - [Features](#features)
 - [Architecture](#architecture)
