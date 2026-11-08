@@ -22,8 +22,8 @@
 	--line-strong: #2e2e33;
 	--grid: rgb(255 255 255 / 5%);
 	--grid-fill: rgb(255 255 255 / 4%);
-	--hero-grid: rgb(255 255 255 / 8%);
-	--hero-grid-fill: rgb(255 255 255 / 6%);
+	--hero-grid: rgb(255 255 255 / 12%);
+	--hero-grid-fill: rgb(255 255 255 / 9%);
 	--glow: rgb(91 91 246 / 24%);
 	--solid-bg: #fafafa;
 	--solid-text: #09090b;
@@ -41,8 +41,8 @@
 	--line-strong: #d4d4d8;
 	--grid: rgb(0 0 0 / 5%);
 	--grid-fill: rgb(0 0 0 / 3.5%);
-	--hero-grid: rgb(9 9 11 / 8%);
-	--hero-grid-fill: rgb(91 91 246 / 6%);
+	--hero-grid: rgb(9 9 11 / 12%);
+	--hero-grid-fill: rgb(9 9 11 / 6%);
 	--glow: rgb(91 91 246 / 14%);
 	--solid-bg: #09090b;
 	--solid-text: #fafafa;
@@ -529,6 +529,13 @@ a {
 	position: relative;
 	overflow: hidden;
 	padding: clamp(28px, 4vw, 52px) 0 clamp(48px, 6vw, 72px);
+	background:
+		radial-gradient(
+			ellipse 70% 48% at 50% 12%,
+			color-mix(in srgb, var(--text) 6%, transparent),
+			transparent 72%
+		),
+		var(--bg);
 }
 
 .hero-grid {
@@ -541,9 +548,9 @@ a {
 	transform: perspective(900px) rotateX(55deg) scale(2.2) translateY(-18%);
 	transform-origin: center top;
 	mask-image: radial-gradient(
-		ellipse 72% 68% at 50% 26%,
-		#000 24%,
-		transparent 82%
+		ellipse 78% 72% at 50% 28%,
+		#000 18%,
+		transparent 88%
 	);
 	pointer-events: none;
 }
@@ -1158,17 +1165,21 @@ a {
 	display: grid;
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 	border-top: 1px solid var(--line);
+	background: color-mix(in srgb, var(--bg-raised) 55%, transparent);
 }
 
 .cell {
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	min-height: 248px;
-	padding: clamp(32px, 3vw, 40px) 0 clamp(36px, 3.2vw, 44px);
+	min-height: 264px;
+	padding: clamp(34px, 3.2vw, 44px) 0 clamp(38px, 3.4vw, 48px);
 	border-right: 1px solid var(--line);
 	overflow: hidden;
 	isolation: isolate;
+	transition:
+		background-color 0.35s ease,
+		transform 0.35s var(--ease);
 }
 
 .cell:nth-child(4n + 1) {
@@ -1187,13 +1198,13 @@ a {
 	z-index: 0;
 	background:
 		radial-gradient(
-			circle 180px at var(--mx, 50%) var(--my, 50%),
-			color-mix(in srgb, var(--accent) 18%, transparent),
-			transparent 72%
+			circle 220px at var(--mx, 50%) var(--my, 50%),
+			color-mix(in srgb, var(--text) 20%, transparent),
+			transparent 70%
 		),
-		linear-gradient(to top, var(--bg-soft), transparent 72%);
+		linear-gradient(to top, var(--bg-soft), transparent 74%);
 	opacity: 0;
-	transition: opacity 0.3s ease;
+	transition: opacity 0.35s ease;
 	pointer-events: none;
 }
 
@@ -1204,15 +1215,21 @@ a {
 .cell:nth-child(n + 5)::before {
 	background:
 		radial-gradient(
-			circle 180px at var(--mx, 50%) var(--my, 50%),
-			color-mix(in srgb, var(--accent) 18%, transparent),
-			transparent 72%
+			circle 220px at var(--mx, 50%) var(--my, 50%),
+			color-mix(in srgb, var(--text) 20%, transparent),
+			transparent 70%
 		),
-		linear-gradient(to bottom, var(--bg-soft), transparent 72%);
+		linear-gradient(to bottom, var(--bg-soft), transparent 74%);
 }
 
 .cell:hover::before {
 	opacity: 1;
+}
+
+.cell:hover {
+	background: color-mix(in srgb, var(--text) 4%, var(--bg-raised));
+	transform: translateY(-2px);
+	z-index: 2;
 }
 
 .cell svg {
@@ -1228,12 +1245,14 @@ a {
 	stroke-linejoin: round;
 	transition:
 		stroke 0.25s ease,
-		transform 0.25s var(--ease);
+		transform 0.25s var(--ease),
+		filter 0.25s ease;
 }
 
 .cell:hover svg {
-	stroke: var(--accent);
+	stroke: var(--text);
 	transform: translateY(-2px);
+	filter: drop-shadow(0 0 8px color-mix(in srgb, var(--text) 40%, transparent));
 }
 
 .cell h3 {
@@ -1261,7 +1280,8 @@ a {
 
 .cell:hover .bar {
 	height: 32px;
-	background: var(--accent);
+	background: var(--text);
+	box-shadow: 0 0 14px color-mix(in srgb, var(--text) 45%, transparent);
 }
 
 .cell .t {
