@@ -1,6 +1,8 @@
 (() => {
 	const messages = window.LF_MESSAGES;
+	const config = window.LF_CONFIG ?? {};
 	const root = document.documentElement;
+	const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 	const store = {
 		get(key) {
 			try {
@@ -16,6 +18,7 @@
 		},
 	};
 
+	// Language
 	const pickLanguage = () => {
 		const fromUrl = new URLSearchParams(location.search).get("lang");
 		const candidates = [fromUrl, store.get("lf-lang"), ...navigator.languages];
@@ -39,9 +42,9 @@
 			el.setAttribute("aria-label", t(el.dataset.i18nAria));
 		}
 		document.getElementById("lang-select").value = code;
+		requestAnimationFrame(movePill);
 	};
 
-	applyLanguage(pickLanguage());
 	document.getElementById("lang-select").addEventListener("change", (event) => {
 		applyLanguage(event.target.value);
 		store.set("lf-lang", event.target.value);
@@ -53,6 +56,71 @@
 		store.set("lf-theme", next);
 	});
 
+	// Header menus: open on hover with a pointer, on click otherwise.
+	const menus = [...document.querySelectorAll(".menu")];
+	const setOpen = (menu, open) => {
+		menu.classList.toggle("open", open);
+		menu
+			.querySelector(".menu-trigger")
+			.setAttribute("aria-expanded", String(open));
+	};
+	for (const menu of menus) {
+		const trigger = menu.querySelector(".menu-trigger");
+		let closeTimer;
+		menu.addEventListener("pointerenter", (event) => {
+			if (event.pointerType !== "mouse") return;
+			clearTimeout(closeTimer);
+			for (const other of menus) setOpen(other, other === menu);
+		});
+		menu.addEventListener("pointerleave", (event) => {
+			if (event.pointerType !== "mouse") return;
+			closeTimer = setTimeout(() => setOpen(menu, false), 120);
+		});
+		trigger.addEventListener("click", () => {
+			const open = !menu.classList.contains("open");
+			for (const other of menus) setOpen(other, false);
+			setOpen(menu, open);
+		});
+	}
+	document.addEventListener("click", (event) => {
+		if (!event.target.closest(".menu"))
+			for (const menu of menus) setOpen(menu, false);
+	});
+	document.addEventListener("keydown", (event) => {
+		if (event.key === "Escape") for (const menu of menus) setOpen(menu, false);
+	});
+
+	const burger = document.querySelector(".burger");
+	const mobileNav = document.getElementById("mobile-nav");
+	burger.addEventListener("click", () => {
+		const open = mobileNav.hidden;
+		mobileNav.hidden = !open;
+		burger.setAttribute("aria-expanded", String(open));
+	});
+	mobileNav.addEventListener("click", (event) => {
+		if (event.target.closest("a")) {
+			mobileNav.hidden = true;
+			burger.setAttribute("aria-expanded", "false");
+		}
+	});
+
+	// Sign in and sign up go to the hosted dashboard once one is configured.
+	const dialog = document.getElementById("panel-dialog");
+	for (const link of document.querySelectorAll("[data-panel]")) {
+		if (config.panelUrl) {
+			link.href =
+				link.dataset.panel === "signup"
+					? `${config.panelUrl}/register`
+					: config.panelUrl;
+			continue;
+		}
+		link.addEventListener("click", (event) => {
+			event.preventDefault();
+			dialog.showModal();
+		});
+	}
+
+	// Copy buttons
 	for (const button of document.querySelectorAll("[data-copy]")) {
 		button.addEventListener("click", async () => {
 			const source = document.getElementById(button.dataset.copy);
@@ -70,18 +138,33 @@
 		});
 	}
 
-	const tabs = [...document.querySelectorAll('.tabs [role="tab"]')];
+	// Product tour tabs with a sliding highlight.
+	const tabList = document.querySelector(".tabs");
+	const pill = tabList.querySelector(".tab-pill");
+	const tabs = [...tabList.querySelectorAll('[role="tab"]')];
 	const shot = document.getElementById("tour-shot");
 	const caption = document.getElementById("tour-caption");
+	function movePill() {
+		const active = tabList.querySelector('[aria-selected="true"]');
+		if (!active) return;
+		pill.style.width = `${active.offsetWidth}px`;
+		pill.style.height = `${active.offsetHeight}px`;
+		pill.style.transform = `translate(${active.offsetLeft}px, ${active.offsetTop}px)`;
+	}
 	const select = (tab) => {
 		for (const other of tabs) {
 			other.setAttribute("aria-selected", String(other === tab));
 			other.tabIndex = other === tab ? 0 : -1;
 		}
+		movePill();
 		caption.dataset.i18n = tab.dataset.caption;
 		caption.textContent = t(tab.dataset.caption);
+		const next = `assets/screens/${tab.dataset.shot}.png`;
+		if (shot.getAttribute("src") === next) return;
 		shot.classList.add("is-loading");
-		shot.src = `assets/screens/${tab.dataset.shot}.png`;
+		setTimeout(() => {
+			shot.src = next;
+		}, 180);
 	};
 	shot.addEventListener("load", () => shot.classList.remove("is-loading"));
 	tabs.forEach((tab, index) => {
@@ -95,22 +178,85 @@
 			select(next);
 		});
 	});
+	addEventListener("resize", movePill);
 
-	const video = document.getElementById("demo-video");
-	const card = video.closest(".video-card");
-	document.getElementById("play-demo").addEventListener("click", () => {
-		card.classList.add("is-playing");
-		video.play();
-	});
-	video.addEventListener("play", () => card.classList.add("is-playing"));
+	// Feature cells follow the pointer with a soft glow.
+	for (const cell of document.querySelectorAll(".cell")) {
+		cell.addEventListener("pointermove", (event) => {
+			const box = cell.getBoundingClientRect();
+			cell.style.setProperty("--mx", `${event.clientX - box.left}px`);
+			cell.style.setProperty("--my", `${event.clientY - box.top}px`);
+		});
+	}
 
-	// The header shows the latest release; the markup carries a fallback.
-	fetch("https://api.github.com/repos/Aayushajs/LaunchForge-OS/releases/latest")
-		.then((response) => (response.ok ? response.json() : null))
-		.then((release) => {
-			if (release?.tag_name) {
-				document.getElementById("gh-version").textContent = release.tag_name;
+	// Count numbers up when they scroll into view.
+	const countUp = (el) => {
+		const target = Number(el.dataset.count);
+		if (reduceMotion) return;
+		const format = new Intl.NumberFormat(language);
+		const start = performance.now();
+		const tick = (now) => {
+			const progress = Math.min(1, (now - start) / 1400);
+			const eased = 1 - (1 - progress) ** 3;
+			el.textContent = format.format(Math.round(target * eased));
+			if (progress < 1) requestAnimationFrame(tick);
+		};
+		requestAnimationFrame(tick);
+	};
+
+	// Reveal sections as they scroll into view.
+	const revealer = new IntersectionObserver(
+		(entries) => {
+			for (const entry of entries) {
+				if (!entry.isIntersecting) continue;
+				entry.target.classList.add("is-visible");
+				for (const counter of entry.target.querySelectorAll("[data-count]")) {
+					countUp(counter);
+				}
+				revealer.unobserve(entry.target);
 			}
+		},
+		{ threshold: 0.15, rootMargin: "0px 0px -40px 0px" },
+	);
+	for (const el of document.querySelectorAll("[data-reveal]"))
+		revealer.observe(el);
+
+	// The demo plays silently while the laptop is on screen.
+	const video = document.getElementById("demo-video");
+	const laptop = video.closest(".laptop");
+	const playButton = document.getElementById("play-demo");
+	const start = () => {
+		laptop.classList.add("is-playing");
+		video.play().catch(() => laptop.classList.remove("is-playing"));
+	};
+	playButton.addEventListener("click", () => {
+		video.controls = true;
+		start();
+	});
+	video.addEventListener("click", () =>
+		video.paused ? start() : video.pause(),
+	);
+	if (!reduceMotion) {
+		new IntersectionObserver(
+			([entry]) => {
+				if (entry.isIntersecting) start();
+				else video.pause();
+			},
+			{ threshold: 0.35 },
+		).observe(video);
+	}
+
+	// Live star count, with the dash as a fallback.
+	fetch("https://api.github.com/repos/Aayushajs/LaunchForge-OS")
+		.then((response) => (response.ok ? response.json() : null))
+		.then((repo) => {
+			if (typeof repo?.stargazers_count !== "number") return;
+			document.getElementById("star-count").textContent = new Intl.NumberFormat(
+				"en",
+				{ notation: "compact" },
+			).format(repo.stargazers_count);
 		})
 		.catch(() => {});
+
+	applyLanguage(pickLanguage());
 })();
