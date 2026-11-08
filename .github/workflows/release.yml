@@ -103,7 +103,9 @@ jobs:
         env:
           VERSION: ${{ needs.version.outputs.version }}
         run: |
-          sed -i -E "s/\"version\": \"[^\"]*\"/\"version\": \"v${VERSION}\"/" apps/dokploy/package.json
+          jq --arg v "v${VERSION}" '.version = $v' apps/dokploy/package.json > package.tmp
+          mv package.tmp apps/dokploy/package.json
+          jq -r .version apps/dokploy/package.json
           cp apps/dokploy/.env.production.example .env.production
           cp apps/dokploy/.env.production.example apps/dokploy/.env.production
 
