@@ -1,10 +1,15 @@
 version: 2
 updates:
+  # Major npm upgrades routinely break the build (they need code changes),
+  # so they are done by hand; Dependabot keeps minor and patch versions fresh.
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       minor-and-patch:
         update-types: [minor, patch]
@@ -12,10 +17,17 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+  # The Node major is pinned by .nvmrc and package.json engines.
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: node
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: gomod
     directory: /apps/monitoring
     schedule:

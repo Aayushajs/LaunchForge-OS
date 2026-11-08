@@ -64,7 +64,7 @@ jobs:
           ffmpeg -y -loglevel error -i "$VIDEO" -c:v libx264 -preset slow -crf 30             -pix_fmt yuv420p -movflags +faststart demo-output/launchforge-demo.mp4
           ls -lh demo-output
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: launchforge-demo
