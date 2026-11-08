@@ -33,13 +33,27 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
 
+      # GitHub release downloads fail intermittently (504s); retry with
+      # backoff so an outage does not turn every run red.
       - name: Install Nixpacks
         if: matrix.job == 'test'
-        run: curl -sSL https://nixpacks.com/install.sh | NIXPACKS_VERSION=1.41.0 bash
+        run: |
+          for attempt in 1 2 3 4 5; do
+            curl -fsSL --retry 3 --retry-delay 5 \
+              "https://github.com/railwayapp/nixpacks/releases/download/v1.41.0/nixpacks-v1.41.0-x86_64-unknown-linux-musl.tar.gz" \
+              | sudo tar -xz -C /usr/local/bin nixpacks && break
+            sleep $((attempt * 15))
+          done
+          nixpacks --version
 
       - name: Install Railpack
         if: matrix.job == 'test'
-        run: curl -sSL https://railpack.com/install.sh | RAILPACK_VERSION=0.15.4 bash
+        run: |
+          for attempt in 1 2 3 4 5; do
+            curl -fsSL https://railpack.com/install.sh | RAILPACK_VERSION=0.15.4 bash && break
+            sleep $((attempt * 15))
+          done
+          railpack --version
 
       - name: Add build tools to PATH
         if: matrix.job == 'test'
@@ -82,7 +96,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version-file: apps/monitoring/go.mod
           cache-dependency-path: apps/monitoring/go.sum

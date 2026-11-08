@@ -57,14 +57,20 @@ RUN case "$(uname -m)" in \
         aarch64) target=aarch64-unknown-linux-musl ;; \
         *) echo "Unsupported architecture $(uname -m)" >&2; exit 1 ;; \
     esac \
-    && curl -fsSL "https://github.com/railwayapp/nixpacks/releases/download/v${NIXPACKS_VERSION}/nixpacks-v${NIXPACKS_VERSION}-${target}.tar.gz" \
+    && curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "https://github.com/railwayapp/nixpacks/releases/download/v${NIXPACKS_VERSION}/nixpacks-v${NIXPACKS_VERSION}-${target}.tar.gz" \
         | tar -xz -C /usr/local/bin nixpacks \
     && nixpacks --version \
     && pnpm install -g tsx
 
-# Install Railpack
+# Install Railpack. Its installer downloads from GitHub releases, which fail
+# intermittently, so the step retries.
 ARG RAILPACK_VERSION=0.15.4
-RUN curl -sSL https://railpack.com/install.sh | bash
+RUN for attempt in 1 2 3 4 5; do \
+        curl -fsSL --retry 3 --retry-all-errors https://railpack.com/install.sh \
+            | RAILPACK_VERSION=${RAILPACK_VERSION} bash && break; \
+        sleep $((attempt * 10)); \
+    done \
+    && railpack --version
 
 # Install buildpacks
 COPY --from=buildpacksio/pack:0.39.1 /usr/local/bin/pack /usr/local/bin/pack
