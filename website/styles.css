@@ -22,6 +22,8 @@
 	--line-strong: #2e2e33;
 	--grid: rgb(255 255 255 / 5%);
 	--grid-fill: rgb(255 255 255 / 4%);
+	--hero-grid: rgb(255 255 255 / 8%);
+	--hero-grid-fill: rgb(255 255 255 / 6%);
 	--glow: rgb(91 91 246 / 24%);
 	--solid-bg: #fafafa;
 	--solid-text: #09090b;
@@ -39,6 +41,8 @@
 	--line-strong: #d4d4d8;
 	--grid: rgb(0 0 0 / 5%);
 	--grid-fill: rgb(0 0 0 / 3.5%);
+	--hero-grid: rgb(9 9 11 / 8%);
+	--hero-grid-fill: rgb(91 91 246 / 6%);
 	--glow: rgb(91 91 246 / 14%);
 	--solid-bg: #09090b;
 	--solid-text: #fafafa;
@@ -531,15 +535,15 @@ a {
 	position: absolute;
 	inset: 0;
 	background-image:
-		linear-gradient(var(--grid) 1px, transparent 1px),
-		linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+		linear-gradient(var(--hero-grid) 1px, transparent 1px),
+		linear-gradient(90deg, var(--hero-grid) 1px, transparent 1px);
 	background-size: 72px 72px;
 	transform: perspective(900px) rotateX(55deg) scale(2.2) translateY(-18%);
 	transform-origin: center top;
 	mask-image: radial-gradient(
-		ellipse 60% 55% at 50% 25%,
-		#000 30%,
-		transparent 75%
+		ellipse 72% 68% at 50% 26%,
+		#000 24%,
+		transparent 82%
 	);
 	pointer-events: none;
 }
@@ -549,7 +553,7 @@ a {
 	position: absolute;
 	width: 72px;
 	height: 72px;
-	background: var(--grid-fill);
+	background: var(--hero-grid-fill);
 	opacity: 0;
 	animation: sq-flicker 6s ease-in-out infinite;
 }
@@ -1106,7 +1110,7 @@ a {
 
 /* Sections */
 .section {
-	padding: clamp(56px, 7vw, 96px) 0;
+	padding: clamp(64px, 7.5vw, 104px) 0;
 }
 
 .section-head {
@@ -1134,7 +1138,7 @@ a {
 
 /* Feature grid */
 .features-section .wrap {
-	max-width: 1280px;
+	max-width: 1320px;
 }
 
 .features-section .section-head {
@@ -1153,13 +1157,18 @@ a {
 .feature-grid {
 	display: grid;
 	grid-template-columns: repeat(4, minmax(0, 1fr));
+	border-top: 1px solid var(--line);
 }
 
 .cell {
 	position: relative;
-	padding: 40px 0 44px;
+	display: flex;
+	flex-direction: column;
+	min-height: 248px;
+	padding: clamp(32px, 3vw, 40px) 0 clamp(36px, 3.2vw, 44px);
 	border-right: 1px solid var(--line);
 	overflow: hidden;
+	isolation: isolate;
 }
 
 .cell:nth-child(4n + 1) {
@@ -1170,19 +1179,36 @@ a {
 	border-bottom: 1px solid var(--line);
 }
 
-/* A soft wash rises from the outer edge on hover. */
+/* A pointer-led accent wash gives each feature a clear, contained hover state. */
 .cell::before {
 	content: "";
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(to top, var(--bg-soft), transparent);
+	z-index: 0;
+	background:
+		radial-gradient(
+			circle 180px at var(--mx, 50%) var(--my, 50%),
+			color-mix(in srgb, var(--accent) 18%, transparent),
+			transparent 72%
+		),
+		linear-gradient(to top, var(--bg-soft), transparent 72%);
 	opacity: 0;
-	transition: opacity 0.25s ease;
+	transition: opacity 0.3s ease;
 	pointer-events: none;
 }
 
+.cell > * {
+	z-index: 1;
+}
+
 .cell:nth-child(n + 5)::before {
-	background: linear-gradient(to bottom, var(--bg-soft), transparent);
+	background:
+		radial-gradient(
+			circle 180px at var(--mx, 50%) var(--my, 50%),
+			color-mix(in srgb, var(--accent) 18%, transparent),
+			transparent 72%
+		),
+		linear-gradient(to bottom, var(--bg-soft), transparent 72%);
 }
 
 .cell:hover::before {
@@ -1200,6 +1226,14 @@ a {
 	stroke-width: 1.5;
 	stroke-linecap: round;
 	stroke-linejoin: round;
+	transition:
+		stroke 0.25s ease,
+		transform 0.25s var(--ease);
+}
+
+.cell:hover svg {
+	stroke: var(--accent);
+	transform: translateY(-2px);
 }
 
 .cell h3 {
@@ -1227,7 +1261,7 @@ a {
 
 .cell:hover .bar {
 	height: 32px;
-	background: var(--text);
+	background: var(--accent);
 }
 
 .cell .t {
@@ -1239,6 +1273,10 @@ a {
 	transform: translateX(8px);
 }
 
+.cell:hover p {
+	color: var(--text);
+}
+
 .cell p {
 	position: relative;
 	margin: 10px 0 0;
@@ -1247,6 +1285,7 @@ a {
 	font-size: 0.96rem;
 	line-height: 1.7;
 	color: var(--text-soft);
+	transition: color 0.25s ease;
 }
 
 /* Product tour */
