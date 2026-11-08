@@ -398,6 +398,47 @@ await caption(
 await pause(4000);
 await screenshot("monitoring");
 
+// Clean dark screenshots for the product website: same session, no captions,
+// no video. The Website workflow publishes them with each release.
+{
+	mkdirSync(`${OUT}/site`, { recursive: true });
+	const siteContext = await browser.newContext({
+		viewport: { width: 1440, height: 900 },
+		deviceScaleFactor: 2,
+		colorScheme: "dark",
+		storageState: await context.storageState(),
+	});
+	const sitePage = await siteContext.newPage();
+	sitePage.setDefaultTimeout(60_000);
+	const environmentUrl = `${BASE}/dashboard/project/${project.projectId}/environment/${environment.environmentId}`;
+	const views = [
+		["application", appUrl],
+		["deployments", appUrl, /deployments/i],
+		["domains", appUrl, /domains/i],
+		["logs", appUrl, /^logs$/i],
+		["environment", environmentUrl],
+		["monitoring", `${BASE}/dashboard/monitoring`],
+		["usage", `${BASE}/dashboard/settings/usage`],
+		["audit-log", `${BASE}/dashboard/settings/audit-logs`],
+		["users", `${BASE}/dashboard/settings/users`],
+	];
+	for (const [name, url, tab] of views) {
+		try {
+			await sitePage.goto(url);
+			await sitePage.waitForLoadState("networkidle").catch(() => {});
+			if (tab) {
+				await sitePage.getByRole("tab", { name: tab }).click();
+				await sitePage.waitForLoadState("networkidle").catch(() => {});
+			}
+			await sitePage.waitForTimeout(2500);
+			await sitePage.screenshot({ path: `${OUT}/site/${name}.png` });
+		} catch (error) {
+			console.warn(`Site screenshot ${name} failed: ${error.message}`);
+		}
+	}
+	await siteContext.close();
+}
+
 // ── Outro ────────────────────────────────────────────────────────────────
 await card(
 	`<div style="text-align:center;max-width:1000px">

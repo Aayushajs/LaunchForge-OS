@@ -5,12 +5,13 @@ on:
     branches: [main]
     paths:
       - "website/**"
-      - "docs/assets/demo/**"
+      - "scripts/install.sh"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 
@@ -26,13 +27,36 @@ jobs:
         with:
           persist-credentials: false
 
-      # The dashboard screenshots live with the docs; copy them in rather
-      # than keeping a second copy in the repository.
       - name: Assemble the site
         run: |
           mkdir -p _site/assets/screens
           cp -r website/. _site/
-          cp docs/assets/demo/03-application-general.png docs/assets/demo/09-usage-quotas.png _site/assets/screens/
+          # Served at <site>/install.sh so the install command stays short.
+          cp scripts/install.sh _site/install.sh
+          cp docs/assets/demo/launchforge-demo.mp4 _site/assets/
+
+      # Dark, caption-free screenshots of the latest release, taken by the
+      # Demo video workflow. The documentation screenshots are the fallback.
+      - name: Add dashboard screenshots
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RUN=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow demo.yml --branch main \
+            --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          if [ -n "$RUN" ] && gh run download "$RUN" --repo "$GITHUB_REPOSITORY" -n launchforge-demo -D demo \
+             && [ -d demo/site ] && [ -n "$(ls demo/site)" ]; then
+            cp demo/site/*.png _site/assets/screens/
+            [ -f demo/launchforge-demo.mp4 ] && cp demo/launchforge-demo.mp4 _site/assets/
+            echo "Using screenshots from demo run $RUN"
+          else
+            for pair in application:03-application-general deployments:04-deployments domains:05-domains \
+                        logs:07-logs environment:08-environment-services usage:09-usage-quotas \
+                        audit-log:11-audit-log monitoring:12-monitoring users:10-users-roles; do
+              cp "docs/assets/demo/${pair#*:}.png" "_site/assets/screens/${pair%%:*}.png"
+            done
+            echo "Using documentation screenshots"
+          fi
+          ls _site/assets/screens
 
       - uses: actions/configure-pages@v5
 

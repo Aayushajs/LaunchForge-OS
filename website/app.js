@@ -54,62 +54,63 @@
 	});
 
 	for (const button of document.querySelectorAll("[data-copy]")) {
-		const label = button.querySelector("[data-i18n]");
 		button.addEventListener("click", async () => {
-			const text = document.getElementById(button.dataset.copy).textContent;
+			const source = document.getElementById(button.dataset.copy);
 			try {
-				await navigator.clipboard.writeText(text);
+				await navigator.clipboard.writeText(source.textContent);
 			} catch {
 				const range = document.createRange();
-				range.selectNodeContents(document.getElementById(button.dataset.copy));
+				range.selectNodeContents(source);
 				getSelection().removeAllRanges();
 				getSelection().addRange(range);
 				return;
 			}
-			label.textContent = t("hero.copied");
 			button.classList.add("is-done");
-			setTimeout(() => {
-				label.textContent = t("hero.copy");
-				button.classList.remove("is-done");
-			}, 1800);
+			setTimeout(() => button.classList.remove("is-done"), 1800);
 		});
 	}
 
-	const forge = document.querySelector(".forge");
-	const stages = [...forge.querySelectorAll(".stages li")];
-	const heat = forge.querySelector(".ingot");
-
-	const show = (step) => {
-		stages.forEach((li, index) => {
-			li.classList.toggle(
-				"is-done",
-				index < step || (step === stages.length - 1 && index === step),
-			);
-			li.classList.toggle(
-				"is-active",
-				index === step && step < stages.length - 1,
-			);
-		});
-		heat.style.setProperty(
-			"--progress",
-			`${((step + 1) / stages.length) * 100}%`,
-		);
-		forge.classList.toggle("is-live", step === stages.length - 1);
-	};
-
-	if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
-		show(stages.length - 1);
-		return;
-	}
-
-	const durations = [700, 1900, 1200];
-	let step = 0;
-	const advance = () => {
-		show(step);
-		if (step < stages.length - 1) {
-			setTimeout(advance, durations[step]);
-			step += 1;
+	const tabs = [...document.querySelectorAll('.tabs [role="tab"]')];
+	const shot = document.getElementById("tour-shot");
+	const caption = document.getElementById("tour-caption");
+	const select = (tab) => {
+		for (const other of tabs) {
+			other.setAttribute("aria-selected", String(other === tab));
+			other.tabIndex = other === tab ? 0 : -1;
 		}
+		caption.dataset.i18n = tab.dataset.caption;
+		caption.textContent = t(tab.dataset.caption);
+		shot.classList.add("is-loading");
+		shot.src = `assets/screens/${tab.dataset.shot}.png`;
 	};
-	setTimeout(advance, 400);
+	shot.addEventListener("load", () => shot.classList.remove("is-loading"));
+	tabs.forEach((tab, index) => {
+		tab.tabIndex = index === 0 ? 0 : -1;
+		tab.addEventListener("click", () => select(tab));
+		tab.addEventListener("keydown", (event) => {
+			const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
+			if (!step) return;
+			const next = tabs[(index + step + tabs.length) % tabs.length];
+			next.focus();
+			select(next);
+		});
+	});
+
+	const video = document.getElementById("demo-video");
+	const card = video.closest(".video-card");
+	document.getElementById("play-demo").addEventListener("click", () => {
+		card.classList.add("is-playing");
+		video.play();
+	});
+	video.addEventListener("play", () => card.classList.add("is-playing"));
+
+	// The header shows the latest release; the markup carries a fallback.
+	fetch("https://api.github.com/repos/Aayushajs/LaunchForge-OS/releases/latest")
+		.then((response) => (response.ok ? response.json() : null))
+		.then((release) => {
+			if (release?.tag_name) {
+				document.getElementById("gh-version").textContent = release.tag_name;
+			}
+		})
+		.catch(() => {});
 })();
