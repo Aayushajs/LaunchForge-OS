@@ -107,6 +107,10 @@ Read the full story in the [engineering case study](docs/engineering/CASE_STUDY.
 - Workspaces, invitations, owner/admin/member roles, custom roles, per-member access to projects, services and servers
 - API keys, REST/OpenAPI and tRPC APIs, 2FA and passkeys
 
+**Dashboard**
+- Light and dark themes, in English, Hindi, Spanish, Portuguese, German, French, Japanese and Chinese
+- Live metric charts for servers, containers and workspace usage, with a colour order checked for colour-blind readers
+
 ## Architecture
 
 ```mermaid
