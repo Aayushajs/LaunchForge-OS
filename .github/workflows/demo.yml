@@ -38,26 +38,30 @@ jobs:
         with:
           node-version: 24
 
+      # Run outside the pnpm workspace so npm does not try to resolve the
+      # repository's workspace: dependencies.
       - name: Install Playwright and ffmpeg
-        working-directory: tests/demo
         run: |
+          mkdir -p "$RUNNER_TEMP/demo"
+          cp tests/demo/demo.mjs tests/demo/install.log "$RUNNER_TEMP/demo/"
+          cd "$RUNNER_TEMP/demo"
+          npm init -y >/dev/null
           npm install --no-audit --no-fund playwright@1.49.1
           npx playwright install --with-deps chromium
           sudo apt-get install -y ffmpeg >/dev/null
 
       - name: Record the walkthrough
-        working-directory: tests/demo
+        working-directory: ${{ runner.temp }}/demo
         env:
           INSTALL_LOG: install.log
         run: node demo.mjs
 
       - name: Convert to MP4
         if: always()
-        working-directory: tests/demo
+        working-directory: ${{ runner.temp }}/demo
         run: |
           VIDEO=$(ls demo-output/video/*.webm | head -1)
-          ffmpeg -y -loglevel error -i "$VIDEO" -c:v libx264 -preset slow -crf 30 \
-            -pix_fmt yuv420p -movflags +faststart demo-output/launchforge-demo.mp4
+          ffmpeg -y -loglevel error -i "$VIDEO" -c:v libx264 -preset slow -crf 30             -pix_fmt yuv420p -movflags +faststart demo-output/launchforge-demo.mp4
           ls -lh demo-output
 
       - uses: actions/upload-artifact@v4
@@ -65,8 +69,8 @@ jobs:
         with:
           name: launchforge-demo
           path: |
-            tests/demo/demo-output/launchforge-demo.mp4
-            tests/demo/demo-output/screens/
+            ${{ runner.temp }}/demo/demo-output/launchforge-demo.mp4
+            ${{ runner.temp }}/demo/demo-output/screens/
           retention-days: 90
 
       - name: Logs on failure
