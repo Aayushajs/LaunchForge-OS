@@ -1,0 +1,74 @@
+name: Demo video
+
+# Installs the latest edge image on a fresh runner with the real installer and
+# records a narrated walkthrough (tests/demo/demo.mjs) as an MP4 plus
+# screenshots of every step.
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  record:
+    runs-on: ubuntu-24.04
+    env:
+      LAUNCHFORGE_MIN_DISK_GB: "5"
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install LaunchForge
+        run: |
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/launchforge"
+          sudo -E bash scripts/install.sh install --yes --image "$IMAGE" --version edge 2>&1 \
+            | sed -E 's/\x1b\[[0-9;]*m//g' | tee tests/demo/install.log
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Install Playwright and ffmpeg
+        working-directory: tests/demo
+        run: |
+          npm install --no-audit --no-fund playwright@1.49.1
+          npx playwright install --with-deps chromium
+          sudo apt-get install -y ffmpeg >/dev/null
+
+      - name: Record the walkthrough
+        working-directory: tests/demo
+        env:
+          INSTALL_LOG: install.log
+        run: node demo.mjs
+
+      - name: Convert to MP4
+        if: always()
+        working-directory: tests/demo
+        run: |
+          VIDEO=$(ls demo-output/video/*.webm | head -1)
+          ffmpeg -y -loglevel error -i "$VIDEO" -c:v libx264 -preset slow -crf 30 \
+            -pix_fmt yuv420p -movflags +faststart demo-output/launchforge-demo.mp4
+          ls -lh demo-output
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: launchforge-demo
+          path: |
+            tests/demo/demo-output/launchforge-demo.mp4
+            tests/demo/demo-output/screens/
+          retention-days: 90
+
+      - name: Logs on failure
+        if: failure()
+        run: docker service logs dokploy --tail 200 || true
