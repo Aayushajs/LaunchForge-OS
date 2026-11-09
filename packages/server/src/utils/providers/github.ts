@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { paths } from "@dokploy/server/constants";
 import type { apiFindGithubBranches } from "@dokploy/server/db/schema";
 import { findGithubById, type Github } from "@dokploy/server/services/github";
+import { createGithubOauthAuth } from "@dokploy/server/services/github-oauth";
 import type { InferResultType } from "@dokploy/server/types/with";
 import { createAppAuth } from "@octokit/auth-app";
 import { TRPCError } from "@trpc/server";
@@ -80,18 +81,25 @@ export const authGithub = (githubProvider: Github): Octokit => {
 		});
 	}
 
-	const octokit: Octokit = new Octokit({
-		authStrategy: createAppAuth,
-		auth: {
-			appId: githubProvider?.githubAppId || 0,
-			privateKey: githubProvider?.githubPrivateKey || "",
-			installationId: githubProvider?.githubInstallationId,
-		},
-		baseUrl: deriveGithubApiUrl(githubProvider?.githubUrl),
-	});
-
-	return octokit;
+	return octokitFor(githubProvider);
 };
+
+const octokitFor = (githubProvider: Github): Octokit =>
+	githubProvider.githubOauthAccountId
+		? new Octokit({
+				authStrategy: createGithubOauthAuth,
+				auth: { accountRowId: githubProvider.githubOauthAccountId },
+				baseUrl: deriveGithubApiUrl(githubProvider.githubUrl),
+			})
+		: new Octokit({
+				authStrategy: createAppAuth,
+				auth: {
+					appId: githubProvider.githubAppId || 0,
+					privateKey: githubProvider.githubPrivateKey || "",
+					installationId: githubProvider.githubInstallationId,
+				},
+				baseUrl: deriveGithubApiUrl(githubProvider.githubUrl),
+			});
 
 export const getGithubToken = async (
 	octokit: ReturnType<typeof authGithub>,
@@ -149,10 +157,13 @@ export const checkUserRepositoryPermissions = async (
 };
 
 export const haveGithubRequirements = (githubProvider: Github) => {
-	return !!(
-		githubProvider?.githubAppId &&
-		githubProvider?.githubPrivateKey &&
-		githubProvider?.githubInstallationId
+	return (
+		!!githubProvider?.githubOauthAccountId ||
+		!!(
+			githubProvider?.githubAppId &&
+			githubProvider?.githubPrivateKey &&
+			githubProvider?.githubInstallationId
+		)
 	);
 };
 
@@ -244,16 +255,19 @@ export const getGithubRepositories = async (githubId?: string) => {
 	}
 
 	const githubProvider = await findGithubById(githubId);
+	const octokit = octokitFor(githubProvider);
 
-	const octokit = new Octokit({
-		authStrategy: createAppAuth,
-		auth: {
-			appId: githubProvider.githubAppId,
-			privateKey: githubProvider.githubPrivateKey,
-			installationId: githubProvider.githubInstallationId,
-		},
-		baseUrl: deriveGithubApiUrl(githubProvider.githubUrl),
-	});
+	if (githubProvider.githubOauthAccountId) {
+		return (await octokit.paginate(
+			octokit.rest.repos.listForAuthenticatedUser,
+			{
+				per_page: 100,
+				sort: "pushed",
+			},
+		)) as unknown as Awaited<
+			ReturnType<typeof octokit.rest.apps.listReposAccessibleToInstallation>
+		>["data"]["repositories"];
+	}
 
 	const repositories = (await octokit.paginate(
 		octokit.rest.apps.listReposAccessibleToInstallation,
@@ -271,16 +285,7 @@ export const getGithubBranches = async (
 		return [];
 	}
 	const githubProvider = await findGithubById(input.githubId);
-
-	const octokit = new Octokit({
-		authStrategy: createAppAuth,
-		auth: {
-			appId: githubProvider.githubAppId,
-			privateKey: githubProvider.githubPrivateKey,
-			installationId: githubProvider.githubInstallationId,
-		},
-		baseUrl: deriveGithubApiUrl(githubProvider.githubUrl),
-	});
+	const octokit = octokitFor(githubProvider);
 
 	const branches = (await octokit.paginate(octokit.rest.repos.listBranches, {
 		owner: input.owner,

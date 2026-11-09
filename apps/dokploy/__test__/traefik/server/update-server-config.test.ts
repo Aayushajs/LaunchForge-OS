@@ -28,6 +28,7 @@ const baseSettings: WebServerSettings = {
 	telemetryProviderIds: [],
 	vectorAgentOrganizationId: null,
 	authProviders: {},
+	allowPublicSignup: false,
 	smtpConfig: null,
 	buildsConcurrency: 1,
 	logCleanupCron: null,

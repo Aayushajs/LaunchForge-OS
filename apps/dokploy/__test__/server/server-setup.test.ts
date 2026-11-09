@@ -29,7 +29,7 @@ const makeSandbox = (dockerShim?: string) => {
 
 const runReport = (sandboxPath: string) => {
 	const script = [
-		"DOCKER_VERSION=28.5.0",
+		"DOCKER_VERSION=29.9.3",
 		reportDockerVersion(),
 		'echo "$DOCKER_VERSION_REPORT"',
 	].join("\n");
@@ -77,7 +77,7 @@ describe("reportDockerVersion", () => {
 	});
 
 	it("reports the pinned version to be installed when docker is missing", () => {
-		expect(runReport(makeSandbox())).toBe("28.5.0 (will be installed)");
+		expect(runReport(makeSandbox())).toBe("29.9.3 (will be installed)");
 	});
 });
 

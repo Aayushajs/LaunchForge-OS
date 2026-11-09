@@ -86,7 +86,7 @@ flowchart TD
 
 No Redis is needed for self-hosted mode today; the deploy queue is in-memory.
 
-**Binaries baked into the panel image (`Dockerfile`):** Docker CLI 28.5.2, rclone, Nixpacks 1.41.0, Railpack 0.15.4, `pack` 0.39.1, tini, git-lfs. Remote servers get Docker 28.5.0 + builders via `setup/server-setup.ts`.
+**Binaries baked into the panel image (`Dockerfile`):** Docker CLI 29.9.3, rclone, Nixpacks 1.41.0, Railpack 0.15.4, `pack` 0.39.1, tini, git-lfs. Remote servers get Docker 29.9.3 (newest available on older distros) + builders via `setup/server-setup.ts`.
 
 ## 5. External network dependencies
 

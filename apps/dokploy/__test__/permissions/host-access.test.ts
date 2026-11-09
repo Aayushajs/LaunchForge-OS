@@ -68,12 +68,22 @@ describe("host access", () => {
 });
 
 describe("public sign-up", () => {
-	it("is off unless ALLOW_PUBLIC_SIGNUP is true", () => {
-		expect(isPublicSignupEnabled()).toBe(false);
+	it("is off by default and follows the dashboard switch", async () => {
+		await expect(isPublicSignupEnabled()).resolves.toBe(false);
+		findFirst.mockResolvedValue({ allowPublicSignup: true });
+		await expect(isPublicSignupEnabled()).resolves.toBe(true);
+	});
+
+	it("lets ALLOW_PUBLIC_SIGNUP override the dashboard switch", async () => {
+		findFirst.mockResolvedValue({ allowPublicSignup: true });
+		process.env.ALLOW_PUBLIC_SIGNUP = "false";
+		await expect(isPublicSignupEnabled()).resolves.toBe(false);
 		process.env.ALLOW_PUBLIC_SIGNUP = "1";
-		expect(isPublicSignupEnabled()).toBe(false);
+		await expect(isPublicSignupEnabled()).resolves.toBe(false);
+
+		findFirst.mockResolvedValue({ allowPublicSignup: false });
 		process.env.ALLOW_PUBLIC_SIGNUP = "true";
-		expect(isPublicSignupEnabled()).toBe(true);
+		await expect(isPublicSignupEnabled()).resolves.toBe(true);
 	});
 
 	it("gives new workspaces a bounded quota, configurable per install", () => {

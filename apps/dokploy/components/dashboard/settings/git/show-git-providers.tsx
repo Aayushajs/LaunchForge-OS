@@ -77,7 +77,9 @@ export const ShowGitProviders = () => {
 							Git Providers
 						</CardTitle>
 						<CardDescription>
-							Connect your Git provider for authentication.
+							Accounts LaunchForge can pull your code from. Signing in with
+							GitHub adds that account here automatically; add a GitHub App,
+							GitLab, Bitbucket or Gitea for anything else.
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-2 py-8 border-t">
@@ -257,10 +259,22 @@ export const ShowGitProviders = () => {
 																		</Link>
 																	</div>
 																)}
+																{isGithub && gitProvider.github?.isOauth && (
+																	<Badge
+																		variant="outline"
+																		className="mr-1 text-xs"
+																	>
+																		Signed in with GitHub
+																	</Badge>
+																)}
 																{haveGithubRequirements && isGithub && (
 																	<div className="flex flex-col gap-1">
 																		<Link
-																			href={`${gitProvider?.github?.githubAppName}`}
+																			href={
+																				gitProvider.github?.isOauth
+																					? `${gitProvider.github.githubUrl}/${gitProvider.github.githubAppName}`
+																					: `${gitProvider?.github?.githubAppName}`
+																			}
 																			target="_blank"
 																			className={buttonVariants({
 																				size: "icon",
@@ -300,6 +314,7 @@ export const ShowGitProviders = () => {
 																	<>
 																		{isGithub &&
 																			haveGithubRequirements &&
+																			!gitProvider.github?.isOauth &&
 																			gitProvider.github?.githubId && (
 																				<EditGithubProvider
 																					githubId={gitProvider.github.githubId}

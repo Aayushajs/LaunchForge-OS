@@ -5,6 +5,7 @@ import {
 	updateGitProvider,
 } from "@dokploy/server";
 import { db } from "@dokploy/server/db";
+import { ensureGithubOauthProvider } from "@dokploy/server/services/github-oauth";
 import { findMemberByUserId } from "@dokploy/server/services/permission";
 import { TRPCError } from "@trpc/server";
 import { desc, eq, inArray } from "drizzle-orm";
@@ -22,6 +23,15 @@ import {
 
 export const gitProviderRouter = createTRPCRouter({
 	getAll: protectedProcedure.query(async ({ ctx }) => {
+		// Someone who signed in with GitHub sees that account here without
+		// setting anything up.
+		await ensureGithubOauthProvider(
+			ctx.session.userId,
+			ctx.session.activeOrganizationId,
+		).catch((error) => {
+			console.warn("Could not add the GitHub sign-in account:", error);
+		});
+
 		const accessibleIds = await getAccessibleGitProviderIds(ctx.session);
 
 		if (accessibleIds.size === 0) {
@@ -49,11 +59,14 @@ export const gitProviderRouter = createTRPCRouter({
 						githubAppId: r.github.githubAppId,
 						githubInstallationId: r.github.githubInstallationId,
 						githubUrl: r.github.githubUrl,
-						isConfigured: !!(
-							r.github.githubPrivateKey &&
-							r.github.githubAppId &&
-							r.github.githubInstallationId
-						),
+						isOauth: !!r.github.githubOauthAccountId,
+						isConfigured:
+							!!r.github.githubOauthAccountId ||
+							!!(
+								r.github.githubPrivateKey &&
+								r.github.githubAppId &&
+								r.github.githubInstallationId
+							),
 					}
 				: null,
 			gitlab: r.gitlab

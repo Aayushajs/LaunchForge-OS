@@ -125,7 +125,7 @@ fi
 export const defaultCommand = (isBuildServer = false) => {
 	const bashCommand = `
 set -e;
-DOCKER_VERSION=28.5.0
+DOCKER_VERSION=29.9.3
 OS_TYPE=$(grep -w "ID" /etc/os-release | cut -d "=" -f 2 | tr -d '"')
 SYS_ARCH=$(uname -m)
 CURRENT_USER=$USER
@@ -176,17 +176,6 @@ if [ "$OS_TYPE" = "arch" ] || [ "$OS_TYPE" = "archarm" ]; then
 	OS_VERSION="rolling"
 else
 	OS_VERSION=$(grep -w "VERSION_ID" /etc/os-release | cut -d "=" -f 2 | tr -d '"')
-fi
-
-# Ubuntu 26.04 (resolute) ships a docker-ce repo that has no 28.5.0, so the
-# default pin is absent from apt-cache madison and get.docker.com aborts before
-# installing Docker. Repin to a version present on every architecture Docker
-# ships resolute for: amd64/arm64/armhf start at 29.3.1, but s390x only carries
-# 29.4.0-29.4.2, so 29.4.2 is the newest version common to all of them. This
-# must run after OS_VERSION is resolved and before the banner so the reported
-# Docker version stays accurate.
-if [ "$OS_TYPE" = "ubuntu" ] && [ "$OS_VERSION" = "26.04" ]; then
-	DOCKER_VERSION=29.4.2
 fi
 
 if [ "$OS_TYPE" = 'amzn' ]; then
@@ -641,6 +630,13 @@ if ! [ -x "$(command -v docker)" ]; then
 
             if ! [ -x "$(command -v docker)" ]; then
                 curl -s https://get.docker.com | $SUDO_CMD sh -s -- --version $DOCKER_VERSION 2>&1
+                # Older releases (Ubuntu 20.04, Debian 11, Raspbian) and some
+                # architectures do not carry the pinned version; get.docker.com
+                # then aborts, so take the newest version their repo has.
+                if ! [ -x "$(command -v docker)" ]; then
+                    echo "Docker $DOCKER_VERSION is not available for $OS_TYPE $OS_VERSION ($SYS_ARCH); installing the newest available version."
+                    curl -s https://get.docker.com | $SUDO_CMD sh 2>&1
+                fi
                 if ! [ -x "$(command -v docker)" ]; then
                     echo " - Docker installation failed."
                     echo "   Maybe your OS is not supported?"

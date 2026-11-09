@@ -127,6 +127,9 @@ export const webServerSettings = pgTable("webServerSettings", {
 	// Outgoing email for password resets and invitations. The password is
 	// stored encrypted.
 	smtpConfig: jsonb("smtpConfig").$type<SmtpConfig | null>(),
+	// Lets anyone create an account (and their own workspace). The
+	// ALLOW_PUBLIC_SIGNUP environment variable, when set, overrides it.
+	allowPublicSignup: boolean("allowPublicSignup").notNull().default(false),
 	// Whitelabeling Configuration (Enterprise / Proprietary)
 	whitelabelingConfig: jsonb("whitelabelingConfig")
 		.$type<{

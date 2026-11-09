@@ -4,12 +4,17 @@ import {
 } from "@dokploy/server/db/schema";
 import { reloadAuthProviders } from "@dokploy/server/lib/auth";
 import {
+	isPublicSignupEnabled,
+	isPublicSignupPinnedByEnv,
+} from "@dokploy/server/services/platform";
+import {
 	clearSmtpConfig,
 	describeAuthProviders,
 	describeSmtpConfig,
 	saveAuthProvider,
 	saveSmtpConfig,
 } from "@dokploy/server/services/sign-in-config";
+import { updateWebServerSettings } from "@dokploy/server/services/web-server-settings";
 import { sendEmail } from "@dokploy/server/verification/send-verification-email";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -38,6 +43,30 @@ export const signInRouter = createTRPCRouter({
 				resourceName: `sign-in-${input.provider}`,
 			});
 			return { enabled };
+		}),
+
+	signup: hostAdminProcedure.query(async () => ({
+		enabled: await isPublicSignupEnabled(),
+		pinnedByEnv: isPublicSignupPinnedByEnv(),
+	})),
+
+	saveSignup: hostAdminProcedure
+		.input(z.object({ enabled: z.boolean() }))
+		.mutation(async ({ ctx, input }) => {
+			if (isPublicSignupPinnedByEnv()) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message:
+						"Sign-up is set by the ALLOW_PUBLIC_SIGNUP environment variable on this server.",
+				});
+			}
+			await updateWebServerSettings({ allowPublicSignup: input.enabled });
+			await audit(ctx, {
+				action: "update",
+				resourceType: "settings",
+				resourceName: "public-signup",
+			});
+			return true;
 		}),
 
 	email: hostAdminProcedure.query(() => describeSmtpConfig()),

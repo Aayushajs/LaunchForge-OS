@@ -180,6 +180,14 @@ const MENU: Menu = {
 		},
 		{
 			isSingle: true,
+			title: "Git Providers",
+			url: "/dashboard/settings/git-providers",
+			icon: GitBranch,
+			// Only enabled for users with access to Git providers
+			isEnabled: ({ permissions }) => !!permissions?.gitProviders.read,
+		},
+		{
+			isSingle: true,
 			title: "Overview",
 			url: "/dashboard/overview",
 			icon: LayoutGrid,
@@ -381,14 +389,6 @@ const MENU: Menu = {
 			url: "/dashboard/settings/tags",
 			icon: Tags,
 			isEnabled: ({ permissions }) => !!permissions?.tag.read,
-		},
-		{
-			isSingle: true,
-			title: "Git",
-			url: "/dashboard/settings/git-providers",
-			icon: GitBranch,
-			// Only enabled for users with access to Git providers
-			isEnabled: ({ permissions }) => !!permissions?.gitProviders.read,
 		},
 		{
 			isSingle: true,

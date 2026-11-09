@@ -1,4 +1,11 @@
-import { Check, Copy, ExternalLink, KeyRound, Mail } from "lucide-react";
+import {
+	Check,
+	Copy,
+	ExternalLink,
+	KeyRound,
+	Mail,
+	UserPlus,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { GithubIcon } from "@/components/icons/data-tools-icons";
@@ -13,6 +20,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useTranslation } from "@/lib/i18n";
 import { api } from "@/utils/api";
 
@@ -328,6 +336,50 @@ const EmailForm = () => {
 	);
 };
 
+const SignupToggle = () => {
+	const { t } = useTranslation();
+	const utils = api.useUtils();
+	const { data } = api.signIn.signup.useQuery();
+	const { mutateAsync, isPending } = api.signIn.saveSignup.useMutation();
+
+	const toggle = async (enabled: boolean) => {
+		try {
+			await mutateAsync({ enabled });
+			await utils.signIn.signup.invalidate();
+			toast.success(
+				enabled
+					? t("Anyone can now create an account")
+					: t("Sign-up is closed"),
+			);
+		} catch (error) {
+			toast.error(error instanceof Error ? error.message : String(error));
+		}
+	};
+
+	return (
+		<div className="flex items-start justify-between gap-6">
+			<div className="flex flex-col gap-1">
+				<Label htmlFor="public-signup">{t("Allow anyone to sign up")}</Label>
+				<p className="text-sm text-muted-foreground">
+					{data?.pinnedByEnv
+						? t(
+								"Set by the ALLOW_PUBLIC_SIGNUP environment variable on this server.",
+							)
+						: t(
+								"Shows Create an account on the sign-in page. Each new account gets its own workspace with the sign-up quota, and GitHub or Google sign-in can create accounts too.",
+							)}
+				</p>
+			</div>
+			<Switch
+				id="public-signup"
+				checked={!!data?.enabled}
+				disabled={!data || data.pinnedByEnv || isPending}
+				onCheckedChange={toggle}
+			/>
+		</div>
+	);
+};
+
 export const ShowSignInSettings = () => {
 	const { t } = useTranslation();
 	const { data: providers } = api.signIn.providers.useQuery();
@@ -335,6 +387,21 @@ export const ShowSignInSettings = () => {
 
 	return (
 		<div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
+			<Card>
+				<CardHeader>
+					<CardTitle className="flex items-center gap-2 text-xl">
+						<UserPlus className="size-5 text-muted-foreground" />
+						{t("Sign-up")}
+					</CardTitle>
+					<CardDescription>
+						{t("Decide whether new people can create accounts on this server.")}
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<SignupToggle />
+				</CardContent>
+			</Card>
+
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2 text-xl">

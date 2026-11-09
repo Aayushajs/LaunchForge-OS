@@ -2,6 +2,18 @@
 
 An application is one container built from source or pulled as an image.
 
+## Import from GitHub in one click
+
+If you signed in with GitHub, or clicked **Connect GitHub** on **Home**, your repositories are listed on the Home page. Click **Import** next to one, check the branch and the port your app listens on (3000 by default), and click **Deploy**. LaunchForge then:
+
+- creates a project named after the repository, with a production environment;
+- adds an application whose source is that repository, sets `PORT` to the port you chose and turns on auto-deploy;
+- generates a `traefik.me` domain routed to that port;
+- adds a push webhook to the repository when the dashboard is reachable from the internet, so every push redeploys (on `localhost` this step is skipped; use **Deploy** to redeploy);
+- starts the first deployment and opens its log.
+
+Everything it set can be changed afterwards in the application's tabs. The GitHub account you signed in with also appears under **Git Providers** (named `GitHub · <your login>`), so the same repositories can be picked when you create an application by hand. Sign in with GitHub asks for the `repo` scope so private repositories work.
+
 ## Sources
 
 | Provider | Use when |

@@ -573,7 +573,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 		props: {
 			trpcState: helpers.dehydrate(),
 			hasAdmin,
-			publicSignup: isPublicSignupEnabled(),
+			publicSignup: await isPublicSignupEnabled(),
 			socialProviders: enabledSocialProviders(),
 		},
 	};

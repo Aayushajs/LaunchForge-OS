@@ -18,6 +18,9 @@ export const github = pgTable("github", {
 	githubPrivateKey: encryptedText("githubPrivateKey"),
 	githubWebhookSecret: encryptedText("githubWebhookSecret"),
 	githubUrl: text("githubUrl").default("https://github.com").notNull(),
+	// Set for providers created from "Sign in with GitHub": the OAuth token of
+	// that sign-in account is used instead of a GitHub App installation.
+	githubOauthAccountId: text("githubOauthAccountId"),
 	gitProviderId: text("gitProviderId")
 		.notNull()
 		.references(() => gitProvider.gitProviderId, { onDelete: "cascade" }),

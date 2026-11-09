@@ -21,6 +21,7 @@ import {
 } from "../services/admin";
 import { createAuditLog } from "../services/audit-log";
 import { isPublicSignupEnabled } from "../services/platform";
+import { GITHUB_REPO_SCOPES } from "../services/github-oauth";
 import { loadAuthProviders } from "../services/sign-in-config";
 import {
 	getWebServerSettings,
@@ -123,7 +124,12 @@ const createBetterAuth = (socialProviders: SocialProviders) =>
 			},
 		},
 		appName: "LaunchForge",
-		socialProviders,
+		socialProviders: {
+			...socialProviders,
+			...(socialProviders.github && {
+				github: { ...socialProviders.github, scope: GITHUB_REPO_SCOPES },
+			}),
+		},
 		// Sign-in and account endpoints are the ones worth guessing at, so they
 		// get much tighter limits than the default.
 		rateLimit: {
@@ -245,13 +251,14 @@ const createBetterAuth = (socialProviders: SocialProviders) =>
 										message: "Email does not match invitation",
 									});
 								}
-							} else if (!isPublicSignupEnabled()) {
+							} else if (!(await isPublicSignupEnabled())) {
 								const isAdminPresent = await db.query.member.findFirst({
 									where: eq(schema.member.role, "owner"),
 								});
 								if (isAdminPresent) {
 									throw new APIError("BAD_REQUEST", {
-										message: "Admin is already created",
+										message:
+											"Sign-up is closed on this server. Ask an admin to invite you.",
 									});
 								}
 							}
@@ -298,7 +305,7 @@ const createBetterAuth = (socialProviders: SocialProviders) =>
 						const isPublicSignup =
 							!IS_CLOUD &&
 							!!isAdminPresent &&
-							isPublicSignupEnabled() &&
+							(await isPublicSignupEnabled()) &&
 							!context?.request?.headers?.get("x-dokploy-token");
 
 						if (IS_CLOUD || !isAdminPresent || isPublicSignup) {
@@ -543,6 +550,7 @@ const fromCurrentApi = <T extends (...args: never[]) => unknown>(
 const _auth = {
 	handler: (request: Request) => instance().handler(request),
 	createApiKey: fromCurrentApi((current) => current.createApiKey),
+	getAccessToken: fromCurrentApi((current) => current.getAccessToken),
 };
 
 export type AuthType = typeof _auth;

@@ -78,7 +78,9 @@ Password-reset and invitation emails need an SMTP server. Any provider works; Br
 
 ## Step 5: Open sign-ups
 
-All of the above are settings of the dashboard service. Apply them on the server in one command:
+The quickest way: **Settings → Sign-in & Email → Sign-up → Allow anyone to sign up**. It takes effect immediately.
+
+Alternatively, everything above can be set as environment variables of the dashboard service (`ALLOW_PUBLIC_SIGNUP`, when set to `true` or `false`, overrides the dashboard switch). Apply them on the server in one command:
 
 ```bash
 sudo docker service update \
@@ -97,7 +99,7 @@ sudo docker service update \
 
 The dashboard restarts in a few seconds. The sign-in page now shows **Create an account**, and `https://deploy.example.com/register` accepts anyone. Each new account gets a workspace named after the person, with the quota from step 3.
 
-To close sign-ups again: `sudo docker service update --env-rm ALLOW_PUBLIC_SIGNUP dokploy`. Existing workspaces keep working.
+To close sign-ups again, turn the switch off (or `sudo docker service update --env-rm ALLOW_PUBLIC_SIGNUP dokploy` if you used the variable). Existing workspaces keep working. People who are not invited then see "Sign-up is closed on this server. Ask an admin to invite you."
 
 ## What a new user sees
 

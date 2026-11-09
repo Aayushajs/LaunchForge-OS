@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { api } from "@/utils/api";
 import { GetStarted } from "./get-started";
+import { ImportRepository } from "./import-repository";
 
 type DeploymentStatus = "idle" | "running" | "done" | "error";
 
@@ -201,6 +202,8 @@ export const ShowHome = () => {
 							deployments={recentDeployments.length}
 						/>
 					)}
+
+					<ImportRepository />
 
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 						<StatCard

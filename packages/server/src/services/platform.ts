@@ -22,8 +22,21 @@ export const getPlatformOrganizationId = async () => {
 export const isPlatformWorkspace = async (organizationId: string) =>
 	!!organizationId && organizationId === (await getPlatformOrganizationId());
 
-export const isPublicSignupEnabled = () =>
-	process.env.ALLOW_PUBLIC_SIGNUP === "true";
+/**
+ * Whether anyone may create an account. ALLOW_PUBLIC_SIGNUP pins it when set
+ * ("true" or "false"); otherwise the switch in Settings, Sign-in & Email.
+ */
+export const isPublicSignupEnabled = async () => {
+	const fromEnv = process.env.ALLOW_PUBLIC_SIGNUP;
+	if (fromEnv !== undefined && fromEnv !== "") return fromEnv === "true";
+	const settings = await db.query.webServerSettings
+		.findFirst({ columns: { allowPublicSignup: true } })
+		.catch(() => null);
+	return !!settings?.allowPublicSignup;
+};
+
+export const isPublicSignupPinnedByEnv = () =>
+	!!process.env.ALLOW_PUBLIC_SIGNUP;
 
 /**
  * Guards an action on a Docker host. With a `serverId` the server must belong

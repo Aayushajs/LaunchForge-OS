@@ -316,7 +316,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	}
 	const hasAdmin = await isAdminPresent();
 
-	if (hasAdmin && !isPublicSignupEnabled()) {
+	if (hasAdmin && !(await isPublicSignupEnabled())) {
 		return {
 			redirect: {
 				permanent: false,
