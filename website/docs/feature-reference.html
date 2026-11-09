@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Feature reference · LaunchForge Docs</title>
+	<meta name="description" content="Every feature in one place: what it does, where to find it, and how to use it.">
+	<meta property="og:title" content="Feature reference · LaunchForge Docs">
+	<meta property="og:description" content="Every feature in one place: what it does, where to find it, and how to use it.">
+	<meta property="og:image" content="../assets/og.png">
+	<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../styles.css">
+	<link rel="stylesheet" href="docs.css">
+	<script>
+		try {
+			const saved = localStorage.getItem("lf-theme");
+			document.documentElement.dataset.theme = saved === "light" ? "light" : "dark";
+		} catch {
+			document.documentElement.dataset.theme = "dark";
+		}
+	</script>
+</head>
+<body class="docs">
+	<a class="skip" href="#main">Skip to content</a>
+
+	<header class="site-header">
+		<div class="wrap header-row">
+			<a class="brand" href="../index.html" aria-label="LaunchForge home">
+				<img src="../assets/icon.svg" alt="" width="30" height="30">
+			</a>
+
+			<nav class="primary-nav" aria-label="Primary">
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-features">
+						<span>Features</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-features">
+						<a href="applications.html"><strong>Applications</strong><span>Git, Docker images, any language</span></a>
+						<a href="databases.html"><strong>Databases</strong><span>Six engines with S3 backups</span></a>
+						<a href="docker-compose.html"><strong>Docker Compose</strong><span>Whole stacks from one file</span></a>
+						<a href="monitoring.html"><strong>Monitoring</strong><span>Metrics, logs and alerts</span></a>
+						<a href="teams.html"><strong>Teams and security</strong><span>Roles, audit log, isolation</span></a>
+					</div>
+				</div>
+				<a class="nav-link" href="../index.html#pricing">Pricing</a>
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-solutions">
+						<span>Solutions</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-solutions">
+						<a href="installation.html"><strong>Self-hosted</strong><span>Install everything on your server</span></a>
+						<a href="servers.html"><strong>Your server, our dashboard</strong><span>Connect a server, we set it up</span></a>
+						<a href="public-platform.html"><strong>Run a public platform</strong><span>Open sign-ups like Render or Railway</span></a>
+					</div>
+				</div>
+				<a class="nav-link is-current" href="index.html" aria-current="page">Docs</a>
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-resources">
+						<span>Resources</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-resources">
+						<a href="free-hosting.html"><strong>Run it for free</strong><span>Oracle Cloud Always Free, step by step</span></a>
+						<a href="public-platform.html"><strong>Public platform guide</strong><span>Open sign-ups like Render or Railway</span></a>
+						<a href="feature-reference.html"><strong>Feature reference</strong><span>Every page and setting</span></a>
+						<a href="https://github.com/Aayushajs/LaunchForge-OS/releases"><strong>Releases</strong><span>A new version with every change</span></a>
+					</div>
+				</div>
+			</nav>
+
+			<div class="header-tools">
+				<button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch theme">
+					<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+					<svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z"/></svg>
+				</button>
+				<a class="stars" href="https://github.com/Aayushajs/LaunchForge-OS" aria-label="Star LaunchForge on GitHub">
+					<span class="sparkle s1" aria-hidden="true"></span>
+					<span class="sparkle s2" aria-hidden="true"></span>
+					<span class="sparkle s3" aria-hidden="true"></span>
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+					<span>Stars</span>
+					<strong id="star-count">—</strong>
+				</a>
+				<a class="nav-link signin" href="installation.html" data-panel="signin">Sign In</a>
+				<a class="btn btn-outline btn-sm contact" href="https://github.com/Aayushajs/LaunchForge-OS/issues/new/choose">Contact</a>
+				<a class="btn btn-light btn-sm" href="installation.html" data-panel="signup"><span>Sign Up</span><svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m4.5 3 3 3-3 3"/></svg></a>
+				<button class="icon-btn burger" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+				</button>
+			</div>
+		</div>
+		<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile" hidden>
+			<a href="../index.html#features">Features</a>
+			<a href="../index.html#pricing">Pricing</a>
+			<a href="../index.html#tour">Product</a>
+			<a href="index.html" aria-current="page">Docs</a>
+			<a href="installation.html" data-panel="signin">Sign In</a>
+			<a href="installation.html" data-panel="signup">Sign Up</a>
+		</nav>
+	</header>
+
+	<div class="docs-bar">
+		<button class="docs-menu-btn" type="button" aria-expanded="false" aria-controls="docs-sidebar">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span class="docs-bar-section">Platform</span><span class="docs-bar-sep" aria-hidden="true">/</span><span class="docs-bar-page">Feature reference</span>
+		</button>
+		<button class="icon-btn" type="button" data-search-open aria-label="Search docs"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+	</div>
+
+	<div class="wrap docs-shell">
+		<aside class="docs-sidebar" id="docs-sidebar" aria-label="Documentation">
+			<button class="search-trigger" type="button" data-search-open>
+				<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search docs</span><kbd>Ctrl K</kbd>
+			</button>
+			<nav class="docs-nav" aria-label="Documentation pages">
+				<div class="nav-group">
+					<p class="nav-group-title">Getting started</p>
+					<ul>
+						<li><a href="index.html">Overview</a></li>
+						<li><a href="concepts.html">Concepts</a></li>
+						<li><a href="quickstart.html">Quickstart</a></li>
+						<li><a href="deploy-a-portfolio.html">Deploy your portfolio</a></li>
+						<li><a href="free-hosting.html">Run it for free</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Deploy</p>
+					<ul>
+						<li><a href="applications.html">Applications</a></li>
+						<li><a href="deploys.html">Deploys and rollbacks</a></li>
+						<li><a href="environment-variables.html">Environment variables</a></li>
+						<li><a href="docker-compose.html">Docker Compose</a></li>
+						<li><a href="databases.html">Databases</a></li>
+						<li><a href="domains.html">Domains and HTTPS</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Operate</p>
+					<ul>
+						<li><a href="monitoring.html">Monitoring and logs</a></li>
+						<li><a href="usage-and-quotas.html">Usage and quotas</a></li>
+						<li><a href="backups.html">Backups</a></li>
+						<li><a href="servers.html">Servers and scaling</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Teams and security</p>
+					<ul>
+						<li><a href="teams.html">Teams and roles</a></li>
+						<li><a href="sign-in-and-email.html">Sign-in and email</a></li>
+						<li><a href="security.html">Isolation and security</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Platform</p>
+					<ul>
+						<li><a href="public-platform.html">Run a public platform</a></li>
+						<li><a href="installation.html">Installation</a></li>
+						<li><a href="configuration.html">Configuration reference</a></li>
+						<li><a href="api.html">API and webhooks</a></li>
+						<li><a href="feature-reference.html" aria-current="page">Feature reference</a></li>
+						<li><a href="troubleshooting.html">Troubleshooting</a></li>
+					</ul>
+				</div>
+			</nav>
+		</aside>
+
+		<main class="docs-main" id="main">
+			<article class="doc">
+				<p class="doc-eyebrow">Platform</p>
+				<h1>Feature reference</h1>
+				<p class="doc-lead">Every feature in one place: what it does, where to find it, and how to use it.</p>
+				<p>Menu paths are written <strong>Area → Page → Tab</strong>. &quot;Service&quot; means an application, a Compose stack or a database.</p>
+<h2 id="getting-started">Getting started<a class="anchor" href="#getting-started" aria-label="Link to this section">#</a></h2>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Where</th>
+<th>What it does and how to use it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>One-command install</td>
+<td>Server terminal</td>
+<td><code>curl -fsSL https://aayushajs.github.io/LaunchForge-OS/install.sh | sudo bash</code> installs Docker, Swarm, PostgreSQL, Traefik and the dashboard, generates every secret, and prints the address to open. Running it again is safe. <a href="installation.html">Installation guide</a></td>
+</tr>
+<tr>
+<td>Upgrade, status, uninstall</td>
+<td>Server terminal</td>
+<td><code>sudo bash install.sh upgrade [--version X.Y.Z]</code> backs up the database first; <code>status</code> shows what runs; <code>uninstall [--purge]</code> removes it. <a href="installation.html#upgrade-status-and-uninstall">Upgrade guide</a></td>
+</tr>
+<tr>
+<td>Owner account</td>
+<td><code>http://&lt;server-ip&gt;:3000</code></td>
+<td>The first account owns the installation and its workspace becomes the platform workspace.</td>
+</tr>
+<tr>
+<td>Dashboard domain</td>
+<td><strong>Settings → Web Server</strong></td>
+<td>Serve the dashboard at <code>https://deploy.example.com</code> with a Let&#39;s Encrypt certificate, then close port 3000.</td>
+</tr>
+<tr>
+<td>In-app updates</td>
+<td>Sidebar footer, <strong>Update</strong></td>
+<td>Checks the latest LaunchForge release on GitHub and switches the dashboard to that image. Platform workspace only.</td>
+</tr>
+<tr>
+<td>Language</td>
+<td>User menu, or the sign-in page</td>
+<td>English, हिन्दी, Español, Português, Deutsch, Français, 日本語, 简体中文. Picked from the browser and remembered.</td>
+</tr>
+<tr>
+<td>Light and dark theme</td>
+<td>User menu</td>
+<td>Follows the system setting until you choose.</td>
+</tr>
+</tbody></table></div>
+<h2 id="projects-and-environments">Projects and environments<a class="anchor" href="#projects-and-environments" aria-label="Link to this section">#</a></h2>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Where</th>
+<th>What it does and how to use it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Projects</td>
+<td><strong>Projects → Create Project</strong></td>
+<td>A folder for related services, for example <code>portfolio</code> or <code>shop</code>.</td>
+</tr>
+<tr>
+<td>Environments</td>
+<td>Inside a project, environment selector</td>
+<td>Each project starts with <code>production</code>; add <code>staging</code> or <code>development</code>. Services in different environments are separate.</td>
+</tr>
+<tr>
+<td>Shared variables</td>
+<td>Project or environment <strong>Environment</strong> button</td>
+<td>Variables available to every service below; reference them as <code>$&#123;&#123;project.NAME&#125;&#125;</code> or <code>$&#123;&#123;environment.NAME&#125;&#125;</code>.</td>
+</tr>
+<tr>
+<td>Move and duplicate</td>
+<td>Service menu</td>
+<td>Move a service to another environment, or duplicate a project with selected services. Only within your workspace.</td>
+</tr>
+<tr>
+<td>Search</td>
+<td><code>Ctrl</code>/<code>⌘</code> + <code>K</code></td>
+<td>Jump to any project or service.</td>
+</tr>
+<tr>
+<td>Tags</td>
+<td><strong>Settings → Tags</strong></td>
+<td>Label projects and filter by label.</td>
+</tr>
+</tbody></table></div>
+<h2 id="applications">Applications<a class="anchor" href="#applications" aria-label="Link to this section">#</a></h2>
+<p>An application is one container image built from source or pulled from a registry. <a href="applications.html">Applications</a></p>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Where</th>
+<th>What it does and how to use it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Git providers</td>
+<td><strong>Git Providers</strong> (sidebar, under Projects)</td>
+<td>Accounts used to clone repositories. Signing in with GitHub adds that account automatically, with the <code>repo</code> scope for private repositories. GitHub Apps, GitLab, Bitbucket and Gitea can be added here.</td>
+</tr>
+<tr>
+<td>Sources</td>
+<td><strong>General → Provider</strong></td>
+<td>GitHub, GitLab, Gitea, Bitbucket (through their apps or OAuth), any Git URL (with an SSH key for private ones), a prebuilt Docker image, or a zip file you upload (&quot;Drop&quot;).</td>
+</tr>
+<tr>
+<td>Build types</td>
+<td><strong>General → Build type</strong></td>
+<td><strong>Nixpacks</strong> (detects Node, Python, Go, PHP, Ruby, Java, Rust, …), <strong>Railpack</strong>, <strong>Heroku</strong> and <strong>Paketo</strong> buildpacks, <strong>Dockerfile</strong> (path, context, target stage, build arguments), <strong>Static</strong> (serves files with nginx).</td>
+</tr>
+<tr>
+<td>Publish directory</td>
+<td><strong>General</strong>, Nixpacks</td>
+<td>Serve a built folder such as <code>dist</code> with nginx, for single-page apps.</td>
+</tr>
+<tr>
+<td>Deploy, redeploy, stop, start</td>
+<td><strong>General</strong> buttons</td>
+<td>Deploy builds and rolls out; Rebuild skips the cache; Stop scales to zero.</td>
+</tr>
+<tr>
+<td>Import a Git repository</td>
+<td><strong>Home → Import a Git repository</strong></td>
+<td>Lists your GitHub repositories, with search, once you signed in with GitHub or clicked <strong>Connect GitHub</strong>. <strong>Import</strong> asks for the branch and the port, then creates a project, an application with <code>PORT</code> set, a generated <code>traefik.me</code> domain and autodeploy, and starts the first deployment. A push webhook is added when the dashboard is reachable from the internet.</td>
+</tr>
+<tr>
+<td>Autodeploy</td>
+<td><strong>General → Autodeploy</strong></td>
+<td>Deploy on every push to the branch.</td>
+</tr>
+<tr>
+<td>Watch paths</td>
+<td><strong>General → Watch paths</strong></td>
+<td>Only deploy when files matching these patterns change.</td>
+</tr>
+<tr>
+<td>Environment variables</td>
+<td><strong>Environment</strong></td>
+<td><code>KEY=value</code> per line, encrypted at rest. Build-time variables and build secrets are separate fields.</td>
+</tr>
+<tr>
+<td>Domains</td>
+<td><strong>Domains</strong></td>
+<td>Host, path, container port, HTTPS with Let&#39;s Encrypt or your own certificate. See <a href="domains.html">Domains</a>.</td>
+</tr>
+<tr>
+<td>Generated domain</td>
+<td><strong>Domains → Generate sslip.io domain</strong></td>
+<td>An instant <code>*.sslip.io</code> address that resolves to your server&#39;s IP. HTTP only; good for testing.</td>
+</tr>
+<tr>
+<td>Deployments</td>
+<td><strong>Deployments</strong></td>
+<td>Every deployment with its live build log, commit, duration and status. Cancel a running build.</td>
+</tr>
+<tr>
+<td>Health-gated rollout</td>
+<td>Automatic</td>
+<td>A deployment is <em>done</em> only when the new containers are running and healthy. Otherwise it fails and the old version keeps serving.</td>
+</tr>
+<tr>
+<td>Health check</td>
+<td><strong>Advanced → Swarm Settings → Health Check</strong></td>
+<td>Docker health check JSON. Strongly recommended.</td>
+</tr>
+<tr>
+<td>Rollback</td>
+<td><strong>Advanced → Rollback Settings</strong>, then <strong>Deployments → Rollback</strong></td>
+<td>Keeps the image of each deployment in a registry and restores any of them without rebuilding.</td>
+</tr>
+<tr>
+<td>Preview deployments</td>
+<td><strong>Preview Deployments</strong></td>
+<td>Each pull request gets its own build and URL; removed when the pull request closes.</td>
+</tr>
+<tr>
+<td>Logs</td>
+<td><strong>Logs</strong></td>
+<td>Live and recent container logs, with search.</td>
+</tr>
+<tr>
+<td>Container monitoring</td>
+<td><strong>Monitoring</strong></td>
+<td>CPU, memory, network and disk I/O of the running container, as live charts.</td>
+</tr>
+<tr>
+<td>Terminal</td>
+<td><strong>General → Open terminal</strong></td>
+<td>A shell inside the running container.</td>
+</tr>
+<tr>
+<td>Schedules</td>
+<td><strong>Schedules</strong></td>
+<td>Run a command in the container on a cron schedule, for example a nightly cleanup script.</td>
+</tr>
+<tr>
+<td>Volume backups</td>
+<td><strong>Volume Backups</strong></td>
+<td>Back up a named volume to S3 storage on a schedule.</td>
+</tr>
+<tr>
+<td>Patches</td>
+<td><strong>Patches</strong></td>
+<td>Edit or add files in the repository right before each build, without committing them, for example a config file with server-specific values.</td>
+</tr>
+<tr>
+<td>Resources</td>
+<td><strong>Advanced → Resources</strong></td>
+<td>Memory and CPU limits and reservations. Unset limits get <code>DEFAULT_SERVICE_MEMORY_MB</code> and <code>DEFAULT_SERVICE_CPU</code>. Counted against the workspace quota.</td>
+</tr>
+<tr>
+<td>Replicas and placement</td>
+<td><strong>Advanced → Cluster Settings</strong></td>
+<td>Number of replicas, the registry used to share images with other nodes, and placement constraints.</td>
+</tr>
+<tr>
+<td>Swarm settings</td>
+<td><strong>Advanced → Swarm Settings</strong></td>
+<td>Restart, update and rollback policies, labels, mode, network attachments, stop grace period.</td>
+</tr>
+<tr>
+<td>Volumes and file mounts</td>
+<td><strong>Advanced → Volumes</strong></td>
+<td>Named volumes, bind mounts (outside system paths) and file mounts whose content you edit in the dashboard.</td>
+</tr>
+<tr>
+<td>Ports</td>
+<td><strong>Advanced → Ports</strong></td>
+<td>Publish a container port on the server directly, for non-HTTP traffic such as a game server.</td>
+</tr>
+<tr>
+<td>Redirects</td>
+<td><strong>Advanced → Redirects</strong></td>
+<td>Regex redirects such as <code>www</code> to the bare domain.</td>
+</tr>
+<tr>
+<td>Basic authentication</td>
+<td><strong>Advanced → Security</strong></td>
+<td>Protect the app with a username and password at the proxy.</td>
+</tr>
+<tr>
+<td>Traefik configuration</td>
+<td><strong>Advanced → Traefik</strong></td>
+<td>View and edit this application&#39;s generated router configuration.</td>
+</tr>
+<tr>
+<td>Run command</td>
+<td><strong>Advanced → General</strong></td>
+<td>Override the container&#39;s command and arguments.</td>
+</tr>
+<tr>
+<td>Build server</td>
+<td><strong>Advanced → Build Server</strong></td>
+<td>Build on a dedicated server and deploy the image elsewhere.</td>
+</tr>
+<tr>
+<td>Deploy webhook</td>
+<td><strong>Deployments → Webhook URL</strong></td>
+<td>A secret URL that triggers a deployment, for any CI system.</td>
+</tr>
+</tbody></table></div>
+<h2 id="docker-compose">Docker Compose<a class="anchor" href="#docker-compose" aria-label="Link to this section">#</a></h2>
+<p>A Compose service runs a whole <code>docker-compose.yml</code> or a Swarm stack. <a href="docker-compose.html">Docker Compose and templates</a></p>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Where</th>
+<th>What it does and how to use it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Sources</td>
+<td><strong>General</strong></td>
+<td>The same Git providers as applications, or a compose file written in the dashboard (&quot;Raw&quot;).</td>
+</tr>
+<tr>
+<td>Compose or Stack</td>
+<td><strong>General → Compose type</strong></td>
+<td><code>docker compose</code> on one server, or <code>docker stack deploy</code> on the Swarm.</td>
+</tr>
+<tr>
+<td>Domains per service</td>
+<td><strong>Domains</strong></td>
+<td>Route a hostname to any service in the file; LaunchForge adds the Traefik labels.</td>
+</tr>
+<tr>
+<td>Isolated deployment</td>
+<td><strong>Advanced</strong></td>
+<td>Give the stack its own network and unique names, so two copies of the same file never collide.</td>
+</tr>
+<tr>
+<td>Containers</td>
+<td><strong>Containers</strong></td>
+<td>Every container of the stack, with logs and terminal.</td>
+</tr>
+<tr>
+<td>Templates</td>
+<td><strong>Create Service → Template</strong></td>
+<td>One-click stacks such as WordPress, Plausible, n8n, Uptime Kuma or Supabase.</td>
+</tr>
+<tr>
+<td>AI-generated stacks</td>
+<td><strong>Create Service → AI</strong></td>
+<td>Describe what you need; get a compose file to review and deploy. Requires an AI provider under <strong>Settings → AI</strong>.</td>
+</tr>
+<tr>
+<td>Workload policy</td>
+<td>Automatic</td>
+<td>Rejects privileged containers, host network or PID namespaces, devices, dangerous capabilities and mounts of the Docker socket or system paths. Turn off only on a single-owner server with <code>WORKLOAD_POLICY=permissive</code>.</td>
+</tr>
+</tbody></table></div>
+<h2 id="databases">Databases<a class="anchor" href="#databases" aria-label="Link to this section">#</a></h2>
+<p><a href="databases.html">Databases</a> · <a href="backups.html">Backups</a></p>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Where</th>
+<th>What it does and how to use it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Engines</td>
+<td><strong>Create Service → Database</strong></td>
+<td>PostgreSQL, MySQL, MariaDB, MongoDB, Redis and libSQL, with the image version of your choice.</td>
+</tr>
+<tr>
+<td>Internal connection</td>
+<td>Database <strong>General → Internal credentials</strong></td>
+<td>A connection string that works from your apps in the same workspace.</td>
+</tr>
+<tr>
+<td>External access</td>
+<td>Database <strong>General → External port</strong></td>
+<td>Publish the database on a server port to connect from your computer. Close it when done.</td>
+</tr>
+<tr>
+<td>Backups</td>
+<td>Database <strong>Backups</strong></td>
+<td>Scheduled dumps to any S3-compatible storage (AWS S3, Cloudflare R2, Backblaze B2, MinIO, Oracle Object Storage), with retention.</td>
+</tr>
+<tr>
+<td>Restore</td>
+<td>Database <strong>Backups → Restore</strong></td>
+<td>Stream a backup back into the database.</td>
+</tr>
+<tr>
+<td>Logs, monitoring, resources</td>
+<td>Same tabs as applications</td>
+<td>Live logs, metrics and memory/CPU limits.</td>
+</tr>
+</tbody></table></div>
+<h2 id="domains-and-certificates">Domains and certificates<a class="anchor" href="#domains-and-certificates" aria-label="Link to this section">#</a></h2>
+<p><a href="domains.html">Domains and HTTPS</a></p>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Where</th>
+<th>What it does and how to use it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Automatic HTTPS</td>
+<td>Domain <strong>HTTPS</strong> + <strong>Let&#39;s Encrypt</strong></td>
+<td>Issued and renewed automatically once DNS points at the server.</td>
+</tr>
+<tr>
+<td>Your own certificates</td>
+<td><strong>Settings → Certificates</strong></td>
+<td>Upload a certificate and key, then pick it on a domain.</td>
+</tr>
+<tr>
+<td>Hostname ownership</td>
+<td>Automatic</td>
+<td>A hostname belongs to one workspace; others cannot add it.</td>
+</tr>
+<tr>
+<td>Paths</td>
+<td>Domain <strong>Path</strong></td>
+<td>Route <code>example.com/api</code> and <code>example.com/</code> to different services.</td>
+</tr>
+<tr>
+<td>DNS providers</td>
+<td><strong>Settings → DNS Providers</strong></td>
+<td>Connect Cloudflare, Route 53, Porkbun, Infomaniak or OVH to manage records from LaunchForge.</td>
+</tr>
+</tbody></table></div>
+<h2 id="teams-and-access">Teams and access<a class="anchor" href="#teams-and-access" aria-label="Link to this section">#</a></h2>
+<p><a href="teams.html">Teams and roles</a> · <a href="sign-in-and-email.html">Sign-in and email</a></p>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Where</th>
+<th>What it does and how to use it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Workspaces</td>
+<td>Workspace switcher in the sidebar</td>
+<td>Separate tenants with their own projects, members, Git accounts, servers and quotas.</td>
+</tr>
+<tr>
+<td>Invitations</td>
+<td><strong>Settings → Users → Invite</strong></td>
+<td>Invite by email with a role; the link expires.</td>
+</tr>
+<tr>
+<td>Roles</td>
+<td><strong>Settings → Users</strong></td>
+<td>Owner, admin, member, or a custom role.</td>
+</tr>
+<tr>
+<td>Custom roles</td>
+<td><strong>Settings → Users → Roles</strong></td>
+<td>Choose exactly which actions a role allows, for example a <em>deployer</em> who can deploy but not delete.</td>
+</tr>
+<tr>
+<td>Per-member access</td>
+<td><strong>Settings → Users → member → Permissions</strong></td>
+<td>Limit a member to specific projects, environments, services and servers.</td>
+</tr>
+<tr>
+<td>Audit log</td>
+<td><strong>Settings → Audit Logs</strong></td>
+<td>Who did what and when, for every change. Always on.</td>
+</tr>
+<tr>
+<td>Sessions</td>
+<td><strong>Settings → Sessions</strong></td>
+<td>See where you are signed in and sign other sessions out.</td>
+</tr>
+<tr>
+<td>Two-factor and passkeys</td>
+<td><strong>Settings → Profile</strong></td>
+<td>Authenticator app codes with backup codes, and passkeys.</td>
+</tr>
+<tr>
+<td>Sign in with GitHub or Google</td>
+<td><strong>Settings → Sign-in &amp; Email</strong></td>
+<td>Paste the client id and secret of a GitHub OAuth app or a Google OAuth client; the page shows the callback URL to register. The button appears on the sign-in page immediately, without a restart. Environment variables work too. GitHub sign-in also connects the account under <strong>Git Providers</strong>.</td>
+</tr>
+<tr>
+<td>Email</td>
+<td><strong>Settings → Sign-in &amp; Email</strong></td>
+<td>Any SMTP server (Brevo, Resend, Mailjet and Gmail all work). Used for password resets and invitations; <strong>Send a test email</strong> checks it. The password is stored encrypted.</td>
+</tr>
+<tr>
+<td>Forgot password</td>
+<td>Sign-in page, <strong>Forgot password?</strong></td>
+<td>With email set up, users get a reset link. Without it, the page shows the command an administrator runs on the server to issue a new password.</td>
+</tr>
+<tr>
+<td>Sign-in protection</td>
+<td>Automatic</td>
+<td>New passwords need at least 12 characters; sign-in, sign-up, password reset and 2FA checks are rate-limited per address.</td>
+</tr>
+<tr>
+<td>API keys</td>
+<td><strong>Settings → Profile → API keys</strong></td>
+<td>Keys scoped to one workspace, with optional expiry and rate limits.</td>
+</tr>
+<tr>
+<td>Public sign-up</td>
+<td><strong>Settings → Sign-in &amp; Email → Sign-up</strong></td>
+<td><strong>Allow anyone to sign up</strong> shows <strong>Create an account</strong> on the sign-in page; GitHub and Google sign-in can create accounts too. Each new account gets its own workspace with a bounded quota. <code>ALLOW_PUBLIC_SIGNUP</code>, when set, overrides the switch. <a href="public-platform.html">Run a public platform</a></td>
+</tr>
+</tbody></table></div>
+<h2 id="usage-quotas-and-monitoring">Usage, quotas and monitoring<a class="anchor" href="#usage-quotas-and-monitoring" aria-label="Link to this section">#</a></h2>
+<p><a href="monitoring.html">Monitoring and logs</a> · <a href="usage-and-quotas.html">Usage and quotas</a></p>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Where</th>
+<th>What it does and how to use it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Usage and quotas</td>
+<td><strong>Settings → Usage &amp; Quotas</strong></td>
+<td>Reserved memory, CPU, applications and databases against the workspace quota, and hourly CPU and memory actually used in the last 24 hours, as charts and a table.</td>
+</tr>
+<tr>
+<td>Quota management</td>
+<td><strong>Settings → Usage &amp; Quotas</strong> (platform workspace)</td>
+<td>Set limits for any workspace. Deploys that would exceed them are refused with a clear message.</td>
+</tr>
+<tr>
+<td>Server monitoring</td>
+<td><strong>Monitoring</strong> (platform workspace)</td>
+<td>CPU, memory, disk and network of the server over time, with threshold alerts.</td>
+</tr>
+<tr>
+<td>Requests</td>
+<td><strong>Requests</strong> (platform workspace)</td>
+<td>Traefik access log: which hosts and paths are called, response codes and timings.</td>
+</tr>
+<tr>
+<td>Notifications</td>
+<td><strong>Settings → Notifications</strong></td>
+<td>Slack, Discord, Telegram, Microsoft Teams, Mattermost, Lark, email, Resend, Gotify, ntfy, Pushover or any webhook, for: deployment done, build failed, backup result, server restart, Docker cleanup and CPU/memory threshold.</td>
+</tr>
+<tr>
+<td>Log and metric shipping</td>
+<td><strong>Settings → Logs &amp; Metrics</strong></td>
+<td>Send logs and metrics to Datadog, Grafana Loki, Elasticsearch and others.</td>
+</tr>
+</tbody></table></div>
+<h2 id="servers-and-the-host">Servers and the host<a class="anchor" href="#servers-and-the-host" aria-label="Link to this section">#</a></h2>
+<p><a href="servers.html">Servers and scaling</a></p>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Where</th>
+<th>What it does and how to use it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Remote servers</td>
+<td><strong>Settings → Remote Servers</strong></td>
+<td>Add more machines over SSH; LaunchForge installs what they need, including Docker 29.9.3. Choose per service where it runs.</td>
+</tr>
+<tr>
+<td>Build servers</td>
+<td><strong>Settings → Remote Servers</strong>, type <em>Build</em></td>
+<td>Run builds away from production apps.</td>
+</tr>
+<tr>
+<td>SSH keys</td>
+<td><strong>Settings → SSH Keys</strong></td>
+<td>Keys for remote servers and private Git repositories, stored encrypted.</td>
+</tr>
+<tr>
+<td>Registries</td>
+<td><strong>Settings → Registry</strong></td>
+<td>Private image registries for pulling images, sharing builds across nodes and rollbacks.</td>
+</tr>
+<tr>
+<td>S3 destinations</td>
+<td><strong>Settings → S3 Destinations</strong></td>
+<td>Storage for database and volume backups.</td>
+</tr>
+<tr>
+<td>Secrets</td>
+<td><strong>Settings → Secrets</strong></td>
+<td>Connect an external secret store and reference its values in environment variables.</td>
+</tr>
+<tr>
+<td>Swarm nodes</td>
+<td><strong>Docker → Swarm</strong> (platform workspace)</td>
+<td>Add workers and managers to scale out.</td>
+</tr>
+<tr>
+<td>Traefik</td>
+<td><strong>Traefik File System</strong>, <strong>Settings → Web Server</strong></td>
+<td>Edit Traefik&#39;s configuration, middleware and ports; update its version. Platform workspace only.</td>
+</tr>
+<tr>
+<td>Docker housekeeping</td>
+<td><strong>Settings → Web Server</strong>, <strong>Docker</strong></td>
+<td>Prune images, volumes, containers and build cache, on a schedule or now. Platform workspace only.</td>
+</tr>
+<tr>
+<td>Networks</td>
+<td>Service <strong>Advanced → Networks</strong></td>
+<td>Create extra overlay networks inside your workspace and attach services to them, for example to keep a database reachable from one app only. Every workspace already has its own private network.</td>
+</tr>
+</tbody></table></div>
+<h2 id="automation">Automation<a class="anchor" href="#automation" aria-label="Link to this section">#</a></h2>
+<p><a href="api.html">API and webhooks</a></p>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Where</th>
+<th>What it does and how to use it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>REST API</td>
+<td><code>https://&lt;dashboard&gt;/swagger</code></td>
+<td>Every dashboard action, documented with OpenAPI. Authenticate with an API key in the <code>x-api-key</code> header.</td>
+</tr>
+<tr>
+<td>Deploy webhooks</td>
+<td>Application <strong>Deployments</strong></td>
+<td>Trigger a deployment from any CI pipeline with one HTTP request.</td>
+</tr>
+<tr>
+<td>Git webhooks</td>
+<td>Automatic</td>
+<td>GitHub, GitLab, Gitea and Bitbucket pushes, verified by signature.</td>
+</tr>
+</tbody></table></div>
+<h2 id="settings-for-operators">Settings for operators<a class="anchor" href="#settings-for-operators" aria-label="Link to this section">#</a></h2>
+<p>All are environment variables of the dashboard service; set them with <code>sudo docker service update --env-add NAME=value dokploy</code>. The complete table is in the <a href="configuration.html">Configuration reference</a>.</p>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ALLOW_PUBLIC_SIGNUP</code></td>
+<td>unset</td>
+<td><code>true</code> lets anyone register and get a workspace, <code>false</code> keeps sign-up closed; overrides the switch in <strong>Settings → Sign-in &amp; Email</strong></td>
+</tr>
+<tr>
+<td><code>SIGNUP_QUOTA_MEMORY_MB</code>, <code>_CPU</code>, <code>_APPLICATIONS</code>, <code>_DATABASES</code>, <code>_DOMAINS</code></td>
+<td>1024, 1, 3, 2, 5</td>
+<td>Quota of a workspace created by sign-up</td>
+</tr>
+<tr>
+<td><code>DEFAULT_SERVICE_MEMORY_MB</code>, <code>DEFAULT_SERVICE_CPU</code></td>
+<td>512, 0.5</td>
+<td>Limits for services that set none</td>
+</tr>
+<tr>
+<td><code>WORKLOAD_POLICY</code></td>
+<td>strict</td>
+<td><code>permissive</code> allows host mounts and privileged containers (single-owner servers only)</td>
+</tr>
+<tr>
+<td><code>WORKSPACE_NETWORK_ISOLATION</code></td>
+<td>true</td>
+<td><code>false</code> puts every service on one shared network</td>
+</tr>
+<tr>
+<td><code>BUILD_TIMEOUT_SECONDS</code></td>
+<td>3600</td>
+<td>Longest a build may run; <code>0</code> turns the limit off</td>
+</tr>
+<tr>
+<td><code>DEPLOY_HEALTH_TIMEOUT_SECONDS</code></td>
+<td>120</td>
+<td>How long a rollout waits for the new version to become healthy</td>
+</tr>
+<tr>
+<td><code>CONTAINER_PIDS_LIMIT</code></td>
+<td>4096</td>
+<td>Process limit per container; <code>0</code> turns it off</td>
+</tr>
+<tr>
+<td><code>SMTP_SERVER</code>, <code>SMTP_PORT</code>, <code>SMTP_USERNAME</code>, <code>SMTP_PASSWORD</code>, <code>SMTP_FROM_ADDRESS</code></td>
+<td>none</td>
+<td>Email for password resets and invitations</td>
+</tr>
+</tbody></table></div>
+
+			</article>
+			<nav class="pager" aria-label="Previous and next page">
+				<a class="prev" href="api.html" rel="prev"><span class="pager-label"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>Previous</span><strong>API and webhooks</strong></a>
+				<a class="next" href="troubleshooting.html" rel="next"><span class="pager-label">Next<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3.5 4.5 4.5L6 12.5"/></svg></span><strong>Troubleshooting</strong></a>
+			</nav>
+		</main>
+
+		<aside class="docs-toc" aria-labelledby="toc-title">
+			<p class="toc-title" id="toc-title">On this page</p>
+			<ul>
+				<li class="lvl-2"><a href="#getting-started">Getting started</a></li>
+				<li class="lvl-2"><a href="#projects-and-environments">Projects and environments</a></li>
+				<li class="lvl-2"><a href="#applications">Applications</a></li>
+				<li class="lvl-2"><a href="#docker-compose">Docker Compose</a></li>
+				<li class="lvl-2"><a href="#databases">Databases</a></li>
+				<li class="lvl-2"><a href="#domains-and-certificates">Domains and certificates</a></li>
+				<li class="lvl-2"><a href="#teams-and-access">Teams and access</a></li>
+				<li class="lvl-2"><a href="#usage-quotas-and-monitoring">Usage, quotas and monitoring</a></li>
+				<li class="lvl-2"><a href="#servers-and-the-host">Servers and the host</a></li>
+				<li class="lvl-2"><a href="#automation">Automation</a></li>
+				<li class="lvl-2"><a href="#settings-for-operators">Settings for operators</a></li>
+			</ul>
+		</aside>
+	</div>
+
+	<footer class="docs-footer">
+		<div class="wrap docs-footer-row">
+			<p>Open source under the Apache-2.0 license. © 2026 Aayush Jain</p>
+			<nav aria-label="Footer">
+				<a href="../index.html">Home</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS">GitHub</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/releases">Changelog</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/issues/new/choose">Report an issue</a>
+			</nav>
+		</div>
+	</footer>
+
+	<dialog class="search-dialog" id="search-dialog" aria-label="Search the documentation">
+		<div class="search-box">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+			<input id="search-input" type="search" placeholder="Search the docs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list" aria-label="Search the docs">
+			<kbd>Esc</kbd>
+		</div>
+		<div class="search-results" id="search-results" role="listbox" aria-label="Results"></div>
+		<p class="search-foot"><span><kbd>↑</kbd><kbd>↓</kbd> to move</span><span><kbd>Enter</kbd> to open</span></p>
+	</dialog>
+
+	<dialog class="modal" id="panel-dialog" aria-labelledby="modal-title">
+		<form method="dialog">
+			<h2 id="modal-title">LaunchForge Cloud is opening soon</h2>
+			<p>Until then, install LaunchForge on your own server. One command sets up everything, and the dashboard opens with its own sign-up page.</p>
+			<div class="install-chip">
+				<code id="modal-cmd">curl -fsSL https://aayushajs.github.io/LaunchForge-OS/install.sh | sudo bash</code>
+				<button class="copy-btn" type="button" data-copy="modal-cmd" aria-label="Copy install command"><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></button>
+			</div>
+			<div class="modal-actions">
+				<a class="btn btn-light btn-sm" href="free-hosting.html">Run it for free</a>
+				<button class="btn btn-outline btn-sm" type="submit" value="close">Close</button>
+			</div>
+		</form>
+	</dialog>
+
+	<script src="../config.js"></script>
+	<script src="search-index.js"></script>
+	<script src="docs.js"></script>
+</body>
+</html>

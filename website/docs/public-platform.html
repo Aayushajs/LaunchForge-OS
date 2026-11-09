@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Run a public platform · LaunchForge Docs</title>
+	<meta name="description" content="Let anyone sign up and deploy apps under your domain, each in an isolated workspace with a fixed allowance, the way Heroku, Render or Railway work.">
+	<meta property="og:title" content="Run a public platform · LaunchForge Docs">
+	<meta property="og:description" content="Let anyone sign up and deploy apps under your domain, each in an isolated workspace with a fixed allowance, the way Heroku, Render or Railway work.">
+	<meta property="og:image" content="../assets/og.png">
+	<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../styles.css">
+	<link rel="stylesheet" href="docs.css">
+	<script>
+		try {
+			const saved = localStorage.getItem("lf-theme");
+			document.documentElement.dataset.theme = saved === "light" ? "light" : "dark";
+		} catch {
+			document.documentElement.dataset.theme = "dark";
+		}
+	</script>
+</head>
+<body class="docs">
+	<a class="skip" href="#main">Skip to content</a>
+
+	<header class="site-header">
+		<div class="wrap header-row">
+			<a class="brand" href="../index.html" aria-label="LaunchForge home">
+				<img src="../assets/icon.svg" alt="" width="30" height="30">
+			</a>
+
+			<nav class="primary-nav" aria-label="Primary">
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-features">
+						<span>Features</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-features">
+						<a href="applications.html"><strong>Applications</strong><span>Git, Docker images, any language</span></a>
+						<a href="databases.html"><strong>Databases</strong><span>Six engines with S3 backups</span></a>
+						<a href="docker-compose.html"><strong>Docker Compose</strong><span>Whole stacks from one file</span></a>
+						<a href="monitoring.html"><strong>Monitoring</strong><span>Metrics, logs and alerts</span></a>
+						<a href="teams.html"><strong>Teams and security</strong><span>Roles, audit log, isolation</span></a>
+					</div>
+				</div>
+				<a class="nav-link" href="../index.html#pricing">Pricing</a>
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-solutions">
+						<span>Solutions</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-solutions">
+						<a href="installation.html"><strong>Self-hosted</strong><span>Install everything on your server</span></a>
+						<a href="servers.html"><strong>Your server, our dashboard</strong><span>Connect a server, we set it up</span></a>
+						<a href="public-platform.html"><strong>Run a public platform</strong><span>Open sign-ups like Render or Railway</span></a>
+					</div>
+				</div>
+				<a class="nav-link is-current" href="index.html" aria-current="page">Docs</a>
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-resources">
+						<span>Resources</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-resources">
+						<a href="free-hosting.html"><strong>Run it for free</strong><span>Oracle Cloud Always Free, step by step</span></a>
+						<a href="public-platform.html"><strong>Public platform guide</strong><span>Open sign-ups like Render or Railway</span></a>
+						<a href="feature-reference.html"><strong>Feature reference</strong><span>Every page and setting</span></a>
+						<a href="https://github.com/Aayushajs/LaunchForge-OS/releases"><strong>Releases</strong><span>A new version with every change</span></a>
+					</div>
+				</div>
+			</nav>
+
+			<div class="header-tools">
+				<button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch theme">
+					<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+					<svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z"/></svg>
+				</button>
+				<a class="stars" href="https://github.com/Aayushajs/LaunchForge-OS" aria-label="Star LaunchForge on GitHub">
+					<span class="sparkle s1" aria-hidden="true"></span>
+					<span class="sparkle s2" aria-hidden="true"></span>
+					<span class="sparkle s3" aria-hidden="true"></span>
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+					<span>Stars</span>
+					<strong id="star-count">—</strong>
+				</a>
+				<a class="nav-link signin" href="installation.html" data-panel="signin">Sign In</a>
+				<a class="btn btn-outline btn-sm contact" href="https://github.com/Aayushajs/LaunchForge-OS/issues/new/choose">Contact</a>
+				<a class="btn btn-light btn-sm" href="installation.html" data-panel="signup"><span>Sign Up</span><svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m4.5 3 3 3-3 3"/></svg></a>
+				<button class="icon-btn burger" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+				</button>
+			</div>
+		</div>
+		<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile" hidden>
+			<a href="../index.html#features">Features</a>
+			<a href="../index.html#pricing">Pricing</a>
+			<a href="../index.html#tour">Product</a>
+			<a href="index.html" aria-current="page">Docs</a>
+			<a href="installation.html" data-panel="signin">Sign In</a>
+			<a href="installation.html" data-panel="signup">Sign Up</a>
+		</nav>
+	</header>
+
+	<div class="docs-bar">
+		<button class="docs-menu-btn" type="button" aria-expanded="false" aria-controls="docs-sidebar">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span class="docs-bar-section">Platform</span><span class="docs-bar-sep" aria-hidden="true">/</span><span class="docs-bar-page">Run a public platform</span>
+		</button>
+		<button class="icon-btn" type="button" data-search-open aria-label="Search docs"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+	</div>
+
+	<div class="wrap docs-shell">
+		<aside class="docs-sidebar" id="docs-sidebar" aria-label="Documentation">
+			<button class="search-trigger" type="button" data-search-open>
+				<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search docs</span><kbd>Ctrl K</kbd>
+			</button>
+			<nav class="docs-nav" aria-label="Documentation pages">
+				<div class="nav-group">
+					<p class="nav-group-title">Getting started</p>
+					<ul>
+						<li><a href="index.html">Overview</a></li>
+						<li><a href="concepts.html">Concepts</a></li>
+						<li><a href="quickstart.html">Quickstart</a></li>
+						<li><a href="deploy-a-portfolio.html">Deploy your portfolio</a></li>
+						<li><a href="free-hosting.html">Run it for free</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Deploy</p>
+					<ul>
+						<li><a href="applications.html">Applications</a></li>
+						<li><a href="deploys.html">Deploys and rollbacks</a></li>
+						<li><a href="environment-variables.html">Environment variables</a></li>
+						<li><a href="docker-compose.html">Docker Compose</a></li>
+						<li><a href="databases.html">Databases</a></li>
+						<li><a href="domains.html">Domains and HTTPS</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Operate</p>
+					<ul>
+						<li><a href="monitoring.html">Monitoring and logs</a></li>
+						<li><a href="usage-and-quotas.html">Usage and quotas</a></li>
+						<li><a href="backups.html">Backups</a></li>
+						<li><a href="servers.html">Servers and scaling</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Teams and security</p>
+					<ul>
+						<li><a href="teams.html">Teams and roles</a></li>
+						<li><a href="sign-in-and-email.html">Sign-in and email</a></li>
+						<li><a href="security.html">Isolation and security</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Platform</p>
+					<ul>
+						<li><a href="public-platform.html" aria-current="page">Run a public platform</a></li>
+						<li><a href="installation.html">Installation</a></li>
+						<li><a href="configuration.html">Configuration reference</a></li>
+						<li><a href="api.html">API and webhooks</a></li>
+						<li><a href="feature-reference.html">Feature reference</a></li>
+						<li><a href="troubleshooting.html">Troubleshooting</a></li>
+					</ul>
+				</div>
+			</nav>
+		</aside>
+
+		<main class="docs-main" id="main">
+			<article class="doc">
+				<p class="doc-eyebrow">Platform</p>
+				<h1>Run a public platform</h1>
+				<p class="doc-lead">Let anyone sign up and deploy apps under your domain, each in an isolated workspace with a fixed allowance, the way Heroku, Render or Railway work.</p>
+				<p>By default an installation is private: the person who installs it creates the first account, and everyone else joins by invitation. This guide opens it up.</p>
+<div class="callout warning" role="note">
+<p class="callout-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 3.9 2.4 17.6A2 2 0 0 0 4.1 20.6h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9.5v4M12 17v.01"/></svg>Warning</p>
+
+<p>Read the <a href="#security-checklist">security checklist</a> before opening sign-ups to strangers.</p>
+</div>
+
+<h2 id="how-it-fits-together">How it fits together<a class="anchor" href="#how-it-fits-together" aria-label="Link to this section">#</a></h2>
+<figure class="diagram" aria-label="Anyone signs up on the dashboard, which creates a workspace with its own network and quota. Visitors reach every workspace's apps through Traefik. The operator manages the server from the platform workspace.">
+<div class="flow"><span class="node">Anyone</span><span class="edge"><span>signs up at <code>deploy.example.com</code></span></span><span class="node">LaunchForge dashboard</span><span class="edge">creates</span><span class="node">Workspace A, B, …<small>own network, own quota</small></span></div>
+<div class="flow"><span class="node">Visitors</span><span class="edge"><code>*.apps.example.com</code></span><span class="node">Traefik + Let's Encrypt</span><span class="edge">routes</span><span class="node">Workspace apps</span></div>
+<div class="flow"><span class="node">You, the operator</span><span class="edge">platform workspace</span><span class="node">Server<small>Traefik, Docker, backups</small></span></div>
+</figure>
+
+<p>Two kinds of workspace exist:</p>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Workspace</th>
+<th>Who</th>
+<th>Can do</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Platform workspace</strong></td>
+<td>The first one, created by the installer&#39;s owner account</td>
+<td>Everything, including the server itself: Traefik, Docker, Swarm, web server settings, updates, and the quotas of other workspaces</td>
+</tr>
+<tr>
+<td><strong>Tenant workspace</strong></td>
+<td>One per sign-up</td>
+<td>Deploy apps and databases inside its quota, invite its own team, connect its own Git accounts and servers. Cannot see or change the server or other workspaces.</td>
+</tr>
+</tbody></table></div>
+<h2 id="step-1-plan-the-domains">Step 1: Plan the domains<a class="anchor" href="#step-1-plan-the-domains" aria-label="Link to this section">#</a></h2>
+<p>Use one domain for the dashboard and a wildcard for apps:</p>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>DNS record</th>
+<th>Type</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>deploy.example.com</code></td>
+<td>A</td>
+<td>server IP</td>
+<td>The dashboard, where users sign up</td>
+</tr>
+<tr>
+<td><code>*.apps.example.com</code></td>
+<td>A</td>
+<td>server IP</td>
+<td>Every app: <code>blog.apps.example.com</code>, <code>api.apps.example.com</code>, …</td>
+</tr>
+</tbody></table></div>
+<p>With a wildcard record, users never have to touch DNS: they add a domain such as <code>myblog.apps.example.com</code> to their app and Let&#39;s Encrypt issues the certificate on the spot. A hostname belongs to whoever claims it first, so one user cannot take over another&#39;s address.</p>
+<p>Users can still bring their own domains by pointing an <code>A</code> record at the server.</p>
+<p>No paid domain? DuckDNS gives a free wildcard, <code>*.yourname.duckdns.org</code>. See <a href="free-hosting.html#5-get-a-free-domain-with-https">Run it for free</a>.</p>
+<h2 id="step-2-install-and-secure-the-dashboard">Step 2: Install and secure the dashboard<a class="anchor" href="#step-2-install-and-secure-the-dashboard" aria-label="Link to this section">#</a></h2>
+<ol>
+<li>Install LaunchForge (<a href="quickstart.html">Quickstart</a>, or <a href="free-hosting.html">for free</a>).</li>
+<li>Create the owner account. This account and its workspace become the <strong>platform workspace</strong>.</li>
+<li><strong>Settings → Web Server</strong>: set the domain <code>deploy.example.com</code> and a Let&#39;s Encrypt email. Then close port 3000 in the firewall.</li>
+<li>Turn on two-factor authentication for the owner account (<strong>Settings → Profile</strong>).</li>
+</ol>
+<h2 id="step-3-set-the-allowance-for-new-workspaces">Step 3: Set the allowance for new workspaces<a class="anchor" href="#step-3-set-the-allowance-for-new-workspaces" aria-label="Link to this section">#</a></h2>
+<p>Every sign-up gets a quota. Choose values that fit your server. On a 24 GB Oracle machine, for example, 1 GB per user leaves room for about twenty active users.</p>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SIGNUP_QUOTA_MEMORY_MB</code></td>
+<td>1024</td>
+<td>Memory that a workspace&#39;s services may reserve in total</td>
+</tr>
+<tr>
+<td><code>SIGNUP_QUOTA_CPU</code></td>
+<td>1</td>
+<td>CPUs that a workspace&#39;s services may reserve in total</td>
+</tr>
+<tr>
+<td><code>SIGNUP_QUOTA_APPLICATIONS</code></td>
+<td>3</td>
+<td>Applications per workspace</td>
+</tr>
+<tr>
+<td><code>SIGNUP_QUOTA_DATABASES</code></td>
+<td>2</td>
+<td>Databases per workspace</td>
+</tr>
+<tr>
+<td><code>SIGNUP_QUOTA_DOMAINS</code></td>
+<td>5</td>
+<td>Domains per workspace</td>
+</tr>
+<tr>
+<td><code>DEFAULT_SERVICE_MEMORY_MB</code></td>
+<td>512</td>
+<td>Memory limit for a service that does not set one</td>
+</tr>
+<tr>
+<td><code>DEFAULT_SERVICE_CPU</code></td>
+<td>0.5</td>
+<td>CPU limit for a service that does not set one</td>
+</tr>
+</tbody></table></div>
+<p>You can change any single workspace&#39;s quota later under <strong>Settings → Usage &amp; Quotas</strong>, which, for the operator, shows every workspace and what it uses.</p>
+<p>The memory and CPU quota only covers services running on your servers. A workspace that connects its own server (<strong>Settings → Remote Servers</strong>, then <strong>Setup Server</strong>, which installs Docker and everything else over SSH in one click) can run anything there without touching its quota. That gives your users both options: deploy on your platform within the free allowance, or bring a server and use your dashboard to run it, like a hosted control panel.</p>
+<h2 id="step-4-turn-on-email">Step 4: Turn on email<a class="anchor" href="#step-4-turn-on-email" aria-label="Link to this section">#</a></h2>
+<p>Password-reset and invitation emails need an SMTP server. Any provider works; Brevo, Resend and Mailjet have free plans. The easiest way is <strong>Settings → Sign-in &amp; Email</strong> in the dashboard: fill in the server and press <strong>Send a test email</strong>. Environment variables work as well; see <a href="sign-in-and-email.html#email">Sign-in and email</a>.</p>
+<h2 id="step-5-open-sign-ups">Step 5: Open sign-ups<a class="anchor" href="#step-5-open-sign-ups" aria-label="Link to this section">#</a></h2>
+<p>Turn on <strong>Allow anyone to sign up</strong> under <strong>Settings → Sign-in &amp; Email</strong>. Or set it, together with the quota and email settings, on the dashboard service in one command; the <code>ALLOW_PUBLIC_SIGNUP</code> variable, when set, overrides the switch:</p>
+<div class="code"><div class="code-head"><span>bash</span><button class="copy-btn" type="button" data-copy-code aria-label="Copy code"><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></button></div><pre><code>sudo docker service update \
+  --env-add ALLOW_PUBLIC_SIGNUP=true \
+  --env-add SIGNUP_QUOTA_MEMORY_MB=1024 \
+  --env-add SIGNUP_QUOTA_CPU=1 \
+  --env-add SIGNUP_QUOTA_APPLICATIONS=3 \
+  --env-add SIGNUP_QUOTA_DATABASES=2 \
+  --env-add SMTP_SERVER=smtp-relay.brevo.com \
+  --env-add SMTP_PORT=587 \
+  --env-add SMTP_USERNAME=... \
+  --env-add SMTP_PASSWORD=... \
+  --env-add SMTP_FROM_ADDRESS="LaunchForge &lt;no-reply@example.com&gt;" \
+  dokploy</code></pre></div>
+<p>The dashboard restarts in a few seconds. The sign-in page now shows <strong>Create an account</strong>, and <code>https://deploy.example.com/register</code> accepts anyone. Each new account gets a workspace named after the person, with the quota from step 3.</p>
+<p>To close sign-ups again, turn the switch off. If you set the variable, remove it (or set it to <code>false</code>):</p>
+<div class="code"><div class="code-head"><span>bash</span><button class="copy-btn" type="button" data-copy-code aria-label="Copy code"><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></button></div><pre><code>sudo docker service update --env-rm ALLOW_PUBLIC_SIGNUP dokploy</code></pre></div>
+<p>Existing workspaces keep working.</p>
+<h2 id="what-a-new-user-sees">What a new user sees<a class="anchor" href="#what-a-new-user-sees" aria-label="Link to this section">#</a></h2>
+<ol>
+<li>They sign up and land in their own empty workspace.</li>
+<li>They connect GitHub: signing up with GitHub connects their account automatically, and <strong>Git Providers</strong> in the sidebar adds GitHub Apps, GitLab, Bitbucket or Gitea. Each workspace connects its own accounts, so nobody can deploy someone else&#39;s private repositories. The <strong>Import a Git repository</strong> card on <strong>Home</strong> deploys a repository in one step.</li>
+<li>They create a project and an application, deploy, and add a domain like <code>name.apps.example.com</code>. HTTPS is automatic.</li>
+<li><strong>Settings → Usage &amp; Quotas</strong> shows how much of their allowance is reserved and what they actually used in the last 24 hours.</li>
+</ol>
+<p>Pages that manage the server itself (Web Server, Traefik, Docker, Swarm, Requests, host Monitoring) are hidden from tenant workspaces and refused by the API if called directly. How tenants are kept apart is described in <a href="security.html">Isolation and security</a>.</p>
+<h2 id="security-checklist">Security checklist<a class="anchor" href="#security-checklist" aria-label="Link to this section">#</a></h2>
+<p>Before inviting the public, know what is not covered yet:</p>
+<ul>
+<li><strong>Builds run on the host&#39;s Docker daemon.</strong> They are time-limited and cannot mount the host, but a deliberately heavy build can slow the server for others while it runs. Keep <code>BUILD_TIMEOUT_SECONDS</code> short (for example 900) and watch <strong>Monitoring</strong>.</li>
+<li><strong>No email verification or CAPTCHA on self-hosted sign-up.</strong> Expect throwaway accounts on a public URL. Quotas cap what each can use.</li>
+<li><strong>No suspend or delete button for other workspaces yet.</strong> To contain an abusive workspace, set its quotas to 1 under <strong>Settings → Usage &amp; Quotas</strong> so nothing new deploys, then remove its services with <code>docker service rm</code> on the server.</li>
+<li><strong>No billing.</strong> Every workspace gets the same free allowance.</li>
+<li><strong>Remote servers are trusted on first SSH connection</strong> (no host-key pinning yet). This only matters if tenants add their own servers.</li>
+</ul>
+<p>For a class, a team or a group of friends, these are acceptable today. For an open service on the internet, add a CAPTCHA and email verification in front of sign-up, and consider separate build servers (<strong>Settings → Remote Servers</strong>, type <em>Build</em>) so builds never run next to production apps.</p>
+<h2 id="operating-it">Operating it<a class="anchor" href="#operating-it" aria-label="Link to this section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>See every workspace&#39;s usage and change quotas</td>
+<td><strong>Settings → Usage &amp; Quotas</strong> (platform workspace)</td>
+</tr>
+<tr>
+<td>Watch the server</td>
+<td><strong>Monitoring</strong></td>
+</tr>
+<tr>
+<td>Find who changed what</td>
+<td><strong>Settings → Audit Logs</strong></td>
+</tr>
+<tr>
+<td>Back up the platform database</td>
+<td><a href="backups.html#backing-up-the-platform-itself">Backups</a></td>
+</tr>
+<tr>
+<td>Upgrade</td>
+<td><code>sudo bash install.sh upgrade</code> (<a href="installation.html#upgrade-status-and-uninstall">Installation</a>)</td>
+</tr>
+<tr>
+<td>Add capacity</td>
+<td>Add a Swarm worker or a remote server (<a href="servers.html">Servers and scaling</a>)</td>
+</tr>
+</tbody></table></div>
+
+			</article>
+			<nav class="pager" aria-label="Previous and next page">
+				<a class="prev" href="security.html" rel="prev"><span class="pager-label"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>Previous</span><strong>Isolation and security</strong></a>
+				<a class="next" href="installation.html" rel="next"><span class="pager-label">Next<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3.5 4.5 4.5L6 12.5"/></svg></span><strong>Installation</strong></a>
+			</nav>
+		</main>
+
+		<aside class="docs-toc" aria-labelledby="toc-title">
+			<p class="toc-title" id="toc-title">On this page</p>
+			<ul>
+				<li class="lvl-2"><a href="#how-it-fits-together">How it fits together</a></li>
+				<li class="lvl-2"><a href="#step-1-plan-the-domains">Step 1: Plan the domains</a></li>
+				<li class="lvl-2"><a href="#step-2-install-and-secure-the-dashboard">Step 2: Install and secure the dashboard</a></li>
+				<li class="lvl-2"><a href="#step-3-set-the-allowance-for-new-workspaces">Step 3: Set the allowance for new workspaces</a></li>
+				<li class="lvl-2"><a href="#step-4-turn-on-email">Step 4: Turn on email</a></li>
+				<li class="lvl-2"><a href="#step-5-open-sign-ups">Step 5: Open sign-ups</a></li>
+				<li class="lvl-2"><a href="#what-a-new-user-sees">What a new user sees</a></li>
+				<li class="lvl-2"><a href="#security-checklist">Security checklist</a></li>
+				<li class="lvl-2"><a href="#operating-it">Operating it</a></li>
+			</ul>
+		</aside>
+	</div>
+
+	<footer class="docs-footer">
+		<div class="wrap docs-footer-row">
+			<p>Open source under the Apache-2.0 license. © 2026 Aayush Jain</p>
+			<nav aria-label="Footer">
+				<a href="../index.html">Home</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS">GitHub</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/releases">Changelog</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/issues/new/choose">Report an issue</a>
+			</nav>
+		</div>
+	</footer>
+
+	<dialog class="search-dialog" id="search-dialog" aria-label="Search the documentation">
+		<div class="search-box">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+			<input id="search-input" type="search" placeholder="Search the docs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list" aria-label="Search the docs">
+			<kbd>Esc</kbd>
+		</div>
+		<div class="search-results" id="search-results" role="listbox" aria-label="Results"></div>
+		<p class="search-foot"><span><kbd>↑</kbd><kbd>↓</kbd> to move</span><span><kbd>Enter</kbd> to open</span></p>
+	</dialog>
+
+	<dialog class="modal" id="panel-dialog" aria-labelledby="modal-title">
+		<form method="dialog">
+			<h2 id="modal-title">LaunchForge Cloud is opening soon</h2>
+			<p>Until then, install LaunchForge on your own server. One command sets up everything, and the dashboard opens with its own sign-up page.</p>
+			<div class="install-chip">
+				<code id="modal-cmd">curl -fsSL https://aayushajs.github.io/LaunchForge-OS/install.sh | sudo bash</code>
+				<button class="copy-btn" type="button" data-copy="modal-cmd" aria-label="Copy install command"><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></button>
+			</div>
+			<div class="modal-actions">
+				<a class="btn btn-light btn-sm" href="free-hosting.html">Run it for free</a>
+				<button class="btn btn-outline btn-sm" type="submit" value="close">Close</button>
+			</div>
+		</form>
+	</dialog>
+
+	<script src="../config.js"></script>
+	<script src="search-index.js"></script>
+	<script src="docs.js"></script>
+</body>
+</html>

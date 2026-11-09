@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Isolation and security · LaunchForge Docs</title>
+	<meta name="description" content="How workspaces are kept apart on a shared server, and how secrets, webhooks and accounts are protected.">
+	<meta property="og:title" content="Isolation and security · LaunchForge Docs">
+	<meta property="og:description" content="How workspaces are kept apart on a shared server, and how secrets, webhooks and accounts are protected.">
+	<meta property="og:image" content="../assets/og.png">
+	<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../styles.css">
+	<link rel="stylesheet" href="docs.css">
+	<script>
+		try {
+			const saved = localStorage.getItem("lf-theme");
+			document.documentElement.dataset.theme = saved === "light" ? "light" : "dark";
+		} catch {
+			document.documentElement.dataset.theme = "dark";
+		}
+	</script>
+</head>
+<body class="docs">
+	<a class="skip" href="#main">Skip to content</a>
+
+	<header class="site-header">
+		<div class="wrap header-row">
+			<a class="brand" href="../index.html" aria-label="LaunchForge home">
+				<img src="../assets/icon.svg" alt="" width="30" height="30">
+			</a>
+
+			<nav class="primary-nav" aria-label="Primary">
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-features">
+						<span>Features</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-features">
+						<a href="applications.html"><strong>Applications</strong><span>Git, Docker images, any language</span></a>
+						<a href="databases.html"><strong>Databases</strong><span>Six engines with S3 backups</span></a>
+						<a href="docker-compose.html"><strong>Docker Compose</strong><span>Whole stacks from one file</span></a>
+						<a href="monitoring.html"><strong>Monitoring</strong><span>Metrics, logs and alerts</span></a>
+						<a href="teams.html"><strong>Teams and security</strong><span>Roles, audit log, isolation</span></a>
+					</div>
+				</div>
+				<a class="nav-link" href="../index.html#pricing">Pricing</a>
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-solutions">
+						<span>Solutions</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-solutions">
+						<a href="installation.html"><strong>Self-hosted</strong><span>Install everything on your server</span></a>
+						<a href="servers.html"><strong>Your server, our dashboard</strong><span>Connect a server, we set it up</span></a>
+						<a href="public-platform.html"><strong>Run a public platform</strong><span>Open sign-ups like Render or Railway</span></a>
+					</div>
+				</div>
+				<a class="nav-link is-current" href="index.html" aria-current="page">Docs</a>
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-resources">
+						<span>Resources</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-resources">
+						<a href="free-hosting.html"><strong>Run it for free</strong><span>Oracle Cloud Always Free, step by step</span></a>
+						<a href="public-platform.html"><strong>Public platform guide</strong><span>Open sign-ups like Render or Railway</span></a>
+						<a href="feature-reference.html"><strong>Feature reference</strong><span>Every page and setting</span></a>
+						<a href="https://github.com/Aayushajs/LaunchForge-OS/releases"><strong>Releases</strong><span>A new version with every change</span></a>
+					</div>
+				</div>
+			</nav>
+
+			<div class="header-tools">
+				<button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch theme">
+					<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+					<svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z"/></svg>
+				</button>
+				<a class="stars" href="https://github.com/Aayushajs/LaunchForge-OS" aria-label="Star LaunchForge on GitHub">
+					<span class="sparkle s1" aria-hidden="true"></span>
+					<span class="sparkle s2" aria-hidden="true"></span>
+					<span class="sparkle s3" aria-hidden="true"></span>
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+					<span>Stars</span>
+					<strong id="star-count">—</strong>
+				</a>
+				<a class="nav-link signin" href="installation.html" data-panel="signin">Sign In</a>
+				<a class="btn btn-outline btn-sm contact" href="https://github.com/Aayushajs/LaunchForge-OS/issues/new/choose">Contact</a>
+				<a class="btn btn-light btn-sm" href="installation.html" data-panel="signup"><span>Sign Up</span><svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m4.5 3 3 3-3 3"/></svg></a>
+				<button class="icon-btn burger" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+				</button>
+			</div>
+		</div>
+		<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile" hidden>
+			<a href="../index.html#features">Features</a>
+			<a href="../index.html#pricing">Pricing</a>
+			<a href="../index.html#tour">Product</a>
+			<a href="index.html" aria-current="page">Docs</a>
+			<a href="installation.html" data-panel="signin">Sign In</a>
+			<a href="installation.html" data-panel="signup">Sign Up</a>
+		</nav>
+	</header>
+
+	<div class="docs-bar">
+		<button class="docs-menu-btn" type="button" aria-expanded="false" aria-controls="docs-sidebar">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span class="docs-bar-section">Teams and security</span><span class="docs-bar-sep" aria-hidden="true">/</span><span class="docs-bar-page">Isolation and security</span>
+		</button>
+		<button class="icon-btn" type="button" data-search-open aria-label="Search docs"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+	</div>
+
+	<div class="wrap docs-shell">
+		<aside class="docs-sidebar" id="docs-sidebar" aria-label="Documentation">
+			<button class="search-trigger" type="button" data-search-open>
+				<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search docs</span><kbd>Ctrl K</kbd>
+			</button>
+			<nav class="docs-nav" aria-label="Documentation pages">
+				<div class="nav-group">
+					<p class="nav-group-title">Getting started</p>
+					<ul>
+						<li><a href="index.html">Overview</a></li>
+						<li><a href="concepts.html">Concepts</a></li>
+						<li><a href="quickstart.html">Quickstart</a></li>
+						<li><a href="deploy-a-portfolio.html">Deploy your portfolio</a></li>
+						<li><a href="free-hosting.html">Run it for free</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Deploy</p>
+					<ul>
+						<li><a href="applications.html">Applications</a></li>
+						<li><a href="deploys.html">Deploys and rollbacks</a></li>
+						<li><a href="environment-variables.html">Environment variables</a></li>
+						<li><a href="docker-compose.html">Docker Compose</a></li>
+						<li><a href="databases.html">Databases</a></li>
+						<li><a href="domains.html">Domains and HTTPS</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Operate</p>
+					<ul>
+						<li><a href="monitoring.html">Monitoring and logs</a></li>
+						<li><a href="usage-and-quotas.html">Usage and quotas</a></li>
+						<li><a href="backups.html">Backups</a></li>
+						<li><a href="servers.html">Servers and scaling</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Teams and security</p>
+					<ul>
+						<li><a href="teams.html">Teams and roles</a></li>
+						<li><a href="sign-in-and-email.html">Sign-in and email</a></li>
+						<li><a href="security.html" aria-current="page">Isolation and security</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Platform</p>
+					<ul>
+						<li><a href="public-platform.html">Run a public platform</a></li>
+						<li><a href="installation.html">Installation</a></li>
+						<li><a href="configuration.html">Configuration reference</a></li>
+						<li><a href="api.html">API and webhooks</a></li>
+						<li><a href="feature-reference.html">Feature reference</a></li>
+						<li><a href="troubleshooting.html">Troubleshooting</a></li>
+					</ul>
+				</div>
+			</nav>
+		</aside>
+
+		<main class="docs-main" id="main">
+			<article class="doc">
+				<p class="doc-eyebrow">Teams and security</p>
+				<h1>Isolation and security</h1>
+				<p class="doc-lead">How workspaces are kept apart on a shared server, and how secrets, webhooks and accounts are protected.</p>
+				<h2 id="workspace-isolation">Workspace isolation<a class="anchor" href="#workspace-isolation" aria-label="Link to this section">#</a></h2>
+<p>Several teams can share one installation. Workspaces cannot see each other&#39;s resources, take each other&#39;s domains, mount the host or exceed their quotas. Only the platform workspace can administer the server itself.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Control</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Reaching another workspace&#39;s databases over the network</td>
+<td>Each workspace has its own overlay network; only Traefik joins them all</td>
+</tr>
+<tr>
+<td>Changing Traefik, Docker or the server</td>
+<td>Host administration is limited to the platform workspace</td>
+</tr>
+<tr>
+<td>Escaping a container through mounts</td>
+<td>The Docker socket, <code>/</code>, <code>/etc</code>, <code>/var/lib/docker</code> and similar paths cannot be mounted; privileged containers and host namespaces are rejected</td>
+</tr>
+<tr>
+<td>Taking someone&#39;s domain</td>
+<td>A hostname belongs to the first workspace that adds it</td>
+</tr>
+<tr>
+<td>Using all the memory or CPU</td>
+<td>Quotas are checked on every deploy; services without limits get the default limits</td>
+</tr>
+<tr>
+<td>Forged Git webhooks</td>
+<td>Signatures are verified against the raw request body</td>
+</tr>
+<tr>
+<td>Reading someone&#39;s secrets</td>
+<td>Environment variables and credentials are encrypted at rest; every API call checks ownership</td>
+</tr>
+</tbody></table></div>
+<p>The full list, with the tests that prove each control, is in the <a href="https://github.com/Aayushajs/LaunchForge-OS/blob/main/docs/06-security/THREAT_MODEL.md">threat model</a>.</p>
+<h2 id="platform-and-tenant-workspaces">Platform and tenant workspaces<a class="anchor" href="#platform-and-tenant-workspaces" aria-label="Link to this section">#</a></h2>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Workspace</th>
+<th>Who</th>
+<th>Can do</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Platform workspace</strong></td>
+<td>The first one, created with the owner account</td>
+<td>Everything, including the server itself: Traefik, Docker, Swarm, web server settings, updates, and the quotas of other workspaces</td>
+</tr>
+<tr>
+<td><strong>Tenant workspace</strong></td>
+<td>Every other workspace</td>
+<td>Deploy apps and databases inside its quota, invite its own team, connect its own Git accounts and servers. Cannot see or change the server or other workspaces.</td>
+</tr>
+</tbody></table></div>
+<p>Pages that manage the server itself (Web Server, Traefik, Docker, Swarm, Requests and host Monitoring) are hidden from tenant workspaces and refused by the API if called directly.</p>
+<h2 id="workload-policy">Workload policy<a class="anchor" href="#workload-policy" aria-label="Link to this section">#</a></h2>
+<p>Every service is checked before it is deployed: no privileged containers, no host network or PID namespaces, no devices, no dangerous capabilities, and no mounts of the Docker socket or system paths. The full rule list is in <a href="docker-compose.html#workload-policy">Docker Compose and templates</a>.</p>
+<h2 id="networks">Networks<a class="anchor" href="#networks" aria-label="Link to this section">#</a></h2>
+<p>Every workspace has its own private network. Inside a workspace, you can create extra overlay networks under a service&#39;s <strong>Advanced → Networks</strong> and attach services to them, for example to keep a database reachable from one app only.</p>
+<p><code>WORKSPACE_NETWORK_ISOLATION=false</code> puts every service back on one shared network; use it on single-owner installations only.</p>
+<h2 id="encryption-at-rest">Encryption at rest<a class="anchor" href="#encryption-at-rest" aria-label="Link to this section">#</a></h2>
+<p>Secrets are encrypted at rest with AES-256-GCM: environment variables, database passwords, SSH keys, Git tokens, registry and S3 keys, and certificate keys. The encryption key is a Docker secret created by the installer; keep it with your <a href="backups.html#backing-up-the-platform-itself">backups</a>.</p>
+<h2 id="webhooks">Webhooks<a class="anchor" href="#webhooks" aria-label="Link to this section">#</a></h2>
+<p>Git webhooks and deploy webhooks are verified by signature, and deliveries with a wrong signature are rejected with <code>401</code>. See <a href="api.html#deploy-webhooks">API and webhooks</a>.</p>
+<h2 id="accounts">Accounts<a class="anchor" href="#accounts" aria-label="Link to this section">#</a></h2>
+<p>New passwords need at least 12 characters, and sign-in, sign-up, password reset and two-factor checks are rate-limited per address. Two-factor authentication and passkeys are under <strong>Settings → Profile</strong>. See <a href="sign-in-and-email.html">Sign-in and email</a>.</p>
+<h2 id="reporting-a-vulnerability">Reporting a vulnerability<a class="anchor" href="#reporting-a-vulnerability" aria-label="Link to this section">#</a></h2>
+<p>Please report security issues privately as described in <a href="https://github.com/Aayushajs/LaunchForge-OS/blob/main/SECURITY.md">SECURITY.md</a>.</p>
+
+			</article>
+			<nav class="pager" aria-label="Previous and next page">
+				<a class="prev" href="sign-in-and-email.html" rel="prev"><span class="pager-label"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>Previous</span><strong>Sign-in and email</strong></a>
+				<a class="next" href="public-platform.html" rel="next"><span class="pager-label">Next<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3.5 4.5 4.5L6 12.5"/></svg></span><strong>Run a public platform</strong></a>
+			</nav>
+		</main>
+
+		<aside class="docs-toc" aria-labelledby="toc-title">
+			<p class="toc-title" id="toc-title">On this page</p>
+			<ul>
+				<li class="lvl-2"><a href="#workspace-isolation">Workspace isolation</a></li>
+				<li class="lvl-2"><a href="#platform-and-tenant-workspaces">Platform and tenant workspaces</a></li>
+				<li class="lvl-2"><a href="#workload-policy">Workload policy</a></li>
+				<li class="lvl-2"><a href="#networks">Networks</a></li>
+				<li class="lvl-2"><a href="#encryption-at-rest">Encryption at rest</a></li>
+				<li class="lvl-2"><a href="#webhooks">Webhooks</a></li>
+				<li class="lvl-2"><a href="#accounts">Accounts</a></li>
+				<li class="lvl-2"><a href="#reporting-a-vulnerability">Reporting a vulnerability</a></li>
+			</ul>
+		</aside>
+	</div>
+
+	<footer class="docs-footer">
+		<div class="wrap docs-footer-row">
+			<p>Open source under the Apache-2.0 license. © 2026 Aayush Jain</p>
+			<nav aria-label="Footer">
+				<a href="../index.html">Home</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS">GitHub</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/releases">Changelog</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/issues/new/choose">Report an issue</a>
+			</nav>
+		</div>
+	</footer>
+
+	<dialog class="search-dialog" id="search-dialog" aria-label="Search the documentation">
+		<div class="search-box">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+			<input id="search-input" type="search" placeholder="Search the docs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list" aria-label="Search the docs">
+			<kbd>Esc</kbd>
+		</div>
+		<div class="search-results" id="search-results" role="listbox" aria-label="Results"></div>
+		<p class="search-foot"><span><kbd>↑</kbd><kbd>↓</kbd> to move</span><span><kbd>Enter</kbd> to open</span></p>
+	</dialog>
+
+	<dialog class="modal" id="panel-dialog" aria-labelledby="modal-title">
+		<form method="dialog">
+			<h2 id="modal-title">LaunchForge Cloud is opening soon</h2>
+			<p>Until then, install LaunchForge on your own server. One command sets up everything, and the dashboard opens with its own sign-up page.</p>
+			<div class="install-chip">
+				<code id="modal-cmd">curl -fsSL https://aayushajs.github.io/LaunchForge-OS/install.sh | sudo bash</code>
+				<button class="copy-btn" type="button" data-copy="modal-cmd" aria-label="Copy install command"><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></button>
+			</div>
+			<div class="modal-actions">
+				<a class="btn btn-light btn-sm" href="free-hosting.html">Run it for free</a>
+				<button class="btn btn-outline btn-sm" type="submit" value="close">Close</button>
+			</div>
+		</form>
+	</dialog>
+
+	<script src="../config.js"></script>
+	<script src="search-index.js"></script>
+	<script src="docs.js"></script>
+</body>
+</html>

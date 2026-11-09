@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Applications · LaunchForge Docs</title>
+	<meta name="description" content="An application is one container, built from source or pulled as a prebuilt image.">
+	<meta property="og:title" content="Applications · LaunchForge Docs">
+	<meta property="og:description" content="An application is one container, built from source or pulled as a prebuilt image.">
+	<meta property="og:image" content="../assets/og.png">
+	<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../styles.css">
+	<link rel="stylesheet" href="docs.css">
+	<script>
+		try {
+			const saved = localStorage.getItem("lf-theme");
+			document.documentElement.dataset.theme = saved === "light" ? "light" : "dark";
+		} catch {
+			document.documentElement.dataset.theme = "dark";
+		}
+	</script>
+</head>
+<body class="docs">
+	<a class="skip" href="#main">Skip to content</a>
+
+	<header class="site-header">
+		<div class="wrap header-row">
+			<a class="brand" href="../index.html" aria-label="LaunchForge home">
+				<img src="../assets/icon.svg" alt="" width="30" height="30">
+			</a>
+
+			<nav class="primary-nav" aria-label="Primary">
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-features">
+						<span>Features</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-features">
+						<a href="applications.html"><strong>Applications</strong><span>Git, Docker images, any language</span></a>
+						<a href="databases.html"><strong>Databases</strong><span>Six engines with S3 backups</span></a>
+						<a href="docker-compose.html"><strong>Docker Compose</strong><span>Whole stacks from one file</span></a>
+						<a href="monitoring.html"><strong>Monitoring</strong><span>Metrics, logs and alerts</span></a>
+						<a href="teams.html"><strong>Teams and security</strong><span>Roles, audit log, isolation</span></a>
+					</div>
+				</div>
+				<a class="nav-link" href="../index.html#pricing">Pricing</a>
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-solutions">
+						<span>Solutions</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-solutions">
+						<a href="installation.html"><strong>Self-hosted</strong><span>Install everything on your server</span></a>
+						<a href="servers.html"><strong>Your server, our dashboard</strong><span>Connect a server, we set it up</span></a>
+						<a href="public-platform.html"><strong>Run a public platform</strong><span>Open sign-ups like Render or Railway</span></a>
+					</div>
+				</div>
+				<a class="nav-link is-current" href="index.html" aria-current="page">Docs</a>
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-resources">
+						<span>Resources</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-resources">
+						<a href="free-hosting.html"><strong>Run it for free</strong><span>Oracle Cloud Always Free, step by step</span></a>
+						<a href="public-platform.html"><strong>Public platform guide</strong><span>Open sign-ups like Render or Railway</span></a>
+						<a href="feature-reference.html"><strong>Feature reference</strong><span>Every page and setting</span></a>
+						<a href="https://github.com/Aayushajs/LaunchForge-OS/releases"><strong>Releases</strong><span>A new version with every change</span></a>
+					</div>
+				</div>
+			</nav>
+
+			<div class="header-tools">
+				<button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch theme">
+					<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+					<svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z"/></svg>
+				</button>
+				<a class="stars" href="https://github.com/Aayushajs/LaunchForge-OS" aria-label="Star LaunchForge on GitHub">
+					<span class="sparkle s1" aria-hidden="true"></span>
+					<span class="sparkle s2" aria-hidden="true"></span>
+					<span class="sparkle s3" aria-hidden="true"></span>
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+					<span>Stars</span>
+					<strong id="star-count">—</strong>
+				</a>
+				<a class="nav-link signin" href="installation.html" data-panel="signin">Sign In</a>
+				<a class="btn btn-outline btn-sm contact" href="https://github.com/Aayushajs/LaunchForge-OS/issues/new/choose">Contact</a>
+				<a class="btn btn-light btn-sm" href="installation.html" data-panel="signup"><span>Sign Up</span><svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m4.5 3 3 3-3 3"/></svg></a>
+				<button class="icon-btn burger" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+				</button>
+			</div>
+		</div>
+		<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile" hidden>
+			<a href="../index.html#features">Features</a>
+			<a href="../index.html#pricing">Pricing</a>
+			<a href="../index.html#tour">Product</a>
+			<a href="index.html" aria-current="page">Docs</a>
+			<a href="installation.html" data-panel="signin">Sign In</a>
+			<a href="installation.html" data-panel="signup">Sign Up</a>
+		</nav>
+	</header>
+
+	<div class="docs-bar">
+		<button class="docs-menu-btn" type="button" aria-expanded="false" aria-controls="docs-sidebar">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span class="docs-bar-section">Deploy</span><span class="docs-bar-sep" aria-hidden="true">/</span><span class="docs-bar-page">Applications</span>
+		</button>
+		<button class="icon-btn" type="button" data-search-open aria-label="Search docs"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+	</div>
+
+	<div class="wrap docs-shell">
+		<aside class="docs-sidebar" id="docs-sidebar" aria-label="Documentation">
+			<button class="search-trigger" type="button" data-search-open>
+				<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search docs</span><kbd>Ctrl K</kbd>
+			</button>
+			<nav class="docs-nav" aria-label="Documentation pages">
+				<div class="nav-group">
+					<p class="nav-group-title">Getting started</p>
+					<ul>
+						<li><a href="index.html">Overview</a></li>
+						<li><a href="concepts.html">Concepts</a></li>
+						<li><a href="quickstart.html">Quickstart</a></li>
+						<li><a href="deploy-a-portfolio.html">Deploy your portfolio</a></li>
+						<li><a href="free-hosting.html">Run it for free</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Deploy</p>
+					<ul>
+						<li><a href="applications.html" aria-current="page">Applications</a></li>
+						<li><a href="deploys.html">Deploys and rollbacks</a></li>
+						<li><a href="environment-variables.html">Environment variables</a></li>
+						<li><a href="docker-compose.html">Docker Compose</a></li>
+						<li><a href="databases.html">Databases</a></li>
+						<li><a href="domains.html">Domains and HTTPS</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Operate</p>
+					<ul>
+						<li><a href="monitoring.html">Monitoring and logs</a></li>
+						<li><a href="usage-and-quotas.html">Usage and quotas</a></li>
+						<li><a href="backups.html">Backups</a></li>
+						<li><a href="servers.html">Servers and scaling</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Teams and security</p>
+					<ul>
+						<li><a href="teams.html">Teams and roles</a></li>
+						<li><a href="sign-in-and-email.html">Sign-in and email</a></li>
+						<li><a href="security.html">Isolation and security</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Platform</p>
+					<ul>
+						<li><a href="public-platform.html">Run a public platform</a></li>
+						<li><a href="installation.html">Installation</a></li>
+						<li><a href="configuration.html">Configuration reference</a></li>
+						<li><a href="api.html">API and webhooks</a></li>
+						<li><a href="feature-reference.html">Feature reference</a></li>
+						<li><a href="troubleshooting.html">Troubleshooting</a></li>
+					</ul>
+				</div>
+			</nav>
+		</aside>
+
+		<main class="docs-main" id="main">
+			<article class="doc">
+				<p class="doc-eyebrow">Deploy</p>
+				<h1>Applications</h1>
+				<p class="doc-lead">An application is one container, built from source or pulled as a prebuilt image.</p>
+				<h2 id="sources">Sources<a class="anchor" href="#sources" aria-label="Link to this section">#</a></h2>
+<p>Choose the source under <strong>General → Provider</strong>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Use when</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GitHub, GitLab, Gitea, Bitbucket</td>
+<td>The repository is on a connected Git provider. Enables autodeploy and, for GitHub, <a href="deploys.html#preview-deployments">preview deployments</a>.</td>
+</tr>
+<tr>
+<td>Git</td>
+<td>Any Git URL. Private repositories work over SSH with a deploy key from <strong>Settings → SSH Keys</strong>.</td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>A prebuilt image (<code>nginx:1.27</code>, <code>ghcr.io/you/api:1.4</code>), optionally from a private registry.</td>
+</tr>
+<tr>
+<td>Drop</td>
+<td>Upload a zip of the source.</td>
+</tr>
+</tbody></table></div>
+<figure class="shot"><img src="img/application.png" alt="The application's General tab with the Docker provider selected" width="1440" height="900" loading="lazy" decoding="async"><figcaption>General tab: deploy controls, Autodeploy and the source provider.</figcaption></figure>
+<h2 id="git-providers">Git providers<a class="anchor" href="#git-providers" aria-label="Link to this section">#</a></h2>
+<p>Connected accounts are listed under <strong>Git Providers</strong>, right under <strong>Projects</strong> in the sidebar.</p>
+<ul>
+<li><strong>Signed in with GitHub?</strong> Your GitHub account is added automatically, named <code>GitHub · &lt;login&gt;</code> with the badge <strong>Signed in with GitHub</strong>. No GitHub App is needed. GitHub sign-in asks for the <code>repo</code> scope, so private repositories work too.</li>
+<li><strong>GitHub Apps, GitLab, Bitbucket and Gitea</strong> can still be added there.</li>
+</ul>
+<p>Each workspace connects its own accounts, so nobody can deploy another workspace&#39;s private repositories.</p>
+<h2 id="import-a-git-repository">Import a Git repository<a class="anchor" href="#import-a-git-repository" aria-label="Link to this section">#</a></h2>
+<p>The fastest way to deploy a repository is the <strong>Import a Git repository</strong> card on <strong>Home</strong>. If you signed in with GitHub, or clicked <strong>Connect GitHub</strong> on Home to link your GitHub account, your repositories are listed there with search.</p>
+<ol>
+<li>Click <strong>Import</strong> next to a repository.</li>
+<li>Check the <strong>Branch</strong> (it defaults to the repository&#39;s default branch) and the <strong>Port your app listens on</strong> (default 3000).</li>
+<li>Click <strong>Deploy</strong>.</li>
+</ol>
+<p>LaunchForge then:</p>
+<ul>
+<li>creates a project named after the repository, with a <code>production</code> environment;</li>
+<li>creates an application with the repository as its GitHub source and the environment variable <code>PORT=&lt;port&gt;</code>;</li>
+<li>generates a <code>traefik.me</code> domain routed to that port;</li>
+<li>turns on autodeploy and queues the first deployment;</li>
+<li>opens the application&#39;s <strong>Deployments</strong> tab.</li>
+</ul>
+<p>When the dashboard is reachable from the internet (a public hostname or IP address), a GitHub push webhook is created on the repository, so every push redeploys. On <code>localhost</code> or a private address this step is skipped; redeploy by hand instead.</p>
+<p>Everything can be changed afterwards in the application&#39;s settings.</p>
+<h2 id="build-types">Build types<a class="anchor" href="#build-types" aria-label="Link to this section">#</a></h2>
+<p>Choose how the source becomes an image under <strong>General → Build type</strong>:</p>
+<ul>
+<li><strong>Nixpacks</strong> detects Node, Python, Go, PHP, Ruby, Java, Rust and more.</li>
+<li><strong>Railpack</strong>, <strong>Heroku buildpacks</strong> and <strong>Paketo buildpacks</strong> are alternative auto-detecting builders.</li>
+<li><strong>Dockerfile</strong> builds your own Dockerfile, with build path, context, target stage, build arguments and BuildKit secrets.</li>
+<li><strong>Static</strong> serves files with nginx.</li>
+</ul>
+<p>For single-page apps built with Nixpacks, set <strong>Publish directory</strong> (for example <code>dist</code> or <code>build</code>) and the built folder is served by nginx.</p>
+<h3 id="recommended-build-type-by-language">Recommended build type by language<a class="anchor" href="#recommended-build-type-by-language" aria-label="Link to this section">#</a></h3>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Stack</th>
+<th>Recommended build type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Node.js, Express, NestJS</td>
+<td>Nixpacks</td>
+<td>Uses the <code>start</code> script; set <code>PORT</code> if your app reads it</td>
+</tr>
+<tr>
+<td>Next.js</td>
+<td>Nixpacks</td>
+<td><code>next build</code> and <code>next start</code>, port 3000</td>
+</tr>
+<tr>
+<td>React, Vite, Angular SPA</td>
+<td>Nixpacks with <strong>Publish directory</strong> (<code>dist</code> or <code>build</code>)</td>
+<td>Served by nginx; enable the SPA option for client-side routing</td>
+</tr>
+<tr>
+<td>Python (Django, Flask, FastAPI)</td>
+<td>Nixpacks or Railpack</td>
+<td>Detects <code>requirements.txt</code> or <code>pyproject.toml</code>; set the start command if needed (<code>gunicorn app:app -b 0.0.0.0:8000</code>)</td>
+</tr>
+<tr>
+<td>PHP, Laravel</td>
+<td>Nixpacks</td>
+<td></td>
+</tr>
+<tr>
+<td>Go</td>
+<td>Nixpacks or Dockerfile</td>
+<td></td>
+</tr>
+<tr>
+<td>Java, Spring Boot</td>
+<td>Nixpacks (Maven or Gradle) or Paketo buildpacks</td>
+<td></td>
+</tr>
+<tr>
+<td>Ruby, Rust, Elixir, .NET</td>
+<td>Nixpacks, Railpack or Heroku buildpacks</td>
+<td></td>
+</tr>
+<tr>
+<td>Anything else</td>
+<td>Dockerfile</td>
+<td>Supports build path, target stage, build args and BuildKit secrets</td>
+</tr>
+<tr>
+<td>Plain HTML</td>
+<td>Static</td>
+<td></td>
+</tr>
+</tbody></table></div>
+<p>Builds stop after <code>BUILD_TIMEOUT_SECONDS</code> (default one hour).</p>
+<h2 id="deploy-controls">Deploy controls<a class="anchor" href="#deploy-controls" aria-label="Link to this section">#</a></h2>
+<p>The buttons on the <strong>General</strong> tab:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Control</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Deploy</strong></td>
+<td>Builds and rolls out the current source and settings.</td>
+</tr>
+<tr>
+<td><strong>Rebuild</strong></td>
+<td>Builds again without the cache.</td>
+</tr>
+<tr>
+<td><strong>Stop</strong></td>
+<td>Scales the service to zero.</td>
+</tr>
+<tr>
+<td><strong>Autodeploy</strong></td>
+<td>Deploys on every push to the branch.</td>
+</tr>
+<tr>
+<td><strong>Watch paths</strong></td>
+<td>Deploys only when files matching these patterns change.</td>
+</tr>
+</tbody></table></div>
+<p>How a release replaces the running version, and how to roll back, is in <a href="deploys.html">Deploys and rollbacks</a>.</p>
+<h2 id="configuration">Configuration<a class="anchor" href="#configuration" aria-label="Link to this section">#</a></h2>
+<ul>
+<li><strong>Environment</strong>: runtime variables, <code>KEY=value</code> per line, encrypted at rest. See <a href="environment-variables.html">Environment variables</a>.</li>
+<li><strong>Build args and build secrets</strong>: for Dockerfile builds. Secrets are passed with BuildKit and never stored in the image.</li>
+<li><strong>Resources</strong> (<strong>Advanced → Resources</strong>): CPU and memory limits and reservations. In a workspace with a quota, services without limits run with the default limits and count against the quota.</li>
+<li><strong>Replicas and placement</strong> (<strong>Advanced → Cluster Settings</strong>): run several copies behind the same domain, the registry used to share images with other nodes, and placement constraints.</li>
+<li><strong>Swarm settings</strong> (<strong>Advanced → Swarm Settings</strong>): health check, restart, update and rollback policies, labels, mode, network attachments and stop grace period.</li>
+<li><strong>Ports</strong> (<strong>Advanced → Ports</strong>): publish a container port (TCP or UDP) on the server directly, for non-HTTP traffic such as a game server.</li>
+<li><strong>Volumes and file mounts</strong> (<strong>Advanced → Volumes</strong>): named volumes, bind mounts outside system directories (see the <a href="docker-compose.html#workload-policy">workload policy</a>), and file mounts whose content you edit in the dashboard.</li>
+<li><strong>Run command</strong> (<strong>Advanced → General</strong>): override the container&#39;s command and arguments.</li>
+<li><strong>Build server</strong> (<strong>Advanced → Build Server</strong>): build on a dedicated server and deploy the image elsewhere. See <a href="servers.html">Servers and scaling</a>.</li>
+<li><strong>Networks</strong> (<strong>Advanced → Networks</strong>): attach the service to extra networks in your workspace.</li>
+</ul>
+<h2 id="logs-monitoring-and-terminal">Logs, monitoring and terminal<a class="anchor" href="#logs-monitoring-and-terminal" aria-label="Link to this section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tab</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Deployments</strong></td>
+<td>Every build with its full log, commit, duration and status. <strong>Cancel</strong> stops only this service&#39;s build.</td>
+</tr>
+<tr>
+<td><strong>Logs</strong></td>
+<td>Live and recent container logs, with search and line limits.</td>
+</tr>
+<tr>
+<td><strong>Monitoring</strong></td>
+<td>CPU, memory, network and disk I/O of the running container, as live charts.</td>
+</tr>
+<tr>
+<td><strong>Terminal</strong> (<strong>General → Open terminal</strong>)</td>
+<td>A shell inside the running container, if your role allows it.</td>
+</tr>
+</tbody></table></div>
+<h2 id="patches">Patches<a class="anchor" href="#patches" aria-label="Link to this section">#</a></h2>
+<p>The <strong>Patches</strong> tab applies file changes on top of the cloned repository at build time, without committing them. Use it for a config file with server-specific values that you do not want in Git.</p>
+<h2 id="schedules">Schedules<a class="anchor" href="#schedules" aria-label="Link to this section">#</a></h2>
+<p>The <strong>Schedules</strong> tab runs a command inside the container on a cron schedule, for example a nightly cleanup script or a cache warm-up.</p>
+<h2 id="volume-backups">Volume backups<a class="anchor" href="#volume-backups" aria-label="Link to this section">#</a></h2>
+<p>The <strong>Volume Backups</strong> tab archives a named volume to S3 storage on a schedule. See <a href="backups.html#volume-backups">Backups</a>.</p>
+
+			</article>
+			<nav class="pager" aria-label="Previous and next page">
+				<a class="prev" href="free-hosting.html" rel="prev"><span class="pager-label"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>Previous</span><strong>Run it for free</strong></a>
+				<a class="next" href="deploys.html" rel="next"><span class="pager-label">Next<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3.5 4.5 4.5L6 12.5"/></svg></span><strong>Deploys and rollbacks</strong></a>
+			</nav>
+		</main>
+
+		<aside class="docs-toc" aria-labelledby="toc-title">
+			<p class="toc-title" id="toc-title">On this page</p>
+			<ul>
+				<li class="lvl-2"><a href="#sources">Sources</a></li>
+				<li class="lvl-2"><a href="#git-providers">Git providers</a></li>
+				<li class="lvl-2"><a href="#import-a-git-repository">Import a Git repository</a></li>
+				<li class="lvl-2"><a href="#build-types">Build types</a></li>
+				<li class="lvl-3"><a href="#recommended-build-type-by-language">Recommended build type by language</a></li>
+				<li class="lvl-2"><a href="#deploy-controls">Deploy controls</a></li>
+				<li class="lvl-2"><a href="#configuration">Configuration</a></li>
+				<li class="lvl-2"><a href="#logs-monitoring-and-terminal">Logs, monitoring and terminal</a></li>
+				<li class="lvl-2"><a href="#patches">Patches</a></li>
+				<li class="lvl-2"><a href="#schedules">Schedules</a></li>
+				<li class="lvl-2"><a href="#volume-backups">Volume backups</a></li>
+			</ul>
+		</aside>
+	</div>
+
+	<footer class="docs-footer">
+		<div class="wrap docs-footer-row">
+			<p>Open source under the Apache-2.0 license. © 2026 Aayush Jain</p>
+			<nav aria-label="Footer">
+				<a href="../index.html">Home</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS">GitHub</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/releases">Changelog</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/issues/new/choose">Report an issue</a>
+			</nav>
+		</div>
+	</footer>
+
+	<dialog class="search-dialog" id="search-dialog" aria-label="Search the documentation">
+		<div class="search-box">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+			<input id="search-input" type="search" placeholder="Search the docs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list" aria-label="Search the docs">
+			<kbd>Esc</kbd>
+		</div>
+		<div class="search-results" id="search-results" role="listbox" aria-label="Results"></div>
+		<p class="search-foot"><span><kbd>↑</kbd><kbd>↓</kbd> to move</span><span><kbd>Enter</kbd> to open</span></p>
+	</dialog>
+
+	<dialog class="modal" id="panel-dialog" aria-labelledby="modal-title">
+		<form method="dialog">
+			<h2 id="modal-title">LaunchForge Cloud is opening soon</h2>
+			<p>Until then, install LaunchForge on your own server. One command sets up everything, and the dashboard opens with its own sign-up page.</p>
+			<div class="install-chip">
+				<code id="modal-cmd">curl -fsSL https://aayushajs.github.io/LaunchForge-OS/install.sh | sudo bash</code>
+				<button class="copy-btn" type="button" data-copy="modal-cmd" aria-label="Copy install command"><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></button>
+			</div>
+			<div class="modal-actions">
+				<a class="btn btn-light btn-sm" href="free-hosting.html">Run it for free</a>
+				<button class="btn btn-outline btn-sm" type="submit" value="close">Close</button>
+			</div>
+		</form>
+	</dialog>
+
+	<script src="../config.js"></script>
+	<script src="search-index.js"></script>
+	<script src="docs.js"></script>
+</body>
+</html>

@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Deploy your portfolio · LaunchForge Docs</title>
+	<meta name="description" content="A complete walk-through: from git push to a live site on your own domain, with HTTPS, health-gated releases and one-click rollback.">
+	<meta property="og:title" content="Deploy your portfolio · LaunchForge Docs">
+	<meta property="og:description" content="A complete walk-through: from git push to a live site on your own domain, with HTTPS, health-gated releases and one-click rollback.">
+	<meta property="og:image" content="../assets/og.png">
+	<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../styles.css">
+	<link rel="stylesheet" href="docs.css">
+	<script>
+		try {
+			const saved = localStorage.getItem("lf-theme");
+			document.documentElement.dataset.theme = saved === "light" ? "light" : "dark";
+		} catch {
+			document.documentElement.dataset.theme = "dark";
+		}
+	</script>
+</head>
+<body class="docs">
+	<a class="skip" href="#main">Skip to content</a>
+
+	<header class="site-header">
+		<div class="wrap header-row">
+			<a class="brand" href="../index.html" aria-label="LaunchForge home">
+				<img src="../assets/icon.svg" alt="" width="30" height="30">
+			</a>
+
+			<nav class="primary-nav" aria-label="Primary">
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-features">
+						<span>Features</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-features">
+						<a href="applications.html"><strong>Applications</strong><span>Git, Docker images, any language</span></a>
+						<a href="databases.html"><strong>Databases</strong><span>Six engines with S3 backups</span></a>
+						<a href="docker-compose.html"><strong>Docker Compose</strong><span>Whole stacks from one file</span></a>
+						<a href="monitoring.html"><strong>Monitoring</strong><span>Metrics, logs and alerts</span></a>
+						<a href="teams.html"><strong>Teams and security</strong><span>Roles, audit log, isolation</span></a>
+					</div>
+				</div>
+				<a class="nav-link" href="../index.html#pricing">Pricing</a>
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-solutions">
+						<span>Solutions</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-solutions">
+						<a href="installation.html"><strong>Self-hosted</strong><span>Install everything on your server</span></a>
+						<a href="servers.html"><strong>Your server, our dashboard</strong><span>Connect a server, we set it up</span></a>
+						<a href="public-platform.html"><strong>Run a public platform</strong><span>Open sign-ups like Render or Railway</span></a>
+					</div>
+				</div>
+				<a class="nav-link is-current" href="index.html" aria-current="page">Docs</a>
+				<div class="menu">
+					<button class="menu-trigger" type="button" aria-expanded="false" aria-controls="menu-resources">
+						<span>Resources</span>
+						<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+					</button>
+					<div class="menu-panel" id="menu-resources">
+						<a href="free-hosting.html"><strong>Run it for free</strong><span>Oracle Cloud Always Free, step by step</span></a>
+						<a href="public-platform.html"><strong>Public platform guide</strong><span>Open sign-ups like Render or Railway</span></a>
+						<a href="feature-reference.html"><strong>Feature reference</strong><span>Every page and setting</span></a>
+						<a href="https://github.com/Aayushajs/LaunchForge-OS/releases"><strong>Releases</strong><span>A new version with every change</span></a>
+					</div>
+				</div>
+			</nav>
+
+			<div class="header-tools">
+				<button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch theme">
+					<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+					<svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z"/></svg>
+				</button>
+				<a class="stars" href="https://github.com/Aayushajs/LaunchForge-OS" aria-label="Star LaunchForge on GitHub">
+					<span class="sparkle s1" aria-hidden="true"></span>
+					<span class="sparkle s2" aria-hidden="true"></span>
+					<span class="sparkle s3" aria-hidden="true"></span>
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+					<span>Stars</span>
+					<strong id="star-count">—</strong>
+				</a>
+				<a class="nav-link signin" href="installation.html" data-panel="signin">Sign In</a>
+				<a class="btn btn-outline btn-sm contact" href="https://github.com/Aayushajs/LaunchForge-OS/issues/new/choose">Contact</a>
+				<a class="btn btn-light btn-sm" href="installation.html" data-panel="signup"><span>Sign Up</span><svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m4.5 3 3 3-3 3"/></svg></a>
+				<button class="icon-btn burger" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+				</button>
+			</div>
+		</div>
+		<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile" hidden>
+			<a href="../index.html#features">Features</a>
+			<a href="../index.html#pricing">Pricing</a>
+			<a href="../index.html#tour">Product</a>
+			<a href="index.html" aria-current="page">Docs</a>
+			<a href="installation.html" data-panel="signin">Sign In</a>
+			<a href="installation.html" data-panel="signup">Sign Up</a>
+		</nav>
+	</header>
+
+	<div class="docs-bar">
+		<button class="docs-menu-btn" type="button" aria-expanded="false" aria-controls="docs-sidebar">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span class="docs-bar-section">Getting started</span><span class="docs-bar-sep" aria-hidden="true">/</span><span class="docs-bar-page">Deploy your portfolio</span>
+		</button>
+		<button class="icon-btn" type="button" data-search-open aria-label="Search docs"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+	</div>
+
+	<div class="wrap docs-shell">
+		<aside class="docs-sidebar" id="docs-sidebar" aria-label="Documentation">
+			<button class="search-trigger" type="button" data-search-open>
+				<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search docs</span><kbd>Ctrl K</kbd>
+			</button>
+			<nav class="docs-nav" aria-label="Documentation pages">
+				<div class="nav-group">
+					<p class="nav-group-title">Getting started</p>
+					<ul>
+						<li><a href="index.html">Overview</a></li>
+						<li><a href="concepts.html">Concepts</a></li>
+						<li><a href="quickstart.html">Quickstart</a></li>
+						<li><a href="deploy-a-portfolio.html" aria-current="page">Deploy your portfolio</a></li>
+						<li><a href="free-hosting.html">Run it for free</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Deploy</p>
+					<ul>
+						<li><a href="applications.html">Applications</a></li>
+						<li><a href="deploys.html">Deploys and rollbacks</a></li>
+						<li><a href="environment-variables.html">Environment variables</a></li>
+						<li><a href="docker-compose.html">Docker Compose</a></li>
+						<li><a href="databases.html">Databases</a></li>
+						<li><a href="domains.html">Domains and HTTPS</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Operate</p>
+					<ul>
+						<li><a href="monitoring.html">Monitoring and logs</a></li>
+						<li><a href="usage-and-quotas.html">Usage and quotas</a></li>
+						<li><a href="backups.html">Backups</a></li>
+						<li><a href="servers.html">Servers and scaling</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Teams and security</p>
+					<ul>
+						<li><a href="teams.html">Teams and roles</a></li>
+						<li><a href="sign-in-and-email.html">Sign-in and email</a></li>
+						<li><a href="security.html">Isolation and security</a></li>
+					</ul>
+				</div>
+				<div class="nav-group">
+					<p class="nav-group-title">Platform</p>
+					<ul>
+						<li><a href="public-platform.html">Run a public platform</a></li>
+						<li><a href="installation.html">Installation</a></li>
+						<li><a href="configuration.html">Configuration reference</a></li>
+						<li><a href="api.html">API and webhooks</a></li>
+						<li><a href="feature-reference.html">Feature reference</a></li>
+						<li><a href="troubleshooting.html">Troubleshooting</a></li>
+					</ul>
+				</div>
+			</nav>
+		</aside>
+
+		<main class="docs-main" id="main">
+			<article class="doc">
+				<p class="doc-eyebrow">Getting started</p>
+				<h1>Deploy your portfolio</h1>
+				<p class="doc-lead">A complete walk-through: from git push to a live site on your own domain, with HTTPS, health-gated releases and one-click rollback.</p>
+				<p>By the end, a <code>git push</code> to your portfolio repository updates <code>https://yourname.dev</code> within a minute or two, with HTTPS, zero downtime and one-click rollback.</p>
+<h2 id="before-you-start">Before you start<a class="anchor" href="#before-you-start" aria-label="Link to this section">#</a></h2>
+<p>You need:</p>
+<ul>
+<li>LaunchForge installed on a server (<a href="quickstart.html">Quickstart</a>, or <a href="free-hosting.html">for free on Oracle Cloud</a>).</li>
+<li>Your portfolio in a GitHub repository. GitLab, Gitea, Bitbucket and plain Git URLs work the same way.</li>
+<li>A domain. No domain yet? Use a free subdomain from <a href="https://www.duckdns.org">DuckDNS</a> or <a href="https://www.is-a.dev">is-a.dev</a>, or skip the domain and use a generated <code>sslip.io</code> address (HTTP only) to try things out.</li>
+</ul>
+<h2 id="step-1-point-the-domain-at-the-server">Step 1: Point the domain at the server<a class="anchor" href="#step-1-point-the-domain-at-the-server" aria-label="Link to this section">#</a></h2>
+<p>At your DNS provider, create these records with your server&#39;s public IP:</p>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A</td>
+<td><code>@</code> (the bare domain, <code>yourname.dev</code>)</td>
+<td>server IP</td>
+</tr>
+<tr>
+<td>A</td>
+<td><code>www</code></td>
+<td>server IP</td>
+</tr>
+</tbody></table></div>
+<p>Check that it resolves before going on. Let&#39;s Encrypt cannot issue a certificate until it does:</p>
+<div class="code"><div class="code-head"><span>bash</span><button class="copy-btn" type="button" data-copy-code aria-label="Copy code"><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></button></div><pre><code>dig +short yourname.dev        <span class="c"># must print the server IP</span></code></pre></div>
+<div class="callout note" role="note">
+<p class="callout-label"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/></svg>Note</p>
+
+<p>On Cloudflare, set the records to <strong>DNS only</strong> (grey cloud) for the first certificate. You can turn the proxy back on afterwards.</p>
+</div>
+
+<h2 id="step-2-connect-github">Step 2: Connect GitHub<a class="anchor" href="#step-2-connect-github" aria-label="Link to this section">#</a></h2>
+<p>If you signed in to LaunchForge with GitHub, your account is already connected: it appears under <strong>Git Providers</strong> (in the sidebar, under <strong>Projects</strong>) as <code>GitHub · &lt;login&gt;</code>, with access to private repositories as well. Skip to step 3.</p>
+<div class="callout note" role="note">
+<p class="callout-label"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/></svg>Note</p>
+
+<p>In a hurry? The <strong>Import a Git repository</strong> card on <strong>Home</strong> does most of this in one go: it creates the project and application, a generated <code>traefik.me</code> domain and autodeploy, and starts the first deployment. See <a href="applications.html#import-a-git-repository">Import a Git repository</a>. The steps below do it by hand, with your own domain, a health check and rollbacks.</p>
+</div>
+
+<p>Otherwise, connect a GitHub App: open <strong>Git Providers</strong>, add <strong>GitHub</strong> and choose <strong>Create GitHub App</strong>. LaunchForge sends you to GitHub with the app pre-filled. Confirm, then <strong>Install</strong> it on your account and select the portfolio repository.</p>
+<p>The app gives LaunchForge read access to that repository and sends a signed webhook on every push. LaunchForge rejects webhook deliveries whose signature does not match, so nobody else can trigger your deployments.</p>
+<p>A public repository also works without the app: choose <strong>Provider: Git</strong> and paste the HTTPS URL. You then deploy by hand or through a <a href="api.html#deploy-webhooks">deploy webhook</a>.</p>
+<h2 id="step-3-create-the-project-and-the-application">Step 3: Create the project and the application<a class="anchor" href="#step-3-create-the-project-and-the-application" aria-label="Link to this section">#</a></h2>
+<ol>
+<li><strong>Projects → Create Project</strong>, name it <code>portfolio</code>. A project starts with a <code>production</code> environment.</li>
+<li>Open it and choose <strong>Create Service → Application</strong>, name it <code>site</code>.</li>
+<li>In <strong>General → Provider</strong>, choose <strong>GitHub</strong>, then the repository and branch <code>main</code>.</li>
+<li>Pick the <strong>build type</strong> and port for your kind of portfolio (table below).</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<div class="table-wrap wide"><table>
+<thead>
+<tr>
+<th>Your portfolio is…</th>
+<th>Build type</th>
+<th>Extra setting</th>
+<th>Port the app listens on</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Plain HTML, CSS and JavaScript</td>
+<td><strong>Static</strong></td>
+<td>none</td>
+<td>80</td>
+</tr>
+<tr>
+<td>React, Vite, Vue, Svelte or Angular single-page app</td>
+<td><strong>Nixpacks</strong></td>
+<td><strong>Publish directory</strong> <code>dist</code> (Vite) or <code>build</code> (Create React App); the built files are served by nginx</td>
+<td>80</td>
+</tr>
+<tr>
+<td>Next.js, Nuxt, Remix, Astro (server mode), SvelteKit</td>
+<td><strong>Nixpacks</strong></td>
+<td>none; it runs <code>npm run build</code> then <code>npm start</code></td>
+<td>3000</td>
+</tr>
+<tr>
+<td>Next.js with <code>output: &quot;export&quot;</code></td>
+<td><strong>Nixpacks</strong></td>
+<td><strong>Publish directory</strong> <code>out</code></td>
+<td>80</td>
+</tr>
+<tr>
+<td>Anything with a <code>Dockerfile</code></td>
+<td><strong>Dockerfile</strong></td>
+<td>Dockerfile path, usually <code>Dockerfile</code></td>
+<td>whatever your <code>EXPOSE</code> says</td>
+</tr>
+<tr>
+<td>Python, Go, PHP, Ruby, Java, Rust</td>
+<td><strong>Nixpacks</strong></td>
+<td>none</td>
+<td>your app&#39;s port</td>
+</tr>
+</tbody></table></div>
+<h3 id="if-you-prefer-a-dockerfile">If you prefer a Dockerfile<a class="anchor" href="#if-you-prefer-a-dockerfile" aria-label="Link to this section">#</a></h3>
+<p>This one builds a Vite or React portfolio and serves it with nginx on port 80:</p>
+<div class="code"><div class="code-head"><span>dockerfile</span><button class="copy-btn" type="button" data-copy-code aria-label="Copy code"><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></button></div><pre><code>FROM node:22-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM nginx:1.27-alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80</code></pre></div>
+<h2 id="step-4-environment-variables">Step 4: Environment variables<a class="anchor" href="#step-4-environment-variables" aria-label="Link to this section">#</a></h2>
+<p>In the <strong>Environment</strong> tab, add what your site reads at build or run time, one per line:</p>
+<div class="code"><div class="code-head"><span>env</span><button class="copy-btn" type="button" data-copy-code aria-label="Copy code"><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></button></div><pre><code>NODE_ENV=production
+NEXT_PUBLIC_CONTACT_EMAIL=you@example.com</code></pre></div>
+<p>Values are encrypted in the database. For a static site, variables that must end up in the browser (<code>VITE_*</code>, <code>NEXT_PUBLIC_*</code>) are read at <strong>build</strong> time, so redeploy after changing them. More in <a href="environment-variables.html">Environment variables</a>.</p>
+<h2 id="step-5-add-a-health-check">Step 5: Add a health check<a class="anchor" href="#step-5-add-a-health-check" aria-label="Link to this section">#</a></h2>
+<p>Recommended. Open <strong>Advanced → Swarm Settings → Health Check</strong>:</p>
+<div class="code"><div class="code-head"><span>json</span><button class="copy-btn" type="button" data-copy-code aria-label="Copy code"><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></button></div><pre><code>{
+  "Test": ["CMD-SHELL", "wget -qO- http://localhost:80/ || exit 1"],
+  "Interval": 10000000000,
+  "Timeout": 5000000000,
+  "Retries": 3,
+  "StartPeriod": 15000000000
+}</code></pre></div>
+<p>Use your app&#39;s port in the URL; durations are in nanoseconds. With a health check, a release that starts but serves errors never takes traffic: LaunchForge waits for it to pass, and if it does not, the previous version keeps serving and the deployment is marked as failed.</p>
+<h2 id="step-6-deploy">Step 6: Deploy<a class="anchor" href="#step-6-deploy" aria-label="Link to this section">#</a></h2>
+<p>Click <strong>Deploy</strong> and open the <strong>Deployments</strong> tab to follow the build log live. A deployment is <strong>done</strong> only once the new version runs and passes its health check.</p>
+<p>A first build takes one to three minutes; later builds reuse the cache.</p>
+<figure class="shot"><img src="img/deployments.png" alt="The Deployments tab after a finished deployment" width="1440" height="900" loading="lazy" decoding="async"><figcaption>Deployments: every build with its log, duration and status.</figcaption></figure>
+<h2 id="step-7-domain-and-https">Step 7: Domain and HTTPS<a class="anchor" href="#step-7-domain-and-https" aria-label="Link to this section">#</a></h2>
+<p><strong>Domains → Add Domain</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Host</td>
+<td><code>yourname.dev</code></td>
+</tr>
+<tr>
+<td>Path</td>
+<td><code>/</code></td>
+</tr>
+<tr>
+<td>Container port</td>
+<td>the port from step 3 (80 or 3000)</td>
+</tr>
+<tr>
+<td>HTTPS</td>
+<td>on</td>
+</tr>
+<tr>
+<td>Certificate</td>
+<td>Let&#39;s Encrypt</td>
+</tr>
+</tbody></table></div>
+<p>Add <code>www.yourname.dev</code> the same way, or redirect it to the bare domain with a redirect rule (see <a href="domains.html#redirects-basic-auth-and-middlewares">Domains and HTTPS</a>). The certificate arrives within about a minute of the DNS record resolving. Open <code>https://yourname.dev</code>.</p>
+<p>A hostname belongs to one workspace only. If someone else on the same installation already uses it, adding it is refused.</p>
+<h2 id="step-8-deploy-on-every-push">Step 8: Deploy on every push<a class="anchor" href="#step-8-deploy-on-every-push" aria-label="Link to this section">#</a></h2>
+<p>Turn on <strong>General → Autodeploy</strong> and push a change:</p>
+<div class="code"><div class="code-head"><span>bash</span><button class="copy-btn" type="button" data-copy-code aria-label="Copy code"><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></button></div><pre><code>git commit -am "Update projects section" &amp;&amp; git push</code></pre></div>
+<p>A new deployment starts within seconds. If the build fails or the new version is unhealthy, the old one keeps serving.</p>
+<p>Optional extras:</p>
+<ul>
+<li><strong>Watch paths</strong> such as <code>src/**</code> and <code>public/**</code>: deploy only when these change, not when you edit the README.</li>
+<li><strong>Preview deployments</strong>: every pull request gets its own URL, removed when the pull request closes.</li>
+<li><strong>Notifications</strong> (<strong>Settings → Notifications</strong>): a Slack, Discord, Telegram or email message for every deployment.</li>
+</ul>
+<h2 id="step-9-roll-back">Step 9: Roll back<a class="anchor" href="#step-9-roll-back" aria-label="Link to this section">#</a></h2>
+<p>Under <strong>Advanced → Rollback Settings</strong>, enable rollbacks and choose a registry. LaunchForge then keeps the image of every deployment, and <strong>Deployments → Rollback</strong> on any earlier deployment brings it back in seconds, without rebuilding.</p>
+<h2 id="what-you-have-now">What you have now<a class="anchor" href="#what-you-have-now" aria-label="Link to this section">#</a></h2>
+<figure class="diagram" aria-label="git push goes to GitHub, which sends a signed webhook to LaunchForge, which builds and rolls out the site container. Visitors reach the container through Traefik.">
+<div class="flow"><span class="node">git push</span><span class="edge">to</span><span class="node">GitHub</span><span class="edge">signed webhook</span><span class="node">LaunchForge</span><span class="edge">build, health-gated rollout</span><span class="node">site container</span></div>
+<div class="flow"><span class="node">Visitors</span><span class="edge"><code>https://yourname.dev</code></span><span class="node">Traefik + Let's Encrypt</span><span class="edge">routes</span><span class="node">site container</span></div>
+</figure>
+
+<h2 id="if-something-goes-wrong">If something goes wrong<a class="anchor" href="#if-something-goes-wrong" aria-label="Link to this section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>What you see</th>
+<th>Cause and fix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Build log ends with <code>npm ERR! missing script: build</code></td>
+<td>Nixpacks runs <code>npm run build</code>. Add a <code>build</code> script, or use the Static build type for plain HTML.</td>
+</tr>
+<tr>
+<td>Site shows <em>404 page not found</em></td>
+<td>The domain&#39;s container port does not match the port the app listens on. Fix it in <strong>Domains</strong>.</td>
+</tr>
+<tr>
+<td>Site shows <em>Bad Gateway</em></td>
+<td>The container is starting or crashed. Check <strong>Logs</strong>; the app must listen on <code>0.0.0.0</code>, not <code>localhost</code>.</td>
+</tr>
+<tr>
+<td>Browser warns about the certificate</td>
+<td>DNS did not resolve to the server when the domain was added. Fix DNS, then edit and save the domain to retry.</td>
+</tr>
+<tr>
+<td>Deployment stuck on <em>health check</em></td>
+<td>The health check URL or port is wrong, or the app takes longer than <code>StartPeriod</code> to boot.</td>
+</tr>
+<tr>
+<td>React routes 404 on refresh</td>
+<td>Use the <strong>Publish directory</strong> option (nginx falls back to <code>index.html</code>), not <code>npm start</code>.</td>
+</tr>
+<tr>
+<td><code>Memory quota exceeded</code> or <code>CPU quota exceeded</code> when deploying</td>
+<td>The workspace reached its limit. Lower the service&#39;s memory or CPU limit, stop another service, or ask the operator for more (<strong>Settings → Usage &amp; Quotas</strong>).</td>
+</tr>
+</tbody></table></div>
+<p>More in <a href="troubleshooting.html">Troubleshooting</a>.</p>
+
+			</article>
+			<nav class="pager" aria-label="Previous and next page">
+				<a class="prev" href="quickstart.html" rel="prev"><span class="pager-label"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>Previous</span><strong>Quickstart</strong></a>
+				<a class="next" href="free-hosting.html" rel="next"><span class="pager-label">Next<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3.5 4.5 4.5L6 12.5"/></svg></span><strong>Run it for free</strong></a>
+			</nav>
+		</main>
+
+		<aside class="docs-toc" aria-labelledby="toc-title">
+			<p class="toc-title" id="toc-title">On this page</p>
+			<ul>
+				<li class="lvl-2"><a href="#before-you-start">Before you start</a></li>
+				<li class="lvl-2"><a href="#step-1-point-the-domain-at-the-server">Step 1: Point the domain at the server</a></li>
+				<li class="lvl-2"><a href="#step-2-connect-github">Step 2: Connect GitHub</a></li>
+				<li class="lvl-2"><a href="#step-3-create-the-project-and-the-application">Step 3: Create the project and the application</a></li>
+				<li class="lvl-3"><a href="#if-you-prefer-a-dockerfile">If you prefer a Dockerfile</a></li>
+				<li class="lvl-2"><a href="#step-4-environment-variables">Step 4: Environment variables</a></li>
+				<li class="lvl-2"><a href="#step-5-add-a-health-check">Step 5: Add a health check</a></li>
+				<li class="lvl-2"><a href="#step-6-deploy">Step 6: Deploy</a></li>
+				<li class="lvl-2"><a href="#step-7-domain-and-https">Step 7: Domain and HTTPS</a></li>
+				<li class="lvl-2"><a href="#step-8-deploy-on-every-push">Step 8: Deploy on every push</a></li>
+				<li class="lvl-2"><a href="#step-9-roll-back">Step 9: Roll back</a></li>
+				<li class="lvl-2"><a href="#what-you-have-now">What you have now</a></li>
+				<li class="lvl-2"><a href="#if-something-goes-wrong">If something goes wrong</a></li>
+			</ul>
+		</aside>
+	</div>
+
+	<footer class="docs-footer">
+		<div class="wrap docs-footer-row">
+			<p>Open source under the Apache-2.0 license. © 2026 Aayush Jain</p>
+			<nav aria-label="Footer">
+				<a href="../index.html">Home</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS">GitHub</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/releases">Changelog</a>
+				<a href="https://github.com/Aayushajs/LaunchForge-OS/issues/new/choose">Report an issue</a>
+			</nav>
+		</div>
+	</footer>
+
+	<dialog class="search-dialog" id="search-dialog" aria-label="Search the documentation">
+		<div class="search-box">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+			<input id="search-input" type="search" placeholder="Search the docs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list" aria-label="Search the docs">
+			<kbd>Esc</kbd>
+		</div>
+		<div class="search-results" id="search-results" role="listbox" aria-label="Results"></div>
+		<p class="search-foot"><span><kbd>↑</kbd><kbd>↓</kbd> to move</span><span><kbd>Enter</kbd> to open</span></p>
+	</dialog>
+
+	<dialog class="modal" id="panel-dialog" aria-labelledby="modal-title">
+		<form method="dialog">
+			<h2 id="modal-title">LaunchForge Cloud is opening soon</h2>
+			<p>Until then, install LaunchForge on your own server. One command sets up everything, and the dashboard opens with its own sign-up page.</p>
+			<div class="install-chip">
+				<code id="modal-cmd">curl -fsSL https://aayushajs.github.io/LaunchForge-OS/install.sh | sudo bash</code>
+				<button class="copy-btn" type="button" data-copy="modal-cmd" aria-label="Copy install command"><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><svg class="i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></button>
+			</div>
+			<div class="modal-actions">
+				<a class="btn btn-light btn-sm" href="free-hosting.html">Run it for free</a>
+				<button class="btn btn-outline btn-sm" type="submit" value="close">Close</button>
+			</div>
+		</form>
+	</dialog>
+
+	<script src="../config.js"></script>
+	<script src="search-index.js"></script>
+	<script src="docs.js"></script>
+</body>
+</html>
