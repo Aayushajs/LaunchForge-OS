@@ -531,14 +531,18 @@ export const reloadAuthProviders = async () => {
 	return Object.keys(providers);
 };
 
+// T is inferred from a property access so declaration emit spells the type out
+// instead of naming createBetterAuth, whose full type references passkey
+// packages this one does not depend on (TS2883).
+const fromCurrentApi = <T extends (...args: never[]) => unknown>(
+	pick: (current: BetterAuthInstance["api"]) => T,
+): T =>
+	((...args: never[]) =>
+		(pick(instance().api) as (...args: never[]) => unknown)(...args)) as T;
+
 const _auth = {
 	handler: (request: Request) => instance().handler(request),
-	createApiKey: ((
-		...args: Parameters<BetterAuthInstance["api"]["createApiKey"]>
-	) =>
-		instance().api.createApiKey(
-			...args,
-		)) as BetterAuthInstance["api"]["createApiKey"],
+	createApiKey: fromCurrentApi((current) => current.createApiKey),
 };
 
 export type AuthType = typeof _auth;
