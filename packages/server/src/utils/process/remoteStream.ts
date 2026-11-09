@@ -110,7 +110,17 @@ export const pipeBetweenServers = async ({
 	from.stdout.on("error", () => {});
 	from.stdout.pipe(to.stdin);
 
+	// Once the target is gone, pipe() leaves the source paused waiting for a
+	// drain that never comes, so its stdout never ends and its exit (which
+	// waits for stdio to close) would hang. Drain it instead.
+	const detachTarget = () => {
+		from.stdout.unpipe(to.stdin);
+		from.stdout.resume();
+	};
+	to.stdin.on("error", detachTarget);
+
 	const targetExit = to.exit.then((code) => {
+		detachTarget();
 		if (code !== 0) from.close();
 		return code;
 	});
