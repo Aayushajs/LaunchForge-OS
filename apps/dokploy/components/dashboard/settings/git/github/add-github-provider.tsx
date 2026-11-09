@@ -1,5 +1,7 @@
 import { format } from "date-fns";
+import Link from "next/link";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { GithubIcon } from "@/components/icons/data-tools-icons";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
@@ -12,9 +14,72 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { authClient } from "@/lib/auth-client";
 import { api } from "@/utils/api";
 import { DEFAULT_GITHUB_URL, resolveGithubBaseUrl } from "@/utils/github-utils";
 import { isPublicHost } from "@/utils/public-host";
+
+const ConnectGithubAccount = ({ enabled }: { enabled: boolean }) => {
+	const { data: connection } = api.github.connection.useQuery(undefined, {
+		enabled,
+	});
+	const [pending, setPending] = useState(false);
+
+	if (!connection) return null;
+
+	if (connection.githubId) {
+		return (
+			<div className="flex flex-col gap-3 rounded-lg border p-4 text-sm">
+				<p className="font-medium">Your GitHub account is connected</p>
+				<p className="text-muted-foreground">
+					Your repositories are listed on Home. Pick one and click Import to
+					deploy it.
+				</p>
+				<Button asChild size="sm" className="w-fit">
+					<Link href="/dashboard/home">Go to Home</Link>
+				</Button>
+			</div>
+		);
+	}
+
+	if (!connection.signInEnabled) {
+		return (
+			<p className="rounded-lg border p-4 text-sm text-muted-foreground">
+				For one-click access to your repositories, turn on GitHub under
+				Settings, Sign-in & Email. Otherwise create a GitHub App below.
+			</p>
+		);
+	}
+
+	return (
+		<div className="flex flex-col gap-3 rounded-lg border p-4 text-sm">
+			<p className="font-medium">Connect your GitHub account</p>
+			<p className="text-muted-foreground">
+				Recommended. Lists all your repositories, public and private, so you can
+				deploy one straight from Home. No app to create.
+			</p>
+			<Button
+				size="sm"
+				className="w-fit"
+				isLoading={pending}
+				onClick={async () => {
+					setPending(true);
+					const { error } = await authClient.linkSocial({
+						provider: "github",
+						callbackURL: "/dashboard/home",
+					});
+					if (error) {
+						toast.error(error.message ?? "Could not connect GitHub");
+						setPending(false);
+					}
+				}}
+			>
+				<GithubIcon className="size-4 fill-current" />
+				Connect GitHub
+			</Button>
+		</div>
+	);
+};
 
 export const AddGithubProvider = () => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -83,11 +148,12 @@ export const AddGithubProvider = () => {
 				<div id="hook-form-add-project" className="grid w-full gap-1">
 					<CardContent className="p-0">
 						<div className="flex flex-col ">
+							<ConnectGithubAccount enabled={isOpen} />
+							<p className="mt-5 text-sm font-medium">Or create a GitHub App</p>
 							<p className="text-muted-foreground text-sm">
-								To integrate your GitHub account with our services, you'll need
-								to create and install a GitHub app. This process is
-								straightforward and only takes a few minutes. Click the button
-								below to get started.
+								Use an app for GitHub organisations, GitHub Enterprise, or pull
+								request preview deployments. GitHub asks you to name and install
+								it; LaunchForge fills in the rest.
 							</p>
 							{!reachable && (
 								<p className="mt-3 rounded-lg border border-border bg-muted/40 p-3 text-sm text-muted-foreground">

@@ -98,6 +98,12 @@ export const githubRouter = createTRPCRouter({
 			return await getGithubBranches(input);
 		}),
 	githubProviders: protectedProcedure.query(async ({ ctx }) => {
+		await ensureGithubOauthProvider(
+			ctx.user.id,
+			ctx.session.activeOrganizationId,
+		).catch((error) => {
+			console.warn("Could not add the GitHub sign-in account:", error);
+		});
 		const accessibleIds = await getAccessibleGitProviderIds(ctx.session);
 
 		let result = await db.query.github.findMany({
