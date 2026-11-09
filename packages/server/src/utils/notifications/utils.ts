@@ -33,6 +33,8 @@ export const sendEmailNotification = async (
 		const transporter = nodemailer.createTransport({
 			host: smtpServer,
 			port: smtpPort,
+			// 465 is implicit TLS; other ports upgrade with STARTTLS.
+			secure: smtpPort === 465,
 			auth: { user: username, pass: password },
 		});
 
